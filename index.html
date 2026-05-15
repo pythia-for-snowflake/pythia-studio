@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🔮 pythia-studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#7056d7;--hover:#f3f0ff;--border:#e0e0e0;--muted:#bbb;--text:#1a1a1a;--bg:#f5f5f5}
+body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);min-height:100vh;padding:48px 24px 80px;display:flex;flex-direction:column;align-items:center}
+
+/* header */
+.hdr{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.hdr-icon{font-size:32px}
+h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--accent);letter-spacing:-.03em}
+.sub{font-size:12px;color:var(--muted);margin-bottom:48px;text-align:center}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;width:100%;max-width:760px}
+.card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:20px 22px;cursor:pointer;text-decoration:none;color:inherit;transition:all .15s;display:flex;flex-direction:column;gap:10px}
+.card:hover{border-color:var(--accent);background:var(--hover);transform:translateY(-2px);box-shadow:0 4px 16px rgba(112,86,215,.1)}
+.card-icon{font-size:28px;line-height:1}
+.card-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--text)}
+.card-desc{font-size:11px;color:var(--muted);line-height:1.6;flex:1}
+.card-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:#f0f9ff;color:#29b5e8;letter-spacing:.05em;align-self:flex-start}
+.card-arrow{font-size:11px;color:var(--accent);margin-top:4px;align-self:flex-end}
+
+/* section label */
+.sec{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin:40px 0 14px;width:100%;max-width:760px}
+
+/* footer */
+footer{margin-top:64px;font-size:10px;color:var(--muted);text-align:center;line-height:1.8}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--accent)}
+footer a img{opacity:.75;transition:opacity .12s;vertical-align:middle}
+footer a:hover img{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="hdr"><span class="hdr-icon"><img src="pythia-logo.png" alt="pythia" height="32" style="display:block" onerror="this.outerHTML='<span style=\'font-size:32px\'>🐭</span>'"></span><h1>pythia-studio</h1></div>
+<p class="sub">browser tools for the pythia-for-snowflake suite</p>
+
+<div class="sec">Design tools</div>
+<div class="grid">
+
+  <a class="card" href="palette-title-generator.html">
+    <div class="card-icon">🎨</div>
+    <div class="card-name">Palette & Title Generator</div>
+    <div class="card-desc">Signature color → harmony → semantic tokens → app title logo export (PNG × 8).</div>
+    <div class="card-tag">design · snowflake-kit-streamlit</div>
+    <div class="card-arrow">open →</div>
+  </a>
+
+  <a class="card" href="env-generator.html">
+    <div class="card-icon">⚙️</div>
+    <div class="card-name">Env Generator</div>
+    <div class="card-desc">Generate environment configuration files for pythia-for-snowflake apps.</div>
+    <div class="card-tag">config · snowflake-provider</div>
+    <div class="card-arrow">open →</div>
+  </a>
+
+</div>
+
+<div class="sec">Documentation</div>
+<div class="grid">
+
+  <a class="card" href="hub-online.html">
+    <div class="card-icon">📚</div>
+    <div class="card-name">Doc Hub — online</div>
+    <div class="card-desc">Curated links to live official docs: Snowflake, Snowpark, Streamlit, Python, Plotly, Anthropic.</div>
+    <div class="card-tag">docs · live</div>
+    <div class="card-arrow">open →</div>
+  </a>
+
+</div>
+
+<footer>
+  <a href="https://github.com/gcwxfcchvz-source/pythia-studio" target="_blank"><img src="avatar-github.png" alt="github" height="22" style="border-radius:50%"> &nbsp;·&nbsp; pythia-studio</a>
+  &nbsp;·&nbsp; part of the <a href="https://github.com/gcwxfcchvz-source" target="_blank">pythia-for-snowflake</a> suite &nbsp;·&nbsp; MIT
+</footer>
+
+</body>
+</html>

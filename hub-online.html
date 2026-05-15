@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📚 pythia doc hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f5;--sidebar:#ffffff;--border:#e0e0e0;--accent:#F7E24B;--accent2:#29b5e8;
+  --text:#1a1a1a;--muted:#999;--hover:#fffef0;--active-bg:#fffef0;--active-border:#F7E24B;
+  --tag-bg:#f0f9ff;--tag-color:#29b5e8;
+}
+body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── top bar ── */
+.topbar{display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--sidebar);border-bottom:2px solid var(--border);flex-shrink:0}
+.topbar-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topbar-logo span:first-child{font-size:18px}
+.topbar-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--accent);letter-spacing:-.02em;white-space:nowrap}
+.topbar-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.topbar-divider{width:1px;height:30px;background:var(--border);flex-shrink:0}
+.topbar-back{font-size:11px;color:var(--muted);text-decoration:none;padding:4px 10px;border:1.5px solid var(--border);border-radius:5px;transition:all .12s;white-space:nowrap}
+.topbar-back:hover{border-color:var(--accent);color:var(--accent);background:var(--hover)}
+.breadcrumb{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;flex:1;overflow:hidden;white-space:nowrap}
+.breadcrumb-sep{color:var(--border)}
+.breadcrumb b{color:var(--text);font-weight:700}
+
+/* ── layout ── */
+.layout{display:flex;flex:1;overflow:hidden}
+
+/* ── sidebar ── */
+.sidebar{width:260px;flex-shrink:0;background:var(--sidebar);border-right:2px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s ease}
+.sidebar.collapsed{width:48px}
+.sidebar-header{padding:12px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.sidebar-label{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.collapse-btn{background:none;border:1.5px solid var(--border);border-radius:5px;cursor:pointer;padding:2px 6px;font-size:12px;color:var(--muted);flex-shrink:0;transition:all .12s;font-family:inherit}
+.collapse-btn:hover{border-color:var(--accent);color:var(--accent)}
+.sidebar-search{padding:8px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.search-inp{width:100%;background:#fafafa;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:12px;padding:5px 9px;outline:none;color:var(--text);transition:border .12s}
+.search-inp:focus{border-color:var(--accent)}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-nav::-webkit-scrollbar{width:4px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:#e0e0e0;border-radius:4px}
+
+/* nav items */
+.api-group{margin-bottom:2px}
+.api-group-header{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;transition:background .12s;border-left:3px solid transparent;user-select:none}
+.api-group-header:hover{background:var(--hover)}
+.api-group-header.active{background:var(--active-bg);border-left-color:var(--accent)}
+.api-icon{font-size:16px;flex-shrink:0}
+.api-info{flex:1;overflow:hidden}
+.api-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.api-tag{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--tag-bg);color:var(--tag-color);font-weight:700;letter-spacing:.05em;white-space:nowrap}
+.api-chevron{font-size:10px;color:var(--muted);transition:transform .15s;flex-shrink:0}
+.api-group-header.open .api-chevron{transform:rotate(90deg)}
+.api-pages{display:none;padding:0 0 4px 0}
+.api-pages.open{display:block}
+.page-link{display:flex;align-items:center;gap:6px;padding:5px 14px 5px 38px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .12s;border-left:3px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-link:hover{color:var(--text);background:var(--hover)}
+.page-link.active{color:var(--accent);font-weight:700;border-left-color:var(--accent);background:var(--active-bg)}
+.page-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.5}
+
+/* collapsed sidebar */
+.sidebar.collapsed .sidebar-label,.sidebar.collapsed .api-info,.sidebar.collapsed .api-chevron,
+.sidebar.collapsed .api-pages,.sidebar.collapsed .sidebar-search{display:none}
+.sidebar.collapsed .api-group-header{padding:10px;justify-content:center;border-left:none}
+.sidebar.collapsed .api-group-header.active{background:var(--active-bg)}
+.sidebar.collapsed .api-icon{font-size:18px}
+.sidebar.collapsed .sidebar-header{justify-content:center;padding:10px}
+
+/* ── content panel ── */
+.content{flex:1;overflow-y:auto;padding:32px 40px;background:var(--bg)}
+.content::-webkit-scrollbar{width:6px}
+.content::-webkit-scrollbar-thumb{background:#e0e0e0;border-radius:4px}
+
+/* welcome */
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center;padding:40px}
+.welcome-icon{font-size:48px}
+.welcome-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent)}
+.welcome-sub{font-size:12px;color:var(--muted);max-width:380px;line-height:1.8}
+.welcome-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;width:100%;max-width:600px;margin-top:8px}
+.wcard{border:1.5px solid var(--border);border-radius:8px;background:#fff;padding:10px 12px;cursor:pointer;transition:all .12s;text-align:left}
+.wcard:hover{border-color:var(--accent);background:var(--hover)}
+.wcard-icon{font-size:18px;margin-bottom:4px}
+.wcard-name{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--text)}
+.wcard-desc{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.5}
+
+/* doc card */
+.doc-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:28px 32px;max-width:700px}
+.doc-card-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+.doc-card-icon{font-size:36px;line-height:1;flex-shrink:0}
+.doc-card-meta{flex:1}
+.doc-card-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px}
+.doc-card-tag{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--tag-bg);color:var(--tag-color);font-weight:700;letter-spacing:.06em;display:inline-block;margin-bottom:8px}
+.doc-card-desc{font-size:12px;color:var(--muted);line-height:1.7}
+.open-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .12s;flex-shrink:0;margin-top:4px}
+.open-btn:hover{background:#c9394f}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.pages-title{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.pages-grid{display:flex;flex-direction:column;gap:6px}
+.page-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;border:1.5px solid var(--border);background:#fafafa;transition:all .12s}
+.page-row:hover{border-color:var(--accent);background:var(--hover)}
+.page-row-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.page-row-label{flex:1;font-size:11px;color:var(--text)}
+.page-row-link{font-size:11px;color:var(--accent);text-decoration:none;font-weight:700;white-space:nowrap}
+.page-row-link:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo" onclick="showWelcome()" title="← hub menu" style="cursor:pointer">
+    <img src="pythia-logo.png" alt="pythia" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:18px\'>📚</span>'">
+    <div>
+      <div class="topbar-title">pythia doc hub</div>
+      <div class="topbar-sub">live docs · always current</div>
+    </div>
+  </div>
+  <div class="topbar-divider"></div>
+  <div class="breadcrumb" id="breadcrumb"><span>select a doc to get started</span></div>
+  <a class="topbar-back" href="index.html">← studio</a>
+</div>
+
+<div class="layout">
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-label">Docs</span>
+      <button class="collapse-btn" id="collapse-btn" onclick="toggleSidebar()">◀</button>
+    </div>
+    <div class="sidebar-search">
+      <input class="search-inp" id="search-inp" placeholder="🔍 filter…" oninput="renderSidebar(this.value)">
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </div>
+
+  <div class="content" id="content">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">📚</div>
+      <div class="welcome-title">pythia doc hub</div>
+      <div class="welcome-sub">Curated live docs for the pythia-for-snowflake stack. Click any entry to open in a new tab.</div>
+      <div class="welcome-grid" id="welcome-grid"></div>
+    </div>
+    <div id="doc-panel" style="display:none"></div>
+  </div>
+
+</div>
+
+<script>
+const DOCS = [
+  {
+    id:"sf-core", name:"core API", icon:"❄️", logo:"snowflake-logo.png", tag:"latest · python",
+    desc:"Snowflake Python API — manage Snowflake objects (databases, schemas, tables, warehouses, tasks…) programmatically via snowflake.core.",
+    url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-api",
+    pages:[
+      {label:"Guide",              url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-api"},
+      {label:"API Reference",      url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/reference/latest/index"},
+      {label:"snowflake.core",     url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/reference/latest/_autosummary/snowflake.core"},
+      {label:"Root & Session",     url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/reference/latest/_autosummary/snowflake.core.root"},
+      {label:"Tasks",              url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/reference/latest/_autosummary/snowflake.core.task"},
+    ]
+  },
+  {
+    id:"snowpark", name:"Snowpark", icon:"🐍", logo:"snowflake-logo.png", tag:"latest · python",
+    desc:"Snowpark Python — DataFrame API, stored procedures, UDFs and ML pipelines running natively inside Snowflake.",
+    url:"https://docs.snowflake.com/en/developer-guide/snowpark/python/index",
+    pages:[
+      {label:"Developer Guide",    url:"https://docs.snowflake.com/en/developer-guide/snowpark/python/index"},
+      {label:"API Reference",      url:"https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/index"},
+      {label:"DataFrame",          url:"https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/dataframe"},
+      {label:"Functions",          url:"https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/functions"},
+      {label:"Session",            url:"https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/session"},
+      {label:"Types",              url:"https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/types"},
+      {label:"Stored Procedures",  url:"https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python"},
+    ]
+  },
+  {
+    id:"streamlit", name:"Streamlit", icon:"🎈", logo:"streamlit-logo.png", tag:"1.52 · SiS",
+    desc:"Streamlit API reference and Streamlit in Snowflake (SiS) guide — components, layouts, session state, widgets.",
+    url:"https://docs.streamlit.io/develop/api-reference",
+    pages:[
+      {label:"API Reference",            url:"https://docs.streamlit.io/develop/api-reference"},
+      {label:"Streamlit in Snowflake",   url:"https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit"},
+      {label:"Session state",            url:"https://docs.streamlit.io/develop/api-reference/caching-and-state/st.session_state"},
+      {label:"st.cache_data",            url:"https://docs.streamlit.io/develop/api-reference/caching-and-state/st.cache_data"},
+      {label:"st.cache_resource",        url:"https://docs.streamlit.io/develop/api-reference/caching-and-state/st.cache_resource"},
+      {label:"Custom components",        url:"https://docs.streamlit.io/develop/concepts/custom-components/intro"},
+      {label:"config.toml",              url:"https://docs.streamlit.io/develop/api-reference/configuration/config.toml"},
+    ]
+  },
+  {
+    id:"telemetry", name:"Telemetry", icon:"📡", logo:"snowflake-logo.png", tag:"latest · python",
+    desc:"Snowflake event tables, OpenTelemetry tracing and logging for Snowpark stored procedures and UDFs.",
+    url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-overview",
+    pages:[
+      {label:"Overview",             url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-overview"},
+      {label:"Event table setup",    url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up"},
+      {label:"Tracing — Python",     url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-python"},
+      {label:"Logging — Python",     url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-python"},
+      {label:"Span attributes",      url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-python#adding-span-attributes"},
+      {label:"Query event table",    url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-columns"},
+    ]
+  },
+  {
+    id:"python", name:"Python 3.11", icon:"🐍", logo:"python-logo.png", tag:"3.11 · stdlib",
+    desc:"Python 3.11 standard library — the version pinned across the pythia-for-snowflake suite.",
+    url:"https://docs.python.org/3.11/library/index.html",
+    pages:[
+      {label:"stdlib index",    url:"https://docs.python.org/3.11/library/index.html"},
+      {label:"dataclasses",     url:"https://docs.python.org/3.11/library/dataclasses.html"},
+      {label:"typing",          url:"https://docs.python.org/3.11/library/typing.html"},
+      {label:"functools",       url:"https://docs.python.org/3.11/library/functools.html"},
+      {label:"pathlib",         url:"https://docs.python.org/3.11/library/pathlib.html"},
+      {label:"datetime",        url:"https://docs.python.org/3.11/library/datetime.html"},
+      {label:"logging",         url:"https://docs.python.org/3.11/library/logging.html"},
+      {label:"math",            url:"https://docs.python.org/3.11/library/math.html"},
+    ]
+  },
+  {
+    id:"plotly", name:"Plotly", icon:"📊", tag:"5.24 · python",
+    desc:"Plotly Python — interactive charts. Version 5.24.1 pinned (available in Snowflake package catalog).",
+    url:"https://plotly.com/python/",
+    pages:[
+      {label:"Getting started",      url:"https://plotly.com/python/"},
+      {label:"Graph Objects API",    url:"https://plotly.com/python-api-reference/plotly.graph_objects.html"},
+      {label:"Express API",          url:"https://plotly.com/python-api-reference/plotly.express.html"},
+      {label:"Bar charts",           url:"https://plotly.com/python/bar-charts/"},
+      {label:"Line charts",          url:"https://plotly.com/python/line-charts/"},
+      {label:"Pie / Donut",          url:"https://plotly.com/python/pie-charts/"},
+      {label:"Layout & themes",      url:"https://plotly.com/python/figure-factories/"},
+    ]
+  },
+  {
+    id:"pandas", name:"Pandas", icon:"🐼", tag:"latest · python",
+    desc:"Pandas — the data manipulation library used by Snowpark .to_pandas() and data loaders.",
+    url:"https://pandas.pydata.org/docs/user_guide/index.html",
+    pages:[
+      {label:"User Guide",        url:"https://pandas.pydata.org/docs/user_guide/index.html"},
+      {label:"API Reference",     url:"https://pandas.pydata.org/docs/reference/index.html"},
+      {label:"DataFrame",         url:"https://pandas.pydata.org/docs/reference/frame.html"},
+      {label:"Series",            url:"https://pandas.pydata.org/docs/reference/series.html"},
+      {label:"GroupBy",           url:"https://pandas.pydata.org/docs/reference/groupby.html"},
+      {label:"IO (read/write)",   url:"https://pandas.pydata.org/docs/reference/io.html"},
+    ]
+  },
+  {
+    id:"anthropic", name:"Anthropic", icon:"🤖", logo:"anthropic-logo-orange.png", tag:"latest · API",
+    desc:"Anthropic Claude API — models, tool use, Claude Code CLI and SDK for building AI-powered workflows.",
+    url:"https://docs.anthropic.com/en/api/getting-started",
+    pages:[
+      {label:"API getting started",  url:"https://docs.anthropic.com/en/api/getting-started"},
+      {label:"Messages API",         url:"https://docs.anthropic.com/en/api/messages"},
+      {label:"Tool use",             url:"https://docs.anthropic.com/en/docs/build-with-claude/tool-use"},
+      {label:"Models",               url:"https://docs.anthropic.com/en/docs/about-claude/models/overview"},
+      {label:"Claude Code — CLI",    url:"https://docs.anthropic.com/en/docs/claude-code/overview"},
+      {label:"Agent SDK",            url:"https://docs.anthropic.com/en/docs/claude-code/sdk"},
+      {label:"MCP",                  url:"https://docs.anthropic.com/en/docs/claude-code/mcp"},
+    ]
+  },
+];
+
+let currentId=null, sidebarCollapsed=false;
+
+function iconHtml(doc, size=18){
+  if(doc.logo) return `<img src="${doc.logo}" alt="${doc.name}" height="${size}" style="display:block;object-fit:contain">`;
+  return `<span style="font-size:${size}px;line-height:1">${doc.icon}</span>`;
+}
+
+function showWelcome(){
+  currentId=null;
+  document.getElementById('welcome').style.display='';
+  document.getElementById('doc-panel').style.display='none';
+  document.getElementById('breadcrumb').innerHTML='<span>select a doc to get started</span>';
+  renderSidebar(document.getElementById('search-inp').value);
+}
+
+function renderSidebar(filter=''){
+  const nav=document.getElementById('sidebar-nav');
+  nav.innerHTML='';
+  const q=filter.toLowerCase();
+  DOCS.filter(d=>!q||d.name.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q)).forEach(doc=>{
+    const group=document.createElement('div');
+    group.className='api-group';
+    const isActive=doc.id===currentId;
+    const header=document.createElement('div');
+    header.className='api-group-header'+(isActive?' active open':'');
+    header.innerHTML=`
+      <span class="api-icon">${iconHtml(doc,16)}</span>
+      <div class="api-info">
+        <div class="api-name">${doc.name}</div>
+        <span class="api-tag">${doc.tag}</span>
+      </div>
+      <span class="api-chevron">▶</span>
+    `;
+    const pages=document.createElement('div');
+    pages.className='api-pages'+(isActive?' open':'');
+    doc.pages.forEach(p=>{
+      const link=document.createElement('div');
+      link.className='page-link';
+      link.innerHTML=`<span class="page-dot"></span>${p.label}`;
+      link.onclick=(e)=>{e.stopPropagation();window.open(p.url,'_blank');};
+      pages.appendChild(link);
+    });
+    header.onclick=()=>{
+      header.classList.toggle('open');
+      pages.classList.toggle('open');
+      showDoc(doc.id);
+    };
+    group.appendChild(header);
+    group.appendChild(pages);
+    nav.appendChild(group);
+  });
+  renderWelcomeGrid();
+}
+
+function renderWelcomeGrid(){
+  const grid=document.getElementById('welcome-grid');
+  grid.innerHTML='';
+  DOCS.forEach(doc=>{
+    const card=document.createElement('div');
+    card.className='wcard';
+    card.innerHTML=`<div class="wcard-icon">${iconHtml(doc,28)}</div><div class="wcard-name">${doc.name}</div><div class="wcard-desc">${doc.tag}</div>`;
+    card.onclick=()=>showDoc(doc.id);
+    grid.appendChild(card);
+  });
+}
+
+function showDoc(id){
+  currentId=id;
+  const doc=DOCS.find(d=>d.id===id);
+  if(!doc)return;
+  document.getElementById('welcome').style.display='none';
+  const panel=document.getElementById('doc-panel');
+  panel.style.display='block';
+  const pagesHtml=doc.pages.map(p=>`
+    <div class="page-row">
+      <div class="page-row-dot"></div>
+      <div class="page-row-label">${p.label}</div>
+      <a class="page-row-link" href="${p.url}" target="_blank" rel="noopener">open ↗</a>
+    </div>`).join('');
+  panel.innerHTML=`
+    <div class="doc-card">
+      <div class="doc-card-header">
+        <div class="doc-card-icon">${iconHtml(doc,32)}</div>
+        <div class="doc-card-meta">
+          <div class="doc-card-name">${doc.name}</div>
+          <div class="doc-card-tag">${doc.tag}</div>
+          <div class="doc-card-desc">${doc.desc}</div>
+        </div>
+        <a class="open-btn" href="${doc.url}" target="_blank" rel="noopener">open ↗</a>
+      </div>
+      ${doc.pages.length?`<div class="divider"></div><div class="pages-title">Pages</div><div class="pages-grid">${pagesHtml}</div>`:''}
+    </div>`;
+  // update breadcrumb
+  document.getElementById('breadcrumb').innerHTML=`<span>${doc.name}</span>`;
+  renderSidebar(document.getElementById('search-inp').value);
+}
+
+function toggleSidebar(){
+  sidebarCollapsed=!sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed);
+  document.getElementById('collapse-btn').textContent=sidebarCollapsed?'▶':'◀';
+}
+
+renderSidebar();
+</script>
+</body>
+</html>

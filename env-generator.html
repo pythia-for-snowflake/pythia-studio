@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧠 Snowflake Dev — Env Generator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Courier New',monospace;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:24px 16px 60px}
+h1{font-size:18px;font-weight:700;color:#60defb;letter-spacing:-.02em}
+.sub{color:#bbb;font-size:12px;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;background:#fff;border-radius:8px 8px 0 0;margin-top:18px;border-bottom:2px solid #e0e0e0}
+.tab{padding:10px 14px;font-size:11.5px;font-weight:500;cursor:pointer;border:none;background:none;font-family:inherit;color:#888;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .12s;white-space:nowrap}
+.tab:hover{color:#1a1a1a}
+.tab.active{color:#60defb;border-bottom-color:#60defb;background:#f0fdff;font-weight:700}
+.panel{display:none;padding:20px 0 0}.panel.active{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:680px){.g2{grid-template-columns:1fr}}
+.sec{font-size:10px;letter-spacing:.12em;color:#bbb;text-transform:uppercase;margin-bottom:7px}
+.blk{font-size:12px;font-weight:700;color:#555;margin:16px 0 8px;display:flex;justify-content:space-between;align-items:center}
+.blk:first-child{margin-top:0}
+.cat{font-size:11px;color:#ccc;margin-bottom:4px;padding-left:2px}
+.divider{height:1px;background:#eee;margin:14px 0}
+.inp{background:#fff;border:1.5px solid #e0e0e0;border-radius:6px;color:#1a1a1a;font-family:inherit;font-size:13px;padding:7px 11px;width:100%;outline:none;transition:border .12s}
+.inp:focus{border-color:#60defb}
+.row{display:flex;align-items:flex-start;gap:9px;padding:7px 11px;border-radius:6px;cursor:pointer;border:1px solid transparent;margin-bottom:3px;transition:all .12s;user-select:none}
+.row:hover:not(.locked){background:#f0fdff;border-color:#b8f4ff}
+.row.on-p{background:#f0fdff;border-color:#60defb}
+.row.on-t{background:#f0fdfa;border-color:#0f766e}
+.row.locked{cursor:default;background:#fafafa;border-color:#e8e8e8}
+.cb{width:15px;height:15px;border:1.5px solid #ccc;border-radius:3px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;background:#fff;transition:all .12s}
+.cb.p{background:#60defb;border-color:#60defb}
+.cb.t{background:#0f766e;border-color:#0f766e}
+.cb.lk{background:#e8e8e8;border-color:#ccc}
+.radio{width:15px;height:15px;border:1.5px solid #ccc;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;background:#fff}
+.radio.on{border-color:#0f766e}
+.rdot{width:8px;height:8px;border-radius:50%;background:#0f766e}
+.iname{font-size:12px;color:#555;font-weight:400}
+.iname.p{color:#60defb;font-weight:700}
+.iname.t{color:#0f766e;font-weight:700}
+.idesc{font-size:11px;color:#bbb;margin-top:1px}
+.idet{font-size:10px;color:#ccc;margin-top:1px}
+.tag{display:inline-block;background:#f2f2f2;border:1px solid #e0e0e0;border-radius:3px;padding:1px 5px;font-size:10px;color:#aaa;margin-left:5px}
+.tag-b{background:#f0fdff;border-color:#b8f4ff;color:#60defb}
+.sl{font-size:11px;color:#bbb;margin-bottom:2px;margin-top:10px}
+.cmd{background:#fff;border:1px solid #e8e8e8;border-radius:7px;padding:12px 46px 12px 14px;font-size:11px;color:#333;position:relative;white-space:pre-wrap;word-break:break-all;line-height:1.75;margin-bottom:4px}
+.cpb{position:absolute;top:8px;right:8px;background:#f5f5f5;border:1px solid #e0e0e0;color:#999;padding:3px 9px;border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;transition:all .12s}
+.cpb:hover,.cpb.ok{background:#f0fdff;border-color:#60defb;color:#60defb}
+.badge{display:inline-block;background:#f0fdff;border:1px solid #b8f4ff;color:#60defb;border-radius:3px;padding:2px 7px;font-size:11px;margin:0 4px 4px 0}
+.badge-t{background:#f0fdfa;border:1px solid #99f6e4;color:#0f766e}
+.tgl{background:#fff;border:1px solid #e0e0e0;color:#aaa;padding:2px 9px;border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;transition:all .12s}
+.tgl:hover{border-color:#60defb;color:#60defb;background:#f0fdff}
+.pkg{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;margin:2px}
+.pkg-b{background:#f0f0f0;border:1px solid #e0e0e0;color:#666}
+.pkg-h{background:#f0fdff;border:1px solid #b8f4ff;color:#60defb}
+.ib{padding:11px 13px;border-radius:7px;font-size:11px;line-height:1.6;margin-top:10px}
+.ib.t{background:#f0fdfa;border:1px solid #99f6e4;color:#0f766e}
+.ib.p{background:#f0fdff;border:1px solid #b8f4ff;color:#c0395a}
+.ib.y{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+code{background:#f0f0f0;padding:0 3px;border-radius:2px;font-family:inherit;font-size:10px}
+code.t{background:#d1fae5}
+.sbox{padding:11px 13px;background:#fff;border:1px solid #eee;border-radius:7px;margin-top:12px}
+.etag{display:inline-flex;align-items:center;gap:4px;background:#f0f0f0;border:1px solid #ddd;border-radius:4px;padding:2px 7px;font-size:11px}
+.etag .x{cursor:pointer;color:#aaa;font-size:13px;line-height:1}
+.etag .x:hover{color:#60defb}
+.tag-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.add-row{display:flex;gap:6px;margin-top:8px}
+.add-inp{flex:1;font-family:inherit;font-size:11px;padding:4px 8px;border:1px solid #e0e0e0;border-radius:4px;outline:none}
+.add-inp:focus{border-color:#60defb}
+.add-btn{background:#60defb;color:#fff;border:none;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+.add-btn:hover{background:#c9394f}
+/* Profile switcher */
+.profile-switch{display:flex;gap:8px;margin-bottom:16px;padding:12px 14px;background:#fff;border:1px solid #eee;border-radius:8px}
+.profile-btn{flex:1;padding:8px 12px;border-radius:6px;border:1.5px solid #e0e0e0;cursor:pointer;font-family:inherit;font-size:11px;font-weight:500;color:#888;background:#fff;transition:all .12s;text-align:center}
+.profile-btn:hover{border-color:#60defb;color:#60defb}
+.profile-btn.active{border-color:#60defb;color:#60defb;background:#f0fdff;font-weight:700}
+/* Mapping table */
+.maptable{width:100%;border-collapse:collapse;font-size:11.5px}
+.maptable th{text-align:left;padding:7px 10px;border-bottom:2px solid #e0e0e0;color:#888;font-size:10px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.maptable td{padding:6px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.maptable tr:hover td{background:#fafafa}
+.type-badge{display:inline-block;background:#f0f0f0;border:1px solid #e0e0e0;border-radius:4px;padding:2px 8px;font-size:11px;color:#555;font-weight:600;min-width:80px;text-align:center}
+.em-btn{font-size:17px;cursor:pointer;border-radius:5px;padding:2px 4px;border:1.5px solid transparent;transition:all .1s;line-height:1;background:none}
+.em-btn:hover{background:#f0fdff;border-color:#b8f4ff}
+.em-btn.sel{background:#f0fdff;border-color:#60defb}
+.picker-wrap{position:relative;display:inline-block}
+.picker-popup{display:none;position:absolute;top:100%;left:0;z-index:100;background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:10px;box-shadow:0 4px 16px rgba(0,0,0,.1);min-width:280px}
+.picker-popup.open{display:block}
+.picker-search{width:100%;font-family:inherit;font-size:11px;padding:4px 8px;border:1px solid #e0e0e0;border-radius:4px;outline:none;margin-bottom:8px}
+.picker-search:focus{border-color:#60defb}
+.picker-grid{display:flex;flex-wrap:wrap;gap:3px;max-height:180px;overflow-y:auto}
+.pg-btn{font-size:18px;cursor:pointer;border-radius:4px;padding:3px 4px;border:1.5px solid transparent;background:none;transition:all .1s;line-height:1}
+.pg-btn:hover{background:#f0fdff;border-color:#b8f4ff}
+.pg-btn.sel{background:#f0fdff;border-color:#60defb}
+.pg-btn.used{opacity:.3;cursor:not-allowed}
+.gmt{width:100%;border-collapse:collapse;font-size:11px}
+.gmt th{text-align:left;padding:6px 8px;border-bottom:2px solid #e0e0e0;color:#888;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.gmt td{padding:5px 8px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.gmt tr:hover td{background:#f9f9f9}
+.gmt tr.gsel td{background:#f0fdff}
+.step{display:flex;gap:12px;margin-bottom:14px}
+.step-num{width:24px;height:24px;border-radius:50%;background:#60defb;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{flex:1}
+.step-title{font-size:12px;font-weight:700;color:#333;margin-bottom:3px}
+.step-desc{font-size:11px;color:#888;line-height:1.5;margin-bottom:4px}
+.pmap{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+</style>
+</head>
+<body>
+<div style="max-width:960px;margin:0 auto">
+
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:3px">
+  <img src="pythia-logo.png" alt="" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:22px\'>🧠</span>'">
+  <h1>snowflake dev — env generator</h1>
+  <a href="index.html" style="margin-left:auto;font-size:11px;color:#bbb;text-decoration:none;padding:3px 10px;border:1.5px solid #e0e0e0;border-radius:5px;white-space:nowrap" onmouseover="this.style.borderColor='#60defb';this.style.color='#60defb'" onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#bbb'">← studio</a>
+</div>
+<p class="sub">conda environment · dependencies · pre-commit hooks · commit convention · offline docs</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="setTab('env',this)">⚙️ Environment</button>
+  <button class="tab"        onclick="setTab('mapping',this)">🗺️ Emoji ↔ Type</button>
+  <button class="tab"        onclick="setTab('commit',this)">✍️ Commit-msg</button>
+  <button class="tab"        onclick="setTab('gitmoji',this)">😄 Gitmojis</button>
+  <button class="tab"        onclick="setTab('docs',this)">📚 Offline docs</button>
+  <button class="tab"        onclick="setTab('guide',this)">🚀 First repo</button>
+  <button class="tab"        onclick="setTab('structure',this)">📁 Structure</button>
+</div>
+
+<!-- ═══ ENV ═══ -->
+<div id="panel-env" class="panel active">
+<div class="g2">
+<div>
+  <!-- Profile switcher -->
+  <div class="profile-switch">
+    <button class="profile-btn active" id="btn-pkg" onclick="setProfile('package')">
+      📦 Python package<br><span style="font-size:10px;font-weight:400;color:#aaa">src/ layout — snowflake-kit, provider, tools</span>
+    </button>
+    <button class="profile-btn" id="btn-data" onclick="setProfile('data-project')">
+      🗄️ Data project<br><span style="font-size:10px;font-weight:400;color:#aaa">resources/ layout — template & instances</span>
+    </button>
+  </div>
+
+  <div class="sec">conda environment name</div>
+  <input class="inp" id="env-name" value="snowflake-kit" oninput="render()" placeholder="my-env">
+
+  <div class="blk"><span>📦 Project dependencies</span><button class="tgl" onclick="toggleAll('deps')">Select all</button></div>
+  <div class="row locked">
+    <div class="cb lk"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="iname">snowflake-core <span class="tag tag-b">base</span></div><div class="idesc">Snowflake Python Core API</div></div>
+  </div>
+  <div class="row locked">
+    <div class="cb lk"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="iname">snowflake-snowpark-python <span class="tag tag-b">base</span></div><div class="idesc">Snowpark Python (DataFrames, UDFs, sprocs)</div></div>
+  </div>
+  <div class="row locked">
+    <div class="cb lk"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="iname">snowflake-telemetry-python <span class="tag tag-b">base</span></div><div class="idesc">Tracing & telemetry events</div></div>
+  </div>
+  <div id="deps-list"></div>
+
+  <div class="divider"></div>
+  <div class="blk"><span>🪝 Pre-commit hooks</span><button class="tgl" onclick="toggleAll('hooks')">Select all</button></div>
+  <div id="hooks-list"></div>
+</div>
+<div>
+  <div class="sec">Generated commands</div>
+  <div id="badges-env" style="margin-bottom:14px"></div>
+  <div class="sl">Full script</div>
+  <div class="cmd" id="cmd-full"><button class="cpb" onclick="cpCmd('cmd-full',this)">copy</button></div>
+  <div class="divider"></div>
+  <div style="font-size:11px;color:#bbb;margin-bottom:8px">Step by step</div>
+  <div class="sl">1. Create env</div><div class="cmd" id="cmd-create"><button class="cpb" onclick="cpCmd('cmd-create',this)">copy</button></div>
+  <div class="sl">2. Project dependencies</div><div class="cmd" id="cmd-proj"><button class="cpb" onclick="cpCmd('cmd-proj',this)">copy</button></div>
+  <div class="sl">3. pre-commit + hook libs</div><div class="cmd" id="cmd-hooks"><button class="cpb" onclick="cpCmd('cmd-hooks',this)">copy</button></div>
+  <div class="sl">4. Activate hooks</div><div class="cmd" id="cmd-install"><button class="cpb" onclick="cpCmd('cmd-install',this)">copy</button></div>
+  <div class="sbox"><div class="sec" style="margin-bottom:7px">Packages summary</div><div id="pkg-sum"></div></div>
+</div>
+</div>
+</div>
+
+<!-- ═══ MAPPING ═══ -->
+<div id="panel-mapping" class="panel">
+<div class="g2">
+<div>
+  <div class="blk"><span>🗺️ Emoji ↔ Type mapping</span><button class="tgl" onclick="addTypePrompt()">+ New type</button></div>
+  <div class="ib y" style="margin-top:0;margin-bottom:12px;font-size:10.5px">
+    Each emoji belongs to <strong>exactly one type</strong>. The hook validates the combination.<br>
+    Click an emoji to add/remove. A greyed emoji is already used by another type.
+  </div>
+  <div id="new-type-row" style="display:none;margin-bottom:10px">
+    <div class="add-row">
+      <input class="add-inp" id="new-type-inp" placeholder="Type name (e.g. hotfix)" onkeydown="if(event.key==='Enter')confirmAddType()">
+      <button class="add-btn" onclick="confirmAddType()">Add</button>
+      <button class="tgl" onclick="cancelAddType()">Cancel</button>
+    </div>
+  </div>
+  <table class="maptable">
+    <thead><tr><th style="width:110px">Type</th><th>Allowed emojis</th><th style="width:32px"></th></tr></thead>
+    <tbody id="map-tbody"></tbody>
+  </table>
+</div>
+<div>
+  <div class="blk">👁️ Mapping preview</div>
+  <div class="ib y" style="margin-top:0;margin-bottom:10px;font-size:10.5px">
+    The hook validates: the emoji must match the declared type exactly.
+  </div>
+  <div id="map-preview"></div>
+  <div class="divider"></div>
+  <div class="blk">📊 Coverage</div>
+  <div id="map-coverage"></div>
+</div>
+</div>
+</div>
+
+<!-- ═══ COMMIT-MSG ═══ -->
+<div id="panel-commit" class="panel">
+<div class="g2">
+<div>
+  <div class="blk">📂 Scopes</div>
+  <div class="tag-list" id="scopes-list"></div>
+  <div class="add-row">
+    <input class="add-inp" id="scope-inp" placeholder="e.g. api" onkeydown="if(event.key==='Enter')addTag('scopes','scope-inp')">
+    <button class="add-btn" onclick="addTag('scopes','scope-inp')">+ Add</button>
+  </div>
+  <div class="divider"></div>
+  <div class="blk">🎫 Ticket prefixes</div>
+  <div class="tag-list" id="tickets-list"></div>
+  <div class="add-row">
+    <input class="add-inp" id="ticket-inp" placeholder="e.g. JIRA" onkeydown="if(event.key==='Enter')addTag('tickets','ticket-inp')">
+    <button class="add-btn" onclick="addTag('tickets','ticket-inp')">+ Add</button>
+  </div>
+  <div class="divider"></div>
+  <div class="blk">💾 Special case "save"</div>
+  <div class="row on-t" style="cursor:default">
+    <div class="cb t"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="iname t">💾 save: &lt;desc&gt; [skip ci]</div><div class="idesc">Always included — WIP commit without triggering CI</div></div>
+  </div>
+  <div class="divider"></div>
+  <div class="ib y" style="margin-top:0">
+    <strong>Expected format</strong><br>
+    <code style="background:#fef3c7">&lt;emoji&gt; &lt;type&gt;(&lt;scope&gt;): &lt;description&gt;</code><br>
+    <span style="font-size:10px">scope and ticket are optional · emoji determines the allowed type</span>
+  </div>
+</div>
+<div>
+  <div class="sec">Generated hook</div>
+  <div class="cmd" id="cmd-hook"><button class="cpb" onclick="cpCmd('cmd-hook',this)">copy</button></div>
+  <div class="sl" style="margin-top:10px">Installation</div>
+  <div class="cmd" id="cmd-hook-install"><button class="cpb" onclick="cpCmd('cmd-hook-install',this)">copy</button></div>
+  <div class="ib t">
+    <strong>💡 Two installation methods</strong><br>
+    <strong>A)</strong> <code class="t">git config core.hooksPath scripts/hooks</code><br>
+    <strong>B)</strong> <code class="t">pre-commit install --hook-type commit-msg</code>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ GITMOJI ═══ -->
+<div id="panel-gitmoji" class="panel">
+<div class="g2">
+<div>
+  <div class="blk">🔍 All gitmojis</div>
+  <input class="inp" id="gm-search" placeholder="Search by description…" oninput="renderGmTable()" style="margin-bottom:10px">
+  <table class="gmt"><thead><tr><th>Emoji</th><th>Usage</th><th>Assigned type</th></tr></thead><tbody id="gm-table"></tbody></table>
+</div>
+<div>
+  <div class="blk">✅ Emojis used in mapping</div>
+  <div id="gm-used-panel"></div>
+</div>
+</div>
+</div>
+
+<!-- ═══ DOCS ═══ -->
+<div id="panel-docs" class="panel">
+<div class="g2">
+<div>
+  <div class="blk">🐍 Python modules to document</div>
+  <div style="font-size:11px;color:#aaa;margin-bottom:8px;line-height:1.5">Doc generated locally from installed source — browsable offline.</div>
+  <div id="docs-modules"></div>
+  <div class="divider"></div>
+  <div class="blk">🔧 Documentation tool</div>
+  <div id="doc-tools"></div>
+  <div class="divider"></div>
+  <div class="blk">🌐 External APIs</div>
+  <div style="font-size:11px;color:#aaa;margin-bottom:8px;line-height:1.5">Specs in <code>docs/api/</code> alongside the code that uses them (Swagger, WSDL, XSD).</div>
+  <div id="ext-apis"></div>
+</div>
+<div>
+  <div class="sec">Generated commands</div>
+  <div class="sl">Generate Python offline docs</div>
+  <div class="cmd" id="cmd-docs-py"><button class="cpb" onclick="cpCmd('cmd-docs-py',this)">copy</button></div>
+  <div id="cmd-api-block" style="display:none">
+    <div class="sl">Integrate external API specs</div>
+    <div class="cmd" id="cmd-docs-api"><button class="cpb" onclick="cpCmd('cmd-docs-api',this)">copy</button></div>
+  </div>
+  <div class="ib t">
+    <strong>💡 Convention</strong><br>
+    📁 <code class="t">docs/api/snowflake-core/</code> → Python offline doc<br>
+    📁 <code class="t">docs/api/snowpark/</code> → Snowpark offline doc<br>
+    📁 <code class="t">docs/api/&lt;service&gt;/</code> → swagger / wsdl / xsd
+  </div>
+  <div class="ib t" style="margin-top:8px">
+    <strong>🌐 Serve locally</strong>
+    <div class="cmd" style="margin-top:7px;background:#e8fdf8;border-color:#99f6e4">python -m http.server 8080 --directory docs/api/<button class="cpb" onclick="cpTxt('python -m http.server 8080 --directory docs/api/',this)">copy</button></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ GUIDE ═══ -->
+<div id="panel-guide" class="panel">
+<div style="display:flex;gap:8px;margin-bottom:16px">
+  <button class="tgl" id="guide-gh-btn" onclick="setGuide('gh')" style="border-color:#60defb;color:#60defb">🐙 GitHub</button>
+  <button class="tgl" id="guide-gl-btn" onclick="setGuide('gl')">🦊 GitLab</button>
+</div>
+<div id="guide-content"></div>
+</div>
+
+<!-- ═══ STRUCTURE ═══ -->
+<div id="panel-structure" class="panel">
+<div class="g2">
+<div>
+  <div class="blk">📁 Project structure</div>
+  <div style="font-size:11px;color:#aaa;margin-bottom:10px;line-height:1.5">
+    Switch between profiles above to see the matching layout.
+  </div>
+  <div class="cmd" id="struct-tree"><button class="cpb" onclick="cpCmd('struct-tree',this)">copy</button></div>
+  <div class="divider"></div>
+  <div class="blk">🔗 Path ↔ purpose</div>
+  <div id="path-map"></div>
+</div>
+<div>
+  <div class="blk">📋 pyproject.toml</div>
+  <div class="cmd" id="pyproject-block"><button class="cpb" onclick="cpCmd('pyproject-block',this)">copy</button></div>
+  <div class="blk">📋 .gitignore</div>
+  <div class="cmd" id="gitignore-block"><button class="cpb" onclick="cpCmd('gitignore-block',this)">copy</button></div>
+  <div class="ib y"><strong>💡 docs/api/ — two conventions</strong><br>Ignore generated HTML (lighter repo) · or version it for offline-first teams (e.g. snowflake-kit).</div>
+</div>
+</div>
+</div>
+
+</div>
+<script>
+const PY="3.11", SF="1.12.0";
+const chk=w=>`<svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="${w}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const name=()=>(document.getElementById('env-name')?.value||'my-env').replace(/\s/g,'-')||'my-env';
+
+const DEPS=[
+  {id:"pyyaml",    label:"pyyaml",           desc:"YAML parsing"},
+  {id:"streamlit", label:"streamlit==1.52.2", desc:"Dashboard / interactive apps"},
+  {id:"plotly",    label:"plotly==5.24.1",    desc:"Interactive visualisations"},
+  {id:"pandas",    label:"pandas",            desc:"Tabular data manipulation"},
+  {id:"requests",  label:"requests",          desc:"HTTP calls / webhooks"},
+  {id:"click",     label:"click",             desc:"CLI framework"},
+  {id:"jinja2",    label:"jinja2",            desc:"Template engine"},
+  {id:"jsonschema",label:"jsonschema",        desc:"JSON Schema validation"},
+];
+
+const HOOKS_DATA=[
+  {cat:"🧹 Formatting",items:[
+    {id:"pre-commit-hooks",label:"pre-commit-hooks",desc:"trailing-whitespace, end-of-file-fixer…",pip:[],tag:"bundled"},
+    {id:"yamlfix",label:"yamlfix",desc:"Auto-fix YAML format",pip:["yamlfix"]},
+    {id:"mdformat",label:"mdformat",desc:"Format Markdown",pip:["mdformat"]},
+  ]},
+  {cat:"🔍 Code quality",items:[
+    {id:"ruff",     label:"ruff",     desc:"Python linter + formatter",        pip:["ruff"]},
+    {id:"yamllint", label:"yamllint", desc:"YAML syntax lint",                 pip:["yamllint"]},
+    {id:"sqlfluff", label:"sqlfluff", desc:"SQL lint (Snowflake, dbt…)",       pip:["sqlfluff"]},
+    {id:"mypy",     label:"mypy",     desc:"Python type checking",             pip:["mypy"]},
+    {id:"bandit",   label:"bandit",   desc:"Python security checks",           pip:["bandit"]},
+  ]},
+  {cat:"🔐 Security",items:[
+    {id:"gitleaks",       label:"gitleaks",       desc:"Secrets & token detection",    pip:[],tag:"binary"},
+    {id:"detect-secrets", label:"detect-secrets", desc:"Alternative secret detection", pip:["detect-secrets"]},
+  ]},
+  {cat:"❄️ snowflake-provider (custom)",items:[
+    {id:"check-yaml-schema",   label:"check_yaml_schema",   desc:"Validates each .yml resource against its JSON Schema",             pip:["jsonschema","pyyaml"]},
+    {id:"check-file-pairs",    label:"check_file_pairs",    desc:"Ensures each procedure/function .yml has its .py counterpart",     pip:[]},
+    {id:"check-yaml-comments", label:"check_yaml_comments", desc:"Enforces a comment: field on all Snowflake objects",               pip:["pyyaml"]},
+    {id:"check-db-roles",      label:"check_db_roles",      desc:"Allows only DR_READER/WRITER/MONITOR/OPERATOR/ADMIN in roles",     pip:["pyyaml"]},
+    {id:"check-naming",        label:"check_naming",        desc:"Naming conventions: WH_ prefix, UPPER_CASE names, snake_case files",pip:["pyyaml"]},
+    {id:"check-depends-on",    label:"check_depends_on",    desc:"Verifies _depends_on references point to existing files",          pip:["pyyaml"]},
+    {id:"check-jinja-vars",    label:"check_jinja_vars",    desc:"Detects undeclared {{VAR}} Jinja variables",                       pip:["jinja2","pyyaml"]},
+    {id:"check-py-compile",    label:"py_compile",          desc:"Compiles .py (SP/UDF) to catch syntax errors before push",         pip:[]},
+    {id:"check-pii-tags",      label:"check_pii_tags",      desc:"Ensures sensitive column tables declare the PII tag",              pip:["pyyaml"]},
+  ]},
+];
+
+const ALL_GM=[
+  {e:"🎨",code:"art",desc:"Improve code structure / format"},
+  {e:"⚡️",code:"zap",desc:"Improve performance"},
+  {e:"🔥",code:"fire",desc:"Remove code or files"},
+  {e:"🐛",code:"bug",desc:"Fix a bug"},
+  {e:"🚑️",code:"ambulance",desc:"Critical hotfix"},
+  {e:"✨",code:"sparkles",desc:"Introduce new features"},
+  {e:"📝",code:"memo",desc:"Add or update documentation"},
+  {e:"🚀",code:"rocket",desc:"Deploy"},
+  {e:"💄",code:"lipstick",desc:"Update UI / styles"},
+  {e:"🎉",code:"tada",desc:"Begin a project"},
+  {e:"✅",code:"white_check_mark",desc:"Add or update tests"},
+  {e:"🔒️",code:"lock",desc:"Fix security issues"},
+  {e:"🔐",code:"closed_lock_with_key",desc:"Add or update secrets"},
+  {e:"🔖",code:"bookmark",desc:"Release / version tags"},
+  {e:"🚨",code:"rotating_light",desc:"Fix compiler / linter warnings"},
+  {e:"🚧",code:"construction",desc:"Work in progress"},
+  {e:"💚",code:"green_heart",desc:"Fix CI build"},
+  {e:"⬇️",code:"arrow_down",desc:"Downgrade dependencies"},
+  {e:"⬆️",code:"arrow_up",desc:"Upgrade dependencies"},
+  {e:"📌",code:"pushpin",desc:"Pin dependencies to specific version"},
+  {e:"👷",code:"construction_worker",desc:"Add or update CI system"},
+  {e:"📈",code:"chart_with_upwards_trend",desc:"Add or update analytics"},
+  {e:"♻️",code:"recycle",desc:"Refactor code"},
+  {e:"➕",code:"heavy_plus_sign",desc:"Add a dependency"},
+  {e:"➖",code:"heavy_minus_sign",desc:"Remove a dependency"},
+  {e:"🔧",code:"wrench",desc:"Add or update config files"},
+  {e:"🔨",code:"hammer",desc:"Add or update dev scripts"},
+  {e:"🌐",code:"globe_with_meridians",desc:"Internationalization"},
+  {e:"✏️",code:"pencil2",desc:"Fix typos"},
+  {e:"⏪️",code:"rewind",desc:"Revert changes"},
+  {e:"🔀",code:"twisted_rightwards_arrows",desc:"Merge branches"},
+  {e:"📦️",code:"package",desc:"Add or update compiled packages"},
+  {e:"👽️",code:"alien",desc:"Update code due to external API change"},
+  {e:"🚚",code:"truck",desc:"Move or rename resources"},
+  {e:"📄",code:"page_facing_up",desc:"Add or update license"},
+  {e:"💥",code:"boom",desc:"Introduce breaking changes"},
+  {e:"🍱",code:"bento",desc:"Add or update assets"},
+  {e:"♿️",code:"wheelchair",desc:"Improve accessibility"},
+  {e:"💡",code:"bulb",desc:"Add comments in source code"},
+  {e:"💬",code:"speech_balloon",desc:"Add or update text / strings"},
+  {e:"🗃️",code:"card_file_box",desc:"Database related changes"},
+  {e:"🔊",code:"loud_sound",desc:"Add or update logs"},
+  {e:"🔇",code:"mute",desc:"Remove logs"},
+  {e:"🏗️",code:"building_construction",desc:"Architectural changes"},
+  {e:"🧪",code:"test_tube",desc:"Add a failing test"},
+  {e:"🏷️",code:"label",desc:"Add or update types"},
+  {e:"🌱",code:"seedling",desc:"Add or update seeds"},
+  {e:"🚩",code:"triangular_flag_on_post",desc:"Add or update feature flags"},
+  {e:"🥅",code:"goal_net",desc:"Catch errors"},
+  {e:"🗑️",code:"wastebasket",desc:"Deprecate code"},
+  {e:"🛂",code:"passport_control",desc:"Authorization / roles / permissions"},
+  {e:"🩹",code:"adhesive_bandage",desc:"Simple fix for non-critical issue"},
+  {e:"⚰️",code:"coffin",desc:"Remove dead code"},
+  {e:"👔",code:"necktie",desc:"Add or update business logic"},
+  {e:"🧱",code:"bricks",desc:"Infrastructure changes"},
+  {e:"🦺",code:"safety_vest",desc:"Add or update validation code"},
+];
+
+const DOC_MODULES=[
+  {id:"sf-core",  label:"snowflake.core",    desc:"Snowflake Python API (resources, tasks…)",   pip:"snowflake==1.12.0",          mod:"snowflake.core"},
+  {id:"snowpark", label:"snowflake.snowpark", desc:"Snowpark Python (DataFrames, UDFs, sprocs…)",pip:"snowflake-snowpark-python",  mod:"snowflake.snowpark"},
+];
+const DOC_TOOLS=[
+  {id:"pdoc",   label:"pdoc",   desc:"Fast, clean HTML, zero config — recommended"},
+  {id:"sphinx", label:"sphinx", desc:"More complete, configurable, ReadTheDocs style"},
+];
+const EXT_APIS=[
+  {id:"swagger", label:"Swagger / OpenAPI (REST)", ext:".json or .yaml", tool:"redoc-cli",         cmd:f=>`npx redoc-cli bundle ${f} -o docs/api/$(basename ${f} .yaml).html`},
+  {id:"wsdl",    label:"WSDL + XSD (SOAP)",        ext:".wsdl / .xsd",   tool:"SoapUI / wsdl2html", cmd:f=>`cp ${f} docs/api/`},
+  {id:"graphql", label:"GraphQL schema",            ext:".graphql",        tool:"graphdoc",           cmd:f=>`npx graphdoc -s ${f} -o docs/api/graphql/`},
+];
+
+// Profile structures
+const PROFILES = {
+  package: {
+    name: n => n,
+    tree: n => {
+      const pkg = n.replace(/-/g,'_');
+      return `${n}/\n├── src/\n│   └── ${pkg}/\n│       ├── __init__.py\n│       ├── packages.py\n│       └── ...          # source modules\n├── tests/\n├── docs/\n│   └── api/\n├── scripts/\n│   └── hooks/           # custom pre-commit hooks\n├── .pre-commit-config.yaml\n├── pyproject.toml\n└── README.md`;
+    },
+    paths: [
+      {p:"src/",          l:"Python package source",           bg:"#f0f0f0",tc:"#666"},
+      {p:"tests/",        l:"Unit & integration tests",        bg:"#f0f0f0",tc:"#666"},
+      {p:"docs/api/",     l:"Offline API docs",                bg:"#f0fdfa",tc:"#0f766e"},
+      {p:"scripts/hooks/",l:"Custom git hooks",                bg:"#f0fdff",tc:"#60defb"},
+    ],
+    pyproject: n => {
+      const pkg = n.replace(/-/g,'_');
+      return `[build-system]\nrequires = ["hatchling"]\nbuild-backend = "hatchling.build"\n\n[project]\nname = "${n}"\nversion = "0.1.0"\nrequires-python = ">=${PY}"\ndependencies = [\n    "snowflake==${SF}",\n]\n\n[project.optional-dependencies]\ndev = [\n    "pdoc",\n    "ruff",\n    "mypy",\n    "pre-commit",\n]\n\n[project.scripts]\n# ${n} = "${pkg}.cli:main"\n\n[tool.hatch.build.targets.wheel]\npackages = ["src/${pkg}"]\n\n[tool.ruff]\nline-length = 88\ntarget-version = "py311"\n\n[tool.mypy]\npython_version = "${PY}"\nstrict = true`;
+    },
+  },
+  "data-project": {
+    name: n => n,
+    tree: n => {
+      return `${n}/\n├── manifest.yml             # project config\n├── resources/\n│   ├── procedure/\n│   │   ├── my_sp.yml\n│   │   └── my_sp.py\n│   ├── function/\n│   ├── table/\n│   ├── view/\n│   └── stream/\n├── modules/                 # local wrappers of shared SP/UDFs\n│   └── send_email.yml\n├── packages/\n│   └── utils/               # shared helpers → zipped at deploy\n│       ├── __init__.py\n│       ├── fmt.py\n│       └── snowpark.py\n├── data/                    # static files (CSV, JSON…)\n│   └── countries.csv\n├── app/                     # Streamlit SIS (optional)\n│   ├── streamlit_app.py\n│   └── utils/\n├── out/\n│   └── plan/                # provider plan output (gitignored)\n├── scripts/\n│   └── hooks/\n├── .pre-commit-config.yaml\n└── README.md`;
+    },
+    paths: [
+      {p:"resources/",    l:"Snowflake objects (SP, UDF, tables…)", bg:"#f0f0f0", tc:"#666"},
+      {p:"modules/",      l:"Local wrappers of shared SP/UDFs",     bg:"#f0fdff", tc:"#60defb"},
+      {p:"packages/utils/",l:"Shared helpers → zipped at deploy",   bg:"#f0fdff", tc:"#60defb"},
+      {p:"data/",         l:"Static files (session.read-able)",      bg:"#f0fdfa", tc:"#0f766e"},
+      {p:"app/",          l:"Streamlit SIS (optional)",              bg:"#f0fdfa", tc:"#0f766e"},
+      {p:"out/plan/",     l:"provider plan output",                  bg:"#f0f0f0", tc:"#bbb"},
+    ],
+    pyproject: n => {
+      return `[build-system]\nrequires = ["hatchling"]\nbuild-backend = "hatchling.build"\n\n[project]\nname = "${n}"\nversion = "0.1.0"\nrequires-python = ">=${PY}"\ndependencies = [\n    "snowflake==${SF}",\n    "pyyaml",\n    "jinja2",\n    "jsonschema",\n]\n\n[project.optional-dependencies]\ndev = [\n    "pdoc",\n    "ruff",\n    "mypy",\n    "pre-commit",\n    "snowflake-provider",\n]\n\n[tool.ruff]\nline-length = 88\ntarget-version = "py311"\n\n[tool.mypy]\npython_version = "${PY}"\nstrict = true`;
+    },
+  },
+};
+
+const S={
+  profile: "package",
+  deps:    new Set(),
+  hooks:   new Set(["pre-commit-hooks","ruff"]),
+  docs:    new Set(["sf-core","snowpark"]),
+  docTool: "pdoc",
+  apis:    new Set(),
+  guide:   "gh",
+  mapping: {
+    "feat":         new Set(["🎉","✨"]),
+    "fix":          new Set(["🐛","🩹","🚑️"]),
+    "docs":         new Set(["📝"]),
+    "style":        new Set(["🎨","💄"]),
+    "refactor":     new Set(["♻️"]),
+    "move":         new Set(["🚚"]),
+    "perf":         new Set(["⚡️"]),
+    "test":         new Set(["✅","🧪"]),
+    "revert":       new Set(["⏪️"]),
+    "build":        new Set(["📦️","⬆️","⬇️","➕","➖","📌"]),
+    "chore":        new Set(["🔧","🔨","👷","💚"]),
+    "release":      new Set(["🚀","🔖"]),
+  },
+  scopes:  ["core","fmt","snowpark","excel","notify","docs","ci"],
+  tickets: ["Closes","Refs"],
+};
+
+// helpers
+const setText=(id,txt)=>{const el=document.getElementById(id);if(!el)return;const btn=el.querySelector('.cpb');el.textContent=txt;if(btn)el.appendChild(btn);};
+function cpCmd(id,btn){const el=document.getElementById(id);navigator.clipboard.writeText((el.childNodes[0]?.textContent||el.textContent).trim());btn.textContent="✓ copied";btn.classList.add('ok');setTimeout(()=>{btn.textContent="copy";btn.classList.remove('ok');},1800);}
+function cpTxt(t,btn){navigator.clipboard.writeText(t);btn.textContent="✓ copied";btn.classList.add('ok');setTimeout(()=>{btn.textContent="copy";btn.classList.remove('ok');},1800);}
+function setTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');}
+function toggleAll(key){const ids=key==='deps'?DEPS.map(d=>d.id):HOOKS_DATA.flatMap(c=>c.items.map(i=>i.id));const all=ids.every(id=>S[key].has(id));S[key]=all?new Set():new Set(ids);render();}
+function toggleItem(id,key){S[key].has(id)?S[key].delete(id):S[key].add(id);render();}
+function setDocTool(id){S.docTool=id;render();}
+function addTag(key,inputId){const inp=document.getElementById(inputId),v=inp.value.trim();if(!v)return;if(!S[key].includes(v))S[key].push(v);inp.value='';render();}
+function removeTag(key,val){S[key]=S[key].filter(v=>v!==val);render();}
+
+function setProfile(p){
+  S.profile=p;
+  document.getElementById('btn-pkg').classList.toggle('active',p==='package');
+  document.getElementById('btn-data').classList.toggle('active',p==='data-project');
+  // update env name suggestion
+  const inp=document.getElementById('env-name');
+  if(inp.value==='snowflake-kit'||inp.value==='my-data-project'){
+    inp.value=p==='package'?'snowflake-kit':'my-data-project';
+  }
+  render();
+}
+
+// mapping
+function usedEmojis(){const m=new Map();for(const[t,es]of Object.entries(S.mapping))for(const e of es)m.set(e,t);return m;}
+function toggleEmojiForType(type,emoji){if(S.mapping[type].has(emoji)){S.mapping[type].delete(emoji);}else{for(const[,es]of Object.entries(S.mapping))es.delete(emoji);S.mapping[type].add(emoji);}render();}
+function removeType(type){delete S.mapping[type];render();}
+function addTypePrompt(){document.getElementById('new-type-row').style.display='block';document.getElementById('new-type-inp').focus();}
+function cancelAddType(){document.getElementById('new-type-row').style.display='none';document.getElementById('new-type-inp').value='';}
+function confirmAddType(){const v=document.getElementById('new-type-inp').value.trim().toLowerCase().replace(/\s+/g,'-');if(!v)return;if(!S.mapping[v])S.mapping[v]=new Set();cancelAddType();render();}
+let openPicker=null;
+function togglePicker(type){openPicker=openPicker===type?null:type;renderMapping();}
+document.addEventListener('click',e=>{if(!e.target.closest('.picker-wrap')&&!e.target.closest('.open-picker-btn')){if(openPicker!==null){openPicker=null;renderMapping();}}});
+
+function renderMapping(){
+  const used=usedEmojis();
+  document.getElementById('map-tbody').innerHTML=Object.entries(S.mapping).map(([type,emojis])=>{
+    const isOpen=openPicker===type;
+    const q=(document.getElementById('picker-search-'+CSS.escape(type))?.value||'').toLowerCase();
+    const filtered=ALL_GM.filter(g=>!q||g.desc.toLowerCase().includes(q)||g.e===q);
+    return `<tr>
+      <td><span class="type-badge">${type}</span></td>
+      <td><div style="display:flex;flex-wrap:wrap;gap:4px">
+        ${[...emojis].map(e=>`<span class="em-btn sel" title="${ALL_GM.find(g=>g.e===e)?.desc||e}" onclick="toggleEmojiForType('${type}','${e}')">${e}</span>`).join('')}
+        <div class="picker-wrap">
+          <span class="em-btn open-picker-btn" title="Add emoji" onclick="togglePicker('${type}')" style="font-size:14px;color:#ccc;border:1.5px dashed #ddd">＋</span>
+          <div class="picker-popup ${isOpen?'open':''}">
+            <input class="picker-search" id="picker-search-${type}" placeholder="Search…" oninput="renderMapping()" onclick="event.stopPropagation()">
+            <div class="picker-grid">
+              ${filtered.map(g=>{const aTo=used.get(g.e);const isSel=emojis.has(g.e);const isUsed=aTo&&aTo!==type;return`<span class="pg-btn ${isSel?'sel':''} ${isUsed?'used':''}" title="${g.desc}${isUsed?' (used by '+aTo+')':''}" onclick="${isUsed?'':'toggleEmojiForType(\''+type+'\',\''+g.e+'\');event.stopPropagation()'}">${g.e}</span>`;}).join('')}
+            </div>
+          </div>
+        </div>
+      </div></td>
+      <td><span style="cursor:pointer;color:#ddd;font-size:14px" onclick="removeType('${type}')" title="Remove type">🗑</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('map-preview').innerHTML=Object.entries(S.mapping).map(([type,emojis])=>{
+    if(!emojis.size)return`<div style="margin-bottom:6px;opacity:.4"><span class="type-badge">${type}</span> <span style="font-size:11px;color:#ccc">— no emoji</span></div>`;
+    return`<div style="margin-bottom:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="type-badge">${type}</span><span style="color:#ccc;font-size:11px">←</span>${[...emojis].map(e=>`<span style="font-size:18px">${e}</span>`).join('')}</div>`;
+  }).join('');
+
+  const used2=usedEmojis();
+  const total=Object.keys(S.mapping).length;
+  const withEmoji=Object.values(S.mapping).filter(s=>s.size>0).length;
+  document.getElementById('map-coverage').innerHTML=`<div style="font-size:11px;color:#888;line-height:2">Types configured: <strong>${withEmoji}/${total}</strong><br>Emojis mapped: <strong>${[...used2.keys()].length}</strong> / ${ALL_GM.length} available<br>Types without emoji: ${total-withEmoji===0?'<span style="color:#0f766e">✅ none</span>':'<span style="color:#60defb">'+Object.entries(S.mapping).filter(([,s])=>!s.size).map(([t])=>t).join(', ')+'</span>'}</div>`;
+}
+
+function renderGmTable(){
+  const used=usedEmojis();
+  const q=(document.getElementById('gm-search')?.value||'').toLowerCase();
+  const rows=ALL_GM.filter(g=>!q||g.desc.toLowerCase().includes(q)||g.code.includes(q));
+  document.getElementById('gm-table').innerHTML=rows.map(g=>{const t=used.get(g.e);return`<tr class="${t?'gsel':''}"><td><span style="font-size:18px">${g.e}</span></td><td>${g.desc}</td><td>${t?`<span class="type-badge" style="font-size:10px">${t}</span>`:'<span style="color:#ddd;font-size:10px">—</span>'}</td></tr>`;}).join('');
+  document.getElementById('gm-used-panel').innerHTML=[...used.entries()].map(([e,type])=>`<div style="display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:6px;background:#f0fdff;border:1px solid #b8f4ff;margin-bottom:4px"><span style="font-size:18px">${e}</span><span style="font-size:11px;color:#555;flex:1">${ALL_GM.find(g=>g.e===e)?.desc||e}</span><span class="type-badge" style="font-size:10px">${type}</span></div>`).join('')||'<div style="font-size:11px;color:#ccc">No emoji mapped</div>';
+}
+
+function setGuide(p){
+  S.guide=p;
+  ['gh','gl'].forEach(k=>{const b=document.getElementById('guide-'+k+'-btn');b.style.borderColor=p===k?'#60defb':'';b.style.color=p===k?'#60defb':'';});
+  renderGuide();
+}
+
+function renderGuide(){
+  const n=name(),isGH=S.guide==='gh';
+  const steps=isGH?[
+    {t:"Create the repo on GitHub", d:"github.com → <strong>New</strong> button → name, visibility, check <em>Add a README</em>. Default branch: <code>main</code>."},
+    {t:"Clone locally", d:"<strong>Code</strong> button → copy SSH URL.", cmd:`git clone git@github.com:<account>/${n}.git\ncd ${n}`},
+    {t:"Create develop branch", d:"Never work directly on <code>main</code>.", cmd:`git checkout -b develop\ngit push -u origin develop`},
+    {t:"Create project structure", cmd:`mkdir -p src/${n.replace(/-/g,'_')} tests docs/api scripts/hooks\ntouch pyproject.toml README.md .gitignore .pre-commit-config.yaml`},
+    {t:"Create conda environment", d:"Use commands from the ⚙️ Environment tab.", cmd:`conda create -n ${n} python=${PY} -y\nconda activate ${n}`},
+    {t:"Install commit-msg hook", d:"Place the generated hook (✍️ tab) in scripts/hooks/.", cmd:`chmod +x scripts/hooks/commit-msg\ngit config core.hooksPath scripts/hooks`},
+    {t:"Configure pre-commit", cmd:`pip install pre-commit\npre-commit install\npre-commit install --hook-type commit-msg`},
+    {t:"Protect main and develop", d:`<strong>Settings → Branches → Add rule</strong><br><strong>main</strong>: ✅ Require PR · ✅ Require CI · ✅ No direct push<br><strong>develop</strong>: ✅ Require PR · ✅ No direct push`},
+    {t:"First commit via feature branch", d:"Always go through a feature branch — even for the initial commit.", cmd:`git checkout develop\ngit checkout -b feature/initial-setup\ngit add .\ngit commit -m "🎉 feat: initial commit"\ngit push origin feature/initial-setup\n# → open PR: feature/initial-setup → develop`},
+    {t:"Daily workflow", d:"Rule: <strong>always</strong> branch from develop, open a PR to merge back.", cmd:`git checkout develop && git pull\ngit checkout -b feature/my-feature\n# work + commit\ngit push origin feature/my-feature\n# → open PR → develop`},
+    {t:"Release: develop → main", d:"When develop is stable: PR <code>develop → main</code>. CI required. This is your release.", cmd:`# GitHub: New pull request\n# base: main ← compare: develop`},
+    {t:"Create an Organization (optional)", d:"Avatar → <strong>Your organizations → New organization</strong>. Free. Groups all your Snowflake repos under one identity."},
+  ]:[
+    {t:"Create the project on GitLab", d:"gitlab.com → <strong>New project → Create blank project</strong>. Default branch: <code>main</code>."},
+    {t:"Clone locally", d:"<strong>Clone</strong> button → SSH URL.", cmd:`git clone git@gitlab.com:<account>/${n}.git\ncd ${n}`},
+    {t:"Create develop branch", cmd:`git checkout -b develop\ngit push -u origin develop`},
+    {t:"Create project structure", cmd:`mkdir -p src/${n.replace(/-/g,'_')} tests docs/api scripts/hooks\ntouch pyproject.toml README.md .gitignore .pre-commit-config.yaml`},
+    {t:"Create conda environment", d:"Use commands from the ⚙️ Environment tab.", cmd:`conda create -n ${n} python=${PY} -y\nconda activate ${n}`},
+    {t:"Install commit-msg hook", cmd:`chmod +x scripts/hooks/commit-msg\ngit config core.hooksPath scripts/hooks`},
+    {t:"Configure pre-commit", cmd:`pip install pre-commit\npre-commit install\npre-commit install --hook-type commit-msg`},
+    {t:"Protect main and develop", d:`<strong>Settings → Repository → Protected branches</strong><br><strong>main</strong>: Merge = Maintainers · Push = No one · ✅ No force push<br><strong>develop</strong>: Merge = Developers · Push = No one · ✅ No force push`},
+    {t:"First commit via feature branch", cmd:`git checkout develop\ngit checkout -b feature/initial-setup\ngit add .\ngit commit -m "🎉 feat: initial commit"\ngit push origin feature/initial-setup\n# → open MR: feature/initial-setup → develop`},
+    {t:"Daily workflow", d:"Rule: <strong>always</strong> branch from develop, open an MR to merge back.", cmd:`git checkout develop && git pull\ngit checkout -b feature/my-feature\n# work + commit\ngit push origin feature/my-feature`},
+    {t:"Release: develop → main", cmd:`# GitLab: Merge requests → New merge request\n# Source: develop → Target: main`},
+    {t:"Create a Group (optional)", d:"gitlab.com → <strong>New group</strong>. Equivalent to a GitHub Organization. Free."},
+  ];
+  document.getElementById('guide-content').innerHTML=`<div class="g2">${steps.map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><div class="step-body"><div class="step-title">${s.t}</div>${s.d?`<div class="step-desc">${s.d}</div>`:''} ${s.cmd?`<div class="cmd" style="margin-top:5px">${s.cmd}<button class="cpb" onclick="cpTxt(\`${s.cmd.replace(/`/g,'\\`')}\`,this)">copy</button></div>`:''}</div></div>`).join('')}</div>`;
+}
+
+function rowHTML({id,label,desc,det,tag,checked,locked,color='p',key}){
+  const cls=locked?'locked':checked?`on-${color}`:'';
+  const cbCls=locked?'lk':checked?color:'';
+  const nc=checked?color:'';
+  const onclick=locked?'':` onclick="toggleItem('${id}','${key}')"`;
+  return `<div class="row ${cls}"${onclick}><div class="cb ${cbCls}">${checked||locked?chk(locked?'#aaa':'white'):''}</div><div><div class="iname ${nc}">${label}${tag?`<span class="tag">${tag}</span>`:''}</div><div class="idesc">${desc}</div>${det?`<div class="idet">${det}</div>`:''}</div></div>`;
+}
+function radioHTML({id,label,desc,checked}){
+  return `<div class="row ${checked?'on-t':''}" onclick="setDocTool('${id}')" style="margin-bottom:3px"><div class="radio ${checked?'on':''}">${checked?'<div class="rdot"></div>':''}</div><div><div class="iname ${checked?'t':''}">${label}</div><div class="idesc">${desc}</div></div></div>`;
+}
+function tagHTML(key,val){return `<span class="etag">${val}<span class="x" onclick="removeTag('${key}','${val}')">×</span></span>`;}
+
+function generateHook(){
+  const used=usedEmojis();
+  const scopesStr=S.scopes.join('|');
+  const cases=[...used.entries()].map(([e,type])=>{
+    const esc=e.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    return `    ${esc}) allowed_type="${type}" ;;`;
+  }).join('\n');
+  return `#!/bin/bash
+# ============================================================
+# COMMIT-MSG HOOK — generated by snowflake dev env generator
+# Format : <emoji> <type>(<scope>): <description>
+#   Emoji determines the allowed type (1 emoji = 1 type)
+#   Scopes (optional) : ${S.scopes.join(' | ')}
+#   Ticket (optional) : ${S.tickets.map(t=>t+': PROJ-123').join(' | ')}
+# ============================================================
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(head -1 "$COMMIT_MSG_FILE")
+
+# Skip automatic merges
+if echo "$COMMIT_MSG" | grep -qE "^Merge "; then exit 0; fi
+
+# Special save case (WIP, skip ci)
+if echo "$COMMIT_MSG" | grep -qE "^💾 save: .{3,} \\[skip ci\\]"; then exit 0; fi
+
+EMOJI=$(echo "$COMMIT_MSG" | grep -oP '^(\\X)' | head -1)
+TYPE=$(echo "$COMMIT_MSG" | grep -oP '^\\X\\s+\\K[a-z_-]+(?=[:(\\s])')
+
+if [ -z "$EMOJI" ] || [ -z "$TYPE" ]; then
+    echo "❌ Invalid format — missing emoji or type."
+    echo "   Format: <emoji> <type>(<scope>): <description>"
+    exit 1
+fi
+
+allowed_type=""
+case "$EMOJI" in
+${cases}
+    *) echo "❌ Emoji '$EMOJI' not in mapping."; exit 1 ;;
+esac
+
+if [ "$TYPE" != "$allowed_type" ]; then
+    echo "❌ Emoji '$EMOJI' requires type '$allowed_type', got '$TYPE'."
+    echo "   Use: $EMOJI $allowed_type(<scope>): <description>"
+    exit 1
+fi
+
+PATTERN="^.+ (${Object.keys(S.mapping).join('|')})(\\((${scopesStr})\\))?: .{3,}"
+if ! echo "$COMMIT_MSG" | grep -qP "$PATTERN"; then
+    echo "❌ Invalid commit format."
+    echo "   Format: <emoji> <type>(<scope>): <description>"
+    echo "   Scopes: ${S.scopes.join(' | ')}"
+    exit 1
+fi
+
+exit 0`;
+}
+
+function render(){
+  const n=name();
+  const prof=PROFILES[S.profile];
+  const selDeps=DEPS.filter(d=>S.deps.has(d.id));
+  const allProjDeps=[`snowflake==${SF}`,...selDeps.map(d=>d.label)];
+  const selHookItems=HOOKS_DATA.flatMap(c=>c.items).filter(i=>S.hooks.has(i.id));
+  const hookPip=[...new Set(selHookItems.flatMap(i=>i.pip))];
+  const totalPip=new Set([...allProjDeps,"pre-commit",...hookPip]).size;
+
+  // ENV
+  document.getElementById('deps-list').innerHTML=DEPS.map(d=>rowHTML({...d,checked:S.deps.has(d.id),key:'deps'})).join('');
+  document.getElementById('hooks-list').innerHTML=HOOKS_DATA.map(cat=>`<div style="margin-bottom:10px"><div class="cat">${cat.cat}</div>${cat.items.map(i=>rowHTML({...i,checked:S.hooks.has(i.id),key:'hooks'})).join('')}</div>`).join('');
+
+  const c1=`conda create -n ${n} python=${PY} -y`;
+  const c2=`conda run -n ${n} pip install ${allProjDeps.join(' ')}`;
+  const c3=hookPip.length?`conda run -n ${n} pip install pre-commit ${hookPip.join(' ')}`:`conda run -n ${n} pip install pre-commit`;
+  const c4=`conda activate ${n}\npre-commit install\npre-commit install --hook-type commit-msg`;
+  setText('cmd-full',`# 1. Create environment\n${c1}\n\n# 2. Project dependencies\n${c2}\n\n# 3. pre-commit + hook libs\n${c3}\n\n# 4. Activate hooks\n${c4}`);
+  setText('cmd-create',c1);setText('cmd-proj',c2);setText('cmd-hooks',c3);setText('cmd-install',c4);
+  document.getElementById('badges-env').innerHTML=[`Python ${PY}`,`snowflake ${SF}`,`${S.hooks.size} hook${S.hooks.size>1?'s':''}`,`${totalPip} pip pkg`].map(b=>`<span class="badge">${b}</span>`).join('');
+  document.getElementById('pkg-sum').innerHTML=allProjDeps.map(p=>`<span class="pkg pkg-b">${p}</span>`).join('')+["pre-commit",...hookPip].map(p=>`<span class="pkg pkg-h">${p}</span>`).join('');
+  const tgls=document.querySelectorAll('.tgl');
+  const allDI=DEPS.map(d=>d.id),allHI=HOOKS_DATA.flatMap(c=>c.items.map(i=>i.id));
+  if(tgls[0])tgls[0].textContent=allDI.every(id=>S.deps.has(id))?"Deselect all":"Select all";
+  if(tgls[1])tgls[1].textContent=allHI.every(id=>S.hooks.has(id))?"Deselect all":"Select all";
+
+  // MAPPING
+  renderMapping();
+
+  // COMMIT-MSG
+  document.getElementById('scopes-list').innerHTML=S.scopes.map(v=>tagHTML('scopes',v)).join('');
+  document.getElementById('tickets-list').innerHTML=S.tickets.map(v=>tagHTML('tickets',v)).join('');
+  setText('cmd-hook',generateHook());
+  setText('cmd-hook-install',`mkdir -p scripts/hooks\n# paste the generated hook into scripts/hooks/commit-msg\nchmod +x scripts/hooks/commit-msg\n\n# Option A\ngit config core.hooksPath scripts/hooks\n\n# Option B (pre-commit)\npre-commit install --hook-type commit-msg`);
+
+  // GITMOJI
+  renderGmTable();
+
+  // DOCS
+  document.getElementById('docs-modules').innerHTML=DOC_MODULES.map(d=>rowHTML({id:d.id,label:d.label,desc:d.desc,det:`pip: ${d.pip}`,checked:S.docs.has(d.id),color:'t',key:'docs'})).join('');
+  document.getElementById('doc-tools').innerHTML=DOC_TOOLS.map(t=>radioHTML({...t,checked:S.docTool===t.id})).join('');
+  document.getElementById('ext-apis').innerHTML=EXT_APIS.map(a=>rowHTML({id:a.id,label:a.label,desc:a.tool,det:`files: ${a.ext}`,checked:S.apis.has(a.id),color:'t',key:'apis'})).join('');
+  const selDocs=DOC_MODULES.filter(d=>S.docs.has(d.id));
+  const toolPkg=S.docTool==='pdoc'?'pdoc':'sphinx sphinx-autodoc-typehints furo';
+  setText('cmd-docs-py',selDocs.length===0?'# Select at least one module above':
+    [`# 0. Install tool\nconda run -n ${n} pip install ${toolPkg}`,`# 1. Create folder\nmkdir -p docs/api`,
+     ...selDocs.map(d=>S.docTool==='pdoc'?`# ${d.label}\npdoc ${d.mod} -o docs/api/${d.id}/`:`# ${d.label}\nsphinx-apidoc -o docs/api/${d.id}/ <path>`)
+    ].join('\n\n'));
+  const selApis=EXT_APIS.filter(a=>S.apis.has(a.id));
+  document.getElementById('cmd-api-block').style.display=selApis.length?'block':'none';
+  if(selApis.length)setText('cmd-docs-api',selApis.map(a=>`# ${a.label}\nmkdir -p docs/api\n${a.cmd('<file'+a.ext+'>')}`).join('\n\n'));
+
+  // STRUCTURE — profile-aware
+  setText('struct-tree', prof.tree(n));
+  document.getElementById('path-map').innerHTML=prof.paths.map(r=>`<div class="pmap"><code style="background:${r.bg};color:${r.tc};border:1px solid ${r.bg==='#f0f0f0'?'#e0e0e0':r.tc+'44'};border-radius:4px;padding:3px 7px;font-size:10px;white-space:nowrap">${r.p}</code><span style="font-size:11px;color:#888">${r.l}</span></div>`).join('');
+  setText('pyproject-block', prof.pyproject(n));
+  setText('gitignore-block',`# Environments\n.conda/\n__pycache__/\n*.pyc\n.env\n\n# Generated docs\ndocs/api/\n\n# Provider cache\n.snowflake-provider/\n\n# Tools\n.ruff_cache/\n.mypy_cache/\n.pre-commit-cache/\n\n# Snowflake credentials\n*.p8\nconnection.json\n\n# Local runner args\n.local/\n\n# Plan output\nout/`);
+
+  // GUIDE
+  renderGuide();
+}
+
+render();
+setGuide('gh');
+</script>
+</body>
+</html>
