@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🗞️ Articles — pythia-studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#7056d7;--hover:#f3f0ff;--border:#e0e0e0;--muted:#bbb;--text:#1a1a1a;--bg:#f5f5f5}
+body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);min-height:100vh;padding:48px 24px 80px;display:flex;flex-direction:column;align-items:center}
+
+.hdr{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-.03em}
+.back{font-size:11px;color:var(--muted);margin-bottom:40px;text-decoration:none}
+.back:hover{color:var(--accent)}
+
+.sec{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin:32px 0 14px;width:100%;max-width:680px}
+
+.articles{display:flex;flex-direction:column;gap:16px;width:100%;max-width:680px}
+
+.preview-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;display:flex;transition:all .15s;cursor:pointer}
+.preview-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(112,86,215,.1);transform:translateY(-1px)}
+
+.preview-img{width:160px;min-width:160px;background:#f0f0f0;object-fit:cover;display:block}
+.preview-img-placeholder{width:160px;min-width:160px;background:linear-gradient(135deg,#f0eeff,#e8e0ff);display:flex;align-items:center;justify-content:center;font-size:36px}
+
+.preview-body{padding:18px 20px;display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+.preview-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:#fff8e1;color:#e6a817;letter-spacing:.05em;align-self:flex-start}
+.preview-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;line-height:1.4;color:var(--text)}
+.preview-desc{font-size:11px;color:var(--muted);line-height:1.6;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.preview-meta{font-size:10px;color:var(--muted);margin-top:4px}
+.preview-arrow{font-size:11px;color:var(--accent);align-self:flex-end}
+
+.loading{font-size:11px;color:var(--muted);font-style:italic}
+
+footer{margin-top:64px;font-size:10px;color:var(--muted);text-align:center;line-height:1.8}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--accent)}
+
+@media(max-width:520px){
+  .preview-img,.preview-img-placeholder{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr"><span style="font-size:24px">🗞️</span><h1>Articles</h1></div>
+<a class="back" href="index.html">← back to pythia-studio</a>
+
+<div class="sec">Security &amp; Access Control</div>
+<div class="articles" id="security"></div>
+
+<div class="sec">Data Quality</div>
+<div class="articles" id="quality"></div>
+
+<div class="sec">Cost &amp; Pricing</div>
+<div class="articles" id="cost"></div>
+
+<div class="sec">Architecture Validation</div>
+<div class="articles" id="arch"></div>
+
+<div class="sec">Distribution &amp; Ecosystem</div>
+<div class="articles" id="distrib"></div>
+
+<footer>
+  part of the <a href="index.html">pythia-for-snowflake</a> suite &nbsp;·&nbsp; MIT
+</footer>
+
+<script>
+const ARTICLES = {
+  security: [
+    {
+      url: "https://medium.com/snowflake/role-based-access-control-rbac-with-snowflake-database-roles-425f560c1873",
+      tag: "security · rbac",
+      fallback: {
+        title: "Role-based Access Control (RBAC) with Snowflake Database Roles",
+        desc: "Database roles vs account roles — how to keep RBAC scalable and avoid the 300-roles-for-300-users anti-pattern.",
+        author: "Maja Ferle · Apr 2025"
+      }
+    }
+  ],
+  quality: [
+    {
+      url: "https://www.snowflake.com/en/blog/engineering/snowflake-check-constraints-error-tables/",
+      tag: "data quality · error tables",
+      fallback: {
+        title: "Snowflake CHECK Constraints: Stop Cleaning Up Bad Data",
+        desc: "Official Snowflake Engineering post on CHECK constraints + ERROR_TABLE() — the native data quality layer that pythia errors surfaces without Cortex.",
+        author: "Snowflake Engineering"
+      }
+    }
+  ],
+  cost: [
+    {
+      url: "https://vutr.substack.com/p/22-i-analyzed-the-pricing-models",
+      tag: "cost · snowflake",
+      fallback: {
+        title: "I analyzed the pricing models of 5 famous cloud data warehouses",
+        desc: "Part 2: Databricks, Snowflake, and the practices for keeping your data warehouse costs under control. (Snowflake section paywalled)",
+        author: "Vu Trinh · Mar 2026"
+      }
+    }
+  ],
+  arch: [
+    {
+      url: "https://www.snowflake.com/en/blog/engineering/sql-spread-operator/",
+      tag: "architecture · sql",
+      fallback: {
+        title: "Snowflake Introduces SQL Spread Operator (**)",
+        desc: "The ** operator expands arrays inline into function/procedure args — Snowflake SQL evolving towards Python-like patterns. Simplifies the typed-args portion of build_call(); KWARGS OBJECT unaffected.",
+        author: "Yogitha Chilukuri · Apr 2025"
+      }
+    },
+    {
+      url: "https://sabrinazhengliu.medium.com/orchestrate-airflow-style-task-dags-in-snowflake-e07611d2ea87",
+      tag: "architecture · tasks",
+      fallback: {
+        title: "Orchestrate Airflow-style Task DAGs in Snowflake",
+        desc: "How to build and orchestrate native Snowflake Task DAGs as a replacement for Airflow on pure Snowflake pipelines.",
+        author: "Sabrina Zheng Liu"
+      }
+    }
+  ],
+  distrib: [
+    {
+      url: "https://medium.com/@pascalpfffle/no-more-manual-package-management-pypi-libraries-directly-in-snowflake-udfs-stored-procedures-fc0fc19aa650",
+      tag: "distribution · pypi",
+      fallback: {
+        title: "No More Manual Package Management: PyPI Libraries Directly in Snowflake",
+        desc: "Use any PyPI package in Snowflake UDFs and Stored Procedures via ARTIFACT_REPOSITORY — without Anaconda approval.",
+        author: "Pascal Pffflé"
+      }
+    }
+  ]
+};
+
+async function fetchPreview(url) {
+  try {
+    const res = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}&timeout=6000`);
+    const json = await res.json();
+    if (json.status === "success") return json.data;
+  } catch(e) {}
+  return null;
+}
+
+function renderCard(article, data) {
+  const title = data?.title || article.fallback.title;
+  const desc  = data?.description || article.fallback.desc;
+  const img   = data?.image?.url || null;
+  const author = article.fallback.author;
+
+  return `
+    <a class="preview-card" href="${article.url}" target="_blank">
+      ${img
+        ? `<img class="preview-img" src="${img}" alt="" loading="lazy" onerror="this.outerHTML='<div class=preview-img-placeholder>📝</div>'">`
+        : `<div class="preview-img-placeholder">📝</div>`}
+      <div class="preview-body">
+        <span class="preview-tag">${article.tag}</span>
+        <div class="preview-title">${title}</div>
+        <div class="preview-desc">${desc}</div>
+        <div class="preview-meta">${author}</div>
+        <span class="preview-arrow">read →</span>
+      </div>
+    </a>`;
+}
+
+async function loadSection(sectionId) {
+  const container = document.getElementById(sectionId);
+  const articles = ARTICLES[sectionId];
+  container.innerHTML = `<span class="loading">loading previews…</span>`;
+  const cards = await Promise.all(articles.map(async a => {
+    const data = await fetchPreview(a.url);
+    return renderCard(a, data);
+  }));
+  container.innerHTML = cards.join('');
+}
+
+loadSection('security');
+loadSection('quality');
+loadSection('cost');
+loadSection('arch');
+loadSection('distrib');
+</script>
+</body>
+</html>
