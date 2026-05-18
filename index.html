@@ -58,7 +58,7 @@ footer a:hover img{opacity:1}
 <p class="pitch">Snowflake is the compute platform, not just the storage.<br>
 Run your pipelines, HTTP calls, IaC, and monitoring inside the platform —<br>
 no ETL layer, no external orchestrator, no transformation framework.<br>
-<span class="pitch-accent">Rationalized costs. Pure Python. Pure Snowflake.</span></p>
+<span class="pitch-accent">Rationalized costs. Pure Python. Snowflake Native First.</span></p>
 
 <!-- ── 1. PRODUCTS ────────────────────────────────────────────── -->
 <div class="sec">Products</div>
@@ -97,7 +97,7 @@ no ETL layer, no external orchestrator, no transformation framework.<br>
   <a class="card" href="https://gcwxfcchvz-source.github.io/snowflake-kit/api/snowflake_kit.html" target="_blank">
     <div class="card-icon">🐍</div>
     <div class="card-name">snowflake-kit</div>
-    <div class="card-desc">fmt · validate · security · sql — core utilities for Snowflake development.</div>
+    <div class="card-desc">Pure Python — no Snowflake connection required. Importable in CI, UDFs, Streamlit, local scripts.</div>
     <div class="card-tag">pdoc · api</div>
     <div class="card-arrow">open →</div>
   </a>
@@ -105,7 +105,7 @@ no ETL layer, no external orchestrator, no transformation framework.<br>
   <a class="card card-inactive" href="#">
     <div class="card-icon">🎈</div>
     <div class="card-name">snowflake-kit-streamlit</div>
-    <div class="card-desc">SiS framework — CSS design system, UI components, Streamlit-in-Snowflake helpers.</div>
+    <div class="card-desc">Requires streamlit — Streamlit in Snowflake UI components only.</div>
     <div class="card-tag tag-soon">coming soon</div>
     <div class="card-arrow">soon</div>
   </a>
@@ -113,7 +113,7 @@ no ETL layer, no external orchestrator, no transformation framework.<br>
   <a class="card card-inactive" href="#">
     <div class="card-icon">❄️</div>
     <div class="card-name">snowflake-kit-snowpark</div>
-    <div class="card-desc">load_kwargs · sp_trace · stage_write — Snowpark helpers and telemetry.</div>
+    <div class="card-desc">Requires a live Snowpark session — runs inside Snowflake only.</div>
     <div class="card-tag tag-soon">coming soon</div>
     <div class="card-arrow">soon</div>
   </a>
@@ -121,7 +121,7 @@ no ETL layer, no external orchestrator, no transformation framework.<br>
   <a class="card card-inactive" href="#">
     <div class="card-icon">🌐</div>
     <div class="card-name">snowflake-kit-connect</div>
-    <div class="card-desc">http · notify · workday · insee — connectors and external integrations.</div>
+    <div class="card-desc">Requires external credentials or network — third-party connectors and integrations.</div>
     <div class="card-tag tag-soon">coming soon</div>
     <div class="card-arrow">soon</div>
   </a>
