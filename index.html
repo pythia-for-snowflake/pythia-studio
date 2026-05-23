@@ -17,7 +17,10 @@ h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--acce
 
 /* pitch */
 .pitch{font-size:13px;line-height:1.9;color:#555;text-align:center;max-width:580px;margin-bottom:52px}
-.pitch-accent{color:var(--accent);font-weight:700}
+.pill-rose{color:#d9608a;font-weight:700}
+.pill-yellow{color:#b8890a;font-weight:700}
+.pill-blue{color:#29b5e8;font-weight:700}
+.pitch strong{color:#333;font-weight:600}
 
 /* section label */
 .sec{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin:40px 0 14px;width:100%;max-width:760px}
@@ -52,95 +55,36 @@ footer a:hover img{opacity:1}
 </head>
 <body>
 
-<div class="hdr"><span><img src="pythia-logo.png" alt="pythia" height="32" style="display:block" onerror="this.outerHTML='<span style=\'font-size:32px\'>🔮</span>'"></span><h1>pythia-for-snowflake</h1></div>
+<div class="hdr"><span><img src="assets/pythia-logo.png" alt="pythia" height="32" style="display:block" onerror="this.outerHTML='<span style=\'font-size:32px\'>🔮</span>'"></span><h1>pythia-for-snowflake</h1></div>
 <p class="sub">a suite of open-source tools for Snowflake-native development</p>
 
-<p class="pitch">Snowflake is the compute platform, not just the storage.<br>
-Run your pipelines, HTTP calls, IaC, and monitoring inside the platform —<br>
-no ETL layer, no external orchestrator, no transformation framework.<br>
-<span class="pitch-accent">Rationalized costs. Pure Python. Snowflake Native First.</span></p>
+<p class="pitch">Snowflake is the <strong>compute platform</strong>, not just the storage.<br>
+Run your <strong>pipelines, HTTP calls, IaC, and monitoring</strong> inside the platform —<br>
+<strong>no ETL layer, no external orchestrator, no transformation framework.</strong><br>
+<span class="pill-rose">Rationalized costs.</span> <span class="pill-yellow">Pure Python.</span> <span class="pill-blue">Snowflake Native First.</span></p>
 
 <!-- ── 1. PRODUCTS ────────────────────────────────────────────── -->
 <div class="sec">Products</div>
-<div class="grid">
-
-  <a class="card card-inactive" href="#">
-    <div class="card-icon">📦</div>
-    <div class="card-name">snowflake-provider</div>
-    <div class="card-desc">IaC engine — YAML → Snowflake objects. plan · apply · export · validate. No state file.</div>
-    <div class="card-tag tag-soon">coming soon</div>
-    <div class="card-arrow">soon</div>
-  </a>
-
-  <a class="card card-inactive" href="#">
-    <div class="card-icon">🛠️</div>
-    <div class="card-name">snowflake-tools</div>
-    <div class="card-desc">Local dev CLI — runner, AST parser, regression testing, readme generation.</div>
-    <div class="card-tag tag-soon">coming soon</div>
-    <div class="card-arrow">soon</div>
-  </a>
-
-  <a class="card card-inactive" href="#">
-    <div class="card-icon">📊</div>
-    <div class="card-name">pythia-monitor</div>
-    <div class="card-desc">Native App — team-scoped Snowsight replicas, business visibility, cost guardrails.</div>
-    <div class="card-tag tag-soon">marketplace · soon</div>
-    <div class="card-arrow">soon</div>
-  </a>
-
-</div>
+<div id="grid-products" class="grid"></div>
 
 <!-- ── 2. API REFERENCE ───────────────────────────────────────── -->
 <div class="sec">API Reference</div>
-<div class="grid">
-
-  <a class="card" href="https://gcwxfcchvz-source.github.io/snowflake-kit/api/snowflake_kit.html" target="_blank">
-    <div class="card-icon">🐍</div>
-    <div class="card-name">snowflake-kit</div>
-    <div class="card-desc">Pure Python — no Snowflake connection required. Importable in CI, UDFs, Streamlit, local scripts.</div>
-    <div class="card-tag">pdoc · api</div>
-    <div class="card-arrow">open →</div>
-  </a>
-
-  <a class="card card-inactive" href="#">
-    <div class="card-icon">🎈</div>
-    <div class="card-name">snowflake-kit-streamlit</div>
-    <div class="card-desc">Requires streamlit — Streamlit in Snowflake UI components only.</div>
-    <div class="card-tag tag-soon">coming soon</div>
-    <div class="card-arrow">soon</div>
-  </a>
-
-  <a class="card card-inactive" href="#">
-    <div class="card-icon">❄️</div>
-    <div class="card-name">snowflake-kit-snowpark</div>
-    <div class="card-desc">Requires a live Snowpark session — runs inside Snowflake only.</div>
-    <div class="card-tag tag-soon">coming soon</div>
-    <div class="card-arrow">soon</div>
-  </a>
-
-  <a class="card card-inactive" href="#">
-    <div class="card-icon">🌐</div>
-    <div class="card-name">snowflake-kit-connect</div>
-    <div class="card-desc">Requires external credentials or network — third-party connectors and integrations.</div>
-    <div class="card-tag tag-soon">coming soon</div>
-    <div class="card-arrow">soon</div>
-  </a>
-
-</div>
+<div id="grid-api" class="grid"></div>
 
 <!-- ── 3. DEV & DESIGN TOOLS ─────────────────────────────────── -->
 <div class="sec">Dev &amp; Design Tools</div>
 <div class="grid">
 
-  <a class="card" href="palette-title-generator.html">
+  <a class="card" href="tools/palette-title-generator.html">
     <div class="card-icon">🎨</div>
-    <div class="card-name">Palette &amp; Title Generator</div>
-    <div class="card-desc">Signature color → harmony → semantic tokens → app title logo export (PNG × 8).</div>
+    <div class="card-name">Pythia Design</div>
+    <div class="card-desc">Streamlit mock — palette, fonts, logo. Export tokens directly usable with snowflake-kit-streamlit.</div>
     <div class="card-tag">design · snowflake-kit-streamlit</div>
     <div class="card-arrow">open →</div>
   </a>
 
-  <a class="card" href="env-generator.html">
+
+  <a class="card" href="tools/env-generator.html">
     <div class="card-icon">⚙️</div>
     <div class="card-name">Env Generator</div>
     <div class="card-desc">Generate environment configuration files for pythia-for-snowflake apps.</div>
@@ -154,7 +98,7 @@ no ETL layer, no external orchestrator, no transformation framework.<br>
 <div class="sec">Resources</div>
 <div class="grid">
 
-  <a class="card" href="hub-online.html">
+  <a class="card" href="tools/hub-online.html">
     <div class="card-icon">📚</div>
     <div class="card-name">Stack Reference</div>
     <div class="card-desc">Curated links to live official docs: Snowflake, Snowpark, Streamlit, Python, Plotly, Anthropic.</div>
@@ -162,7 +106,7 @@ no ETL layer, no external orchestrator, no transformation framework.<br>
     <div class="card-arrow">open →</div>
   </a>
 
-  <a class="card" href="hub-articles.html">
+  <a class="card" href="tools/hub-articles.html">
     <div class="card-icon">🗞️</div>
     <div class="card-name">Articles</div>
     <div class="card-desc">Articles and posts that led to or validate the pythia architecture approach.</div>
@@ -172,9 +116,31 @@ no ETL layer, no external orchestrator, no transformation framework.<br>
 
 </div>
 
+<script>
+const GIST_BASE='https://gist.githubusercontent.com/gcwxfcchvz-source/f1b86f55e7ec008146c56417cc342815/raw';
+
+function renderCard(r){
+  const off=!r.active;
+  return `<a class="card${off?' card-inactive':''}" href="${off?'#':r.url}"${off?'':' target="_blank"'}>
+    <div class="card-icon">${r.icon}</div>
+    <div class="card-name">${r.name}</div>
+    <div class="card-desc">${r.desc}</div>
+    <div class="card-tag${off?' tag-soon':''}">${r.tag}</div>
+    <div class="card-arrow">${off?'soon':'open →'}</div>
+  </a>`;
+}
+
+async function initRepos(){
+  const repos=await fetch(`${GIST_BASE}/repos.json`).then(r=>r.json());
+  document.getElementById('grid-products').innerHTML=repos.filter(r=>r.section==='products').map(renderCard).join('');
+  document.getElementById('grid-api').innerHTML=repos.filter(r=>r.section==='api').map(renderCard).join('');
+}
+initRepos();
+</script>
+
 <footer>
-  <a href="https://github.com/gcwxfcchvz-source/pythia-studio" target="_blank"><img src="avatar-github.png" alt="github" height="22" style="border-radius:50%"> &nbsp;·&nbsp; pythia-studio</a>
-  &nbsp;·&nbsp; part of the <a href="https://github.com/gcwxfcchvz-source" target="_blank">pythia-for-snowflake</a> suite &nbsp;·&nbsp; MIT
+  <a href="https://github.com/pythia-for-snowflake/pythia-studio" target="_blank"><img src="assets/avatar-github.png" alt="github" height="22" style="border-radius:50%"> &nbsp;·&nbsp; pythia-studio</a>
+  &nbsp;·&nbsp; part of the <a href="https://github.com/pythia-for-snowflake" target="_blank">pythia-for-snowflake</a> suite &nbsp;·&nbsp; MIT
 </footer>
 
 </body>

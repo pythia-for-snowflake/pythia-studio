@@ -112,7 +112,7 @@ body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);
 
 <div class="topbar">
   <div class="topbar-logo" onclick="showWelcome()" title="← hub menu" style="cursor:pointer">
-    <img src="pythia-logo.png" alt="pythia" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:18px\'>📚</span>'">
+    <img src="../assets/pythia-logo.png" alt="pythia" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:18px\'>📚</span>'">
     <div>
       <div class="topbar-title">pythia doc hub</div>
       <div class="topbar-sub">live docs · always current</div>
@@ -120,7 +120,7 @@ body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);
   </div>
   <div class="topbar-divider"></div>
   <div class="breadcrumb" id="breadcrumb"><span>select a doc to get started</span></div>
-  <a class="topbar-back" href="index.html">← studio</a>
+  <a class="topbar-back" href="../index.html">← studio</a>
 </div>
 
 <div class="layout">
@@ -151,19 +151,16 @@ body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);
 <script>
 const DOCS = [
   {
-    id:"sf-core", name:"core API", icon:"❄️", logo:"snowflake-logo.png", tag:"latest · python",
+    id:"sf-core", name:"core API", icon:"❄️", logo:"../assets/snowflake-logo.png", tag:"latest · python",
     desc:"Snowflake Python API — manage Snowflake objects (databases, schemas, tables, warehouses, tasks…) programmatically via snowflake.core.",
-    url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-api",
+    url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-overview",
     pages:[
-      {label:"Guide",              url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-api"},
-      {label:"API Reference",      url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/reference/latest/index"},
-      {label:"snowflake.core",     url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/reference/latest/_autosummary/snowflake.core"},
-      {label:"Root & Session",     url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/reference/latest/_autosummary/snowflake.core.root"},
-      {label:"Tasks",              url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/reference/latest/_autosummary/snowflake.core.task"},
+      {label:"Guide",         url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-overview"},
+      {label:"API Reference", url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/reference/latest/index"},
     ]
   },
   {
-    id:"snowpark", name:"Snowpark", icon:"🐍", logo:"snowflake-logo.png", tag:"latest · python",
+    id:"snowpark", name:"Snowpark", icon:"🐍", logo:"../assets/snowflake-logo.png", tag:"latest · python",
     desc:"Snowpark Python — DataFrame API, stored procedures, UDFs and ML pipelines running natively inside Snowflake.",
     url:"https://docs.snowflake.com/en/developer-guide/snowpark/python/index",
     pages:[
@@ -177,34 +174,30 @@ const DOCS = [
     ]
   },
   {
-    id:"streamlit", name:"Streamlit", icon:"🎈", logo:"streamlit-logo.png", tag:"1.52 · SiS",
+    id:"streamlit", name:"Streamlit", icon:"🎈", logo:"../assets/streamlit-logo.png", tag:"1.52 · SiS",
     desc:"Streamlit API reference and Streamlit in Snowflake (SiS) guide — components, layouts, session state, widgets.",
     url:"https://docs.streamlit.io/develop/api-reference",
     pages:[
       {label:"API Reference",            url:"https://docs.streamlit.io/develop/api-reference"},
       {label:"Streamlit in Snowflake",   url:"https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit"},
-      {label:"Session state",            url:"https://docs.streamlit.io/develop/api-reference/caching-and-state/st.session_state"},
-      {label:"st.cache_data",            url:"https://docs.streamlit.io/develop/api-reference/caching-and-state/st.cache_data"},
-      {label:"st.cache_resource",        url:"https://docs.streamlit.io/develop/api-reference/caching-and-state/st.cache_resource"},
-      {label:"Custom components",        url:"https://docs.streamlit.io/develop/concepts/custom-components/intro"},
-      {label:"config.toml",              url:"https://docs.streamlit.io/develop/api-reference/configuration/config.toml"},
+      {label:"Caching & state",           url:"https://docs.streamlit.io/develop/api-reference/caching-and-state"},
+      {label:"Limitations SiS",          url:"https://docs.snowflake.com/en/developer-guide/streamlit/limitations"},
+      {label:"Troubleshooting SiS",      url:"https://docs.snowflake.com/en/developer-guide/streamlit/troubleshooting"},
     ]
   },
   {
-    id:"telemetry", name:"Telemetry", icon:"📡", logo:"snowflake-logo.png", tag:"latest · python",
+    id:"telemetry", name:"Telemetry", icon:"📡", logo:"../assets/snowflake-logo.png", tag:"latest · python",
     desc:"Snowflake event tables, OpenTelemetry tracing and logging for Snowpark stored procedures and UDFs.",
-    url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-overview",
+    url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-tracing-overview",
     pages:[
-      {label:"Overview",             url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-overview"},
-      {label:"Event table setup",    url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up"},
+      {label:"Overview",             url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-tracing-overview"},
+      {label:"Event table overview", url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up"},
       {label:"Tracing — Python",     url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-python"},
       {label:"Logging — Python",     url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-python"},
-      {label:"Span attributes",      url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-python#adding-span-attributes"},
-      {label:"Query event table",    url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-columns"},
     ]
   },
   {
-    id:"python", name:"Python 3.11", icon:"🐍", logo:"python-logo.png", tag:"3.11 · stdlib",
+    id:"python", name:"Python 3.11", icon:"🐍", logo:"../assets/python-logo.png", tag:"3.11 · stdlib",
     desc:"Python 3.11 standard library — the version pinned across the pythia-for-snowflake suite.",
     url:"https://docs.python.org/3.11/library/index.html",
     pages:[
@@ -246,7 +239,7 @@ const DOCS = [
     ]
   },
   {
-    id:"anthropic", name:"Anthropic", icon:"🤖", logo:"anthropic-logo-orange.png", tag:"latest · API",
+    id:"anthropic", name:"Anthropic", icon:"🤖", logo:"../assets/anthropic-logo-orange.png", tag:"latest · API",
     desc:"Anthropic Claude API — models, tool use, Claude Code CLI and SDK for building AI-powered workflows.",
     url:"https://docs.anthropic.com/en/api/getting-started",
     pages:[

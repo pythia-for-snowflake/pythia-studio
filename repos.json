@@ -1,0 +1,74 @@
+[
+  {
+    "section": "products",
+    "name": "snowflake-provider",
+    "icon": "📦",
+    "desc": "IaC engine — YAML → Snowflake objects. plan · apply · export · validate. No state file.",
+    "tag": "coming soon",
+    "url": null,
+    "active": false
+  },
+  {
+    "section": "products",
+    "name": "snowflake-tools",
+    "icon": "🛠️",
+    "desc": "Local dev CLI — runner, AST parser, regression testing, readme generation.",
+    "tag": "coming soon",
+    "url": null,
+    "active": false
+  },
+  {
+    "section": "products",
+    "name": "pythia-monitor",
+    "icon": "📊",
+    "desc": "Native App — team-scoped Snowsight replicas, business visibility, cost guardrails.",
+    "tag": "marketplace · soon",
+    "url": null,
+    "active": false
+  },
+  {
+    "section": "api",
+    "name": "snowflake-kit",
+    "icon": "🐍",
+    "desc": "Pure Python — no Snowflake connection required. Importable in CI, UDFs, Streamlit, local scripts.",
+    "tag": "pdoc · api",
+    "url": "https://pythia-for-snowflake.github.io/snowflake-kit/api/snowflake_kit.html",
+    "active": true
+  },
+  {
+    "section": "api",
+    "name": "snowflake-kit-streamlit",
+    "icon": "🎈",
+    "desc": "Requires streamlit — Streamlit in Snowflake UI components only.",
+    "tag": "coming soon",
+    "url": null,
+    "active": false
+  },
+  {
+    "section": "api",
+    "name": "snowflake-kit-snowpark",
+    "icon": "❄️",
+    "desc": "Requires a Snowpark session — runs inside Snowflake only.",
+    "tag": "coming soon",
+    "url": null,
+    "active": false
+  },
+  {
+    "section": "api",
+    "name": "snowflake-kit-connect",
+    "icon": "🌐",
+    "desc": "Requires external credentials — third-party connectors and integrations.",
+    "tag": "coming soon",
+    "url": null,
+    "active": false
+  },
+  {
+    "section": "api",
+    "name": "snowflake-kit-airflow",
+    "icon": "🌬️",
+    "desc": "Airflow integration — PythiaTaskSensor for cross-platform DAG orchestration.",
+    "tag": "coming soon",
+    "url": null,
+    "active": false
+  }
+]

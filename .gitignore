@@ -11,3 +11,11 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+
+#docs
+docs/*

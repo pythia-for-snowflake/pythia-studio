@@ -46,7 +46,7 @@ footer a:hover{color:var(--accent)}
 <body>
 
 <div class="hdr"><span style="font-size:24px">🗞️</span><h1>Articles</h1></div>
-<a class="back" href="index.html">← back to pythia-studio</a>
+<a class="back" href="../index.html">← back to pythia-studio</a>
 
 <div class="sec">Security &amp; Access Control</div>
 <div class="articles" id="security"></div>
@@ -64,123 +64,63 @@ footer a:hover{color:var(--accent)}
 <div class="articles" id="distrib"></div>
 
 <footer>
-  part of the <a href="index.html">pythia-for-snowflake</a> suite &nbsp;·&nbsp; MIT
+  part of the <a href="../index.html">pythia-for-snowflake</a> suite &nbsp;·&nbsp; MIT
 </footer>
 
 <script>
-const ARTICLES = {
-  security: [
-    {
-      url: "https://medium.com/snowflake/role-based-access-control-rbac-with-snowflake-database-roles-425f560c1873",
-      tag: "security · rbac",
-      fallback: {
-        title: "Role-based Access Control (RBAC) with Snowflake Database Roles",
-        desc: "Database roles vs account roles — how to keep RBAC scalable and avoid the 300-roles-for-300-users anti-pattern.",
-        author: "Maja Ferle · Apr 2025"
-      }
-    }
-  ],
-  quality: [
-    {
-      url: "https://www.snowflake.com/en/blog/engineering/snowflake-check-constraints-error-tables/",
-      tag: "data quality · error tables",
-      fallback: {
-        title: "Snowflake CHECK Constraints: Stop Cleaning Up Bad Data",
-        desc: "Official Snowflake Engineering post on CHECK constraints + ERROR_TABLE() — the native data quality layer that pythia errors surfaces without Cortex.",
-        author: "Snowflake Engineering"
-      }
-    }
-  ],
-  cost: [
-    {
-      url: "https://vutr.substack.com/p/22-i-analyzed-the-pricing-models",
-      tag: "cost · snowflake",
-      fallback: {
-        title: "I analyzed the pricing models of 5 famous cloud data warehouses",
-        desc: "Part 2: Databricks, Snowflake, and the practices for keeping your data warehouse costs under control. (Snowflake section paywalled)",
-        author: "Vu Trinh · Mar 2026"
-      }
-    }
-  ],
-  arch: [
-    {
-      url: "https://www.snowflake.com/en/blog/engineering/sql-spread-operator/",
-      tag: "architecture · sql",
-      fallback: {
-        title: "Snowflake Introduces SQL Spread Operator (**)",
-        desc: "The ** operator expands arrays inline into function/procedure args — Snowflake SQL evolving towards Python-like patterns. Simplifies the typed-args portion of build_call(); KWARGS OBJECT unaffected.",
-        author: "Yogitha Chilukuri · Apr 2025"
-      }
-    },
-    {
-      url: "https://sabrinazhengliu.medium.com/orchestrate-airflow-style-task-dags-in-snowflake-e07611d2ea87",
-      tag: "architecture · tasks",
-      fallback: {
-        title: "Orchestrate Airflow-style Task DAGs in Snowflake",
-        desc: "How to build and orchestrate native Snowflake Task DAGs as a replacement for Airflow on pure Snowflake pipelines.",
-        author: "Sabrina Zheng Liu"
-      }
-    }
-  ],
-  distrib: [
-    {
-      url: "https://medium.com/@pascalpfffle/no-more-manual-package-management-pypi-libraries-directly-in-snowflake-udfs-stored-procedures-fc0fc19aa650",
-      tag: "distribution · pypi",
-      fallback: {
-        title: "No More Manual Package Management: PyPI Libraries Directly in Snowflake",
-        desc: "Use any PyPI package in Snowflake UDFs and Stored Procedures via ARTIFACT_REPOSITORY — without Anaconda approval.",
-        author: "Pascal Pffflé"
-      }
-    }
-  ]
-};
+// Replace with your Gist raw URL:
+// https://gist.githubusercontent.com/{user}/{id}/raw/articles.json
+const GIST_RAW_URL = 'https://gist.githubusercontent.com/gcwxfcchvz-source/f1b86f55e7ec008146c56417cc342815/raw/articles.json';
+
+const SECTIONS = ['security','quality','cost','arch','distrib'];
 
 async function fetchPreview(url) {
   try {
     const res = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}&timeout=6000`);
     const json = await res.json();
-    if (json.status === "success") return json.data;
+    if (json.status === 'success') return json.data;
   } catch(e) {}
   return null;
 }
 
-function renderCard(article, data) {
-  const title = data?.title || article.fallback.title;
-  const desc  = data?.description || article.fallback.desc;
+function renderCard(a, data) {
+  const title = data?.title || a.title;
+  const desc  = data?.description || a.desc;
   const img   = data?.image?.url || null;
-  const author = article.fallback.author;
-
   return `
-    <a class="preview-card" href="${article.url}" target="_blank">
+    <a class="preview-card" href="${a.url}" target="_blank">
       ${img
         ? `<img class="preview-img" src="${img}" alt="" loading="lazy" onerror="this.outerHTML='<div class=preview-img-placeholder>📝</div>'">`
         : `<div class="preview-img-placeholder">📝</div>`}
       <div class="preview-body">
-        <span class="preview-tag">${article.tag}</span>
+        <span class="preview-tag">${a.tag}</span>
         <div class="preview-title">${title}</div>
         <div class="preview-desc">${desc}</div>
-        <div class="preview-meta">${author}</div>
+        <div class="preview-meta">${a.author}</div>
         <span class="preview-arrow">read →</span>
       </div>
     </a>`;
 }
 
-async function loadSection(sectionId) {
-  const container = document.getElementById(sectionId);
-  const articles = ARTICLES[sectionId];
-  container.innerHTML = `<span class="loading">loading previews…</span>`;
-  const cards = await Promise.all(articles.map(async a => {
-    const data = await fetchPreview(a.url);
-    return renderCard(a, data);
-  }));
-  container.innerHTML = cards.join('');
+async function init() {
+  const res = await fetch(GIST_RAW_URL);
+  const articles = await res.json();
+
+  for (const sectionId of SECTIONS) {
+    const container = document.getElementById(sectionId);
+    if (!container) continue;
+    const items = articles.filter(a => a.section === sectionId);
+    if (!items.length) { container.innerHTML = ''; continue; }
+    container.innerHTML = '<span class="loading">loading previews…</span>';
+    const cards = await Promise.all(items.map(async a => {
+      const data = await fetchPreview(a.url);
+      return renderCard(a, data);
+    }));
+    container.innerHTML = cards.join('');
+  }
 }
 
-loadSection('security');
-loadSection('quality');
-loadSection('cost');
-loadSection('arch');
-loadSection('distrib');
+init();
 </script>
 </body>
 </html>

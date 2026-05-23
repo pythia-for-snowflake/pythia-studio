@@ -1,0 +1,85 @@
+/* pythia-for-snowflake — pdoc theme
+   Single source of truth: pythia-studio/pdoc-pythia.css
+   Loaded via snowflake-kit/docs/templates/frame.html.jinja2
+   ------------------------------------------------------------------
+   Overrides pdoc's theme.css color variables + pythia typography.
+   Requires pdoc >= 14.
+   Font: loaded by frame.html.jinja2 (DM Sans + JetBrains Mono). */
+
+/* ── Color variables ───────────────────────────────────────────── */
+
+:root {
+    --pdoc-background: #fafafa;
+}
+
+.pdoc {
+    --text:       #3E4264;
+    --muted:      #8b8fa8;
+    --link:       #7056d7;
+    --link-hover: #5a42b8;
+    --code:       #f7f7f7;
+    --active:     #f3f0ff;
+    --accent:     #f3f0ff;
+    --accent2:    #e0d9f5;
+    --nav-hover:  rgba(112, 86, 215, .08);
+    --name:       #7056d7;
+    --def:        #e07baa;
+    --annotation: #5a6b8c;
+
+    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+}
+
+/* ── Code & mono ───────────────────────────────────────────────── */
+
+.pdoc code,
+.pdoc pre,
+.pdoc .pdoc-code {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 13px;
+}
+
+/* ── Module name heading ───────────────────────────────────────── */
+
+.pdoc .modulename a {
+    color: #7056d7;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+/* ── Nav sidebar ───────────────────────────────────────────────── */
+
+nav.pdoc {
+    border-right: 1px solid #e0d9f5;
+    box-shadow: none;
+}
+
+/* ── Search input focus ────────────────────────────────────────── */
+
+.pdoc input[type=search]:focus {
+    outline: 2px solid #7056d7;
+    outline-offset: 0;
+}
+
+/* ── Content headings ──────────────────────────────────────────── */
+
+.pdoc h1, .pdoc h2, .pdoc h3 {
+    color: #3E4264;
+}
+
+/* ── Signature attribute strip ─────────────────────────────────── */
+
+.pdoc .attr {
+    border-radius: 4px;
+}
+
+/* ── pdoc UI buttons (nav toggle, view source) ─────────────────── */
+
+.pdoc .pdoc-button {
+    border-color: #c9bef5;
+    color: #7056d7;
+}
+
+.pdoc .pdoc-button:hover {
+    background: #f3f0ff;
+}

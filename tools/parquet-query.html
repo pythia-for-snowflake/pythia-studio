@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Parquet Query — pythia-studio</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Courier New',monospace;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:24px 16px 60px}
+h1{font-size:18px;font-weight:700;color:#60defb;letter-spacing:-.02em}
+.sub{color:#bbb;font-size:12px;margin-top:3px}
+.section{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:16px;margin-top:16px}
+.label{font-size:10px;letter-spacing:.12em;color:#bbb;text-transform:uppercase;margin-bottom:7px}
+.inp{background:#fff;border:1.5px solid #e0e0e0;border-radius:6px;color:#1a1a1a;font-family:inherit;font-size:12px;padding:8px 11px;width:100%;outline:none;transition:border .12s}
+.inp:focus{border-color:#60defb}
+textarea.inp{height:130px;resize:vertical;line-height:1.6}
+.preset-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;align-items:center}
+.preset-lbl{font-size:10px;letter-spacing:.08em;color:#ccc;text-transform:uppercase;margin-right:2px}
+.preset{background:#f0fdff;border:1px solid #b8f4ff;border-radius:4px;color:#60defb;font-family:inherit;font-size:10px;padding:3px 9px;cursor:pointer;transition:all .12s;white-space:nowrap}
+.preset:hover{background:#e0f8ff;border-color:#60defb}
+.preset.teal{background:#f0fdfa;border-color:#99f6e4;color:#0f766e}
+.preset.teal:hover{background:#d1fae5}
+.btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.btn{background:#f5f5f5;border:1.5px solid #e0e0e0;border-radius:6px;color:#555;font-family:inherit;font-size:11px;font-weight:600;padding:8px 15px;cursor:pointer;transition:all .12s}
+.btn:hover{border-color:#60defb;color:#60defb;background:#f0fdff}
+.btn.primary{background:#60defb;border-color:#60defb;color:#1a1a1a;font-weight:700}
+.btn.primary:hover{background:#3dd0eb;border-color:#3dd0eb}
+.btn.ghost{background:none;border-color:#e0e0e0;color:#aaa}
+.btn.ghost:hover{border-color:#0f766e;color:#0f766e;background:#f0fdfa}
+.spacer{flex:1}
+.status{font-size:11px;margin-top:14px;padding:9px 13px;border-radius:6px;display:none;line-height:1.5}
+.status.loading{display:flex;align-items:center;gap:9px;background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.status.error{display:block;background:#fff0f0;border:1px solid #fca5a5;color:#b91c1c;white-space:pre-wrap;word-break:break-word}
+.status.ok{display:block;background:#f0fdfa;border:1px solid #99f6e4;color:#0f766e}
+.spinner{width:14px;height:14px;border:2px solid #fde68a;border-top-color:#92400e;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.results-wrap{overflow:auto;max-height:480px;margin-top:14px;border:1px solid #e0e0e0;border-radius:6px;display:none}
+table{border-collapse:collapse;width:100%;font-size:11px}
+thead th{position:sticky;top:0;background:#f2f2f2;padding:7px 10px;text-align:left;border-bottom:2px solid #e0e0e0;color:#555;font-weight:700;white-space:nowrap;z-index:1}
+tbody td{padding:5px 10px;border-bottom:1px solid #f5f5f5;color:#1a1a1a;white-space:nowrap;max-width:280px;overflow:hidden;text-overflow:ellipsis}
+tbody tr:hover td{background:#f0fdff}
+.meta{font-size:10px;color:#bbb;margin-top:6px;display:flex;gap:12px;flex-wrap:wrap}
+.meta span{display:flex;gap:4px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:#99f6e4;flex-shrink:0}
+code{background:#f0f0f0;padding:0 3px;border-radius:2px;font-family:inherit;font-size:10px}
+.hint{font-size:10px;color:#ccc;margin-top:6px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<h1>🦆 Parquet Query</h1>
+<p class="sub">Requête SQL locale sur n'importe quel fichier Parquet distant — DuckDB WASM, zéro backend, zéro crédit Snowflake</p>
+
+<div class="section">
+  <div class="label">URL Parquet</div>
+  <input id="url" class="inp" type="url"
+    placeholder="https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockUniteLegale_utf8.parquet" />
+  <div class="preset-row">
+    <span class="preset-lbl">Presets</span>
+    <button class="preset" onclick="applyPreset('sirene_ul')">SIRENE — UnitéLégale</button>
+    <button class="preset" onclick="applyPreset('sirene_et')">SIRENE — Établissement</button>
+    <button class="preset" onclick="applyPreset('sirene_join')">SIRENE — UL × ET join</button>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">SQL — utilisez <code>$URL</code> ou l'URL directement entre guillemets</div>
+  <textarea id="sql" class="inp">SELECT *
+FROM read_parquet($URL)
+LIMIT 100</textarea>
+  <p class="hint">Exemples : <code>DESCRIBE SELECT * FROM read_parquet($URL) LIMIT 1</code> &nbsp;·&nbsp; <code>SELECT COUNT(*) FROM read_parquet($URL)</code></p>
+  <div class="btn-row">
+    <button class="btn primary" id="run-btn" onclick="runQuery()">▶ Exécuter</button>
+    <button class="btn" onclick="describeOnly()">DESCRIBE</button>
+    <button class="btn" onclick="countOnly()">COUNT(*)</button>
+    <button class="btn ghost" onclick="clearAll()">Effacer</button>
+    <div class="spacer"></div>
+    <button class="btn" id="export-btn" onclick="exportCsv()" style="display:none">⬇ Export CSV</button>
+  </div>
+</div>
+
+<div id="status" class="status"></div>
+<div id="results-wrap" class="results-wrap"></div>
+<div id="meta" class="meta"></div>
+
+<script type="module">
+
+const PRESETS = {
+  sirene_ul: {
+    url: 'https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockUniteLegale_utf8.parquet',
+    sql: `SELECT
+    siren,
+    denominationUniteLegale,
+    sigleUniteLegale,
+    categorieEntreprise,
+    etatAdministratifUniteLegale,
+    activitePrincipaleUniteLegale,
+    trancheEffectifsUniteLegale,
+    anneeEffectifsUniteLegale
+FROM read_parquet($URL)
+WHERE etatAdministratifUniteLegale = 'A'
+  AND activitePrincipaleUniteLegale IN ('62.01Z', '58.29A', '58.29B', '58.29C')
+  AND categorieEntreprise IN ('PME', 'ETI')
+LIMIT 200`
+  },
+  sirene_et: {
+    url: 'https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockEtablissement_utf8.parquet',
+    sql: `SELECT
+    siret,
+    siren,
+    nic,
+    denominationUsuelleEtablissement,
+    codePostalEtablissement,
+    libelleCommuneEtablissement,
+    codeCommuneEtablissement,
+    etatAdministratifEtablissement,
+    caractereEmployeurEtablissement,
+    trancheEffectifsEtablissement,
+    activitePrincipaleEtablissement
+FROM read_parquet($URL)
+WHERE etatAdministratifEtablissement = 'A'
+  AND caractereEmployeurEtablissement = 'O'
+  AND codePostalEtablissement LIKE '31%'
+LIMIT 200`
+  },
+  sirene_join: {
+    url: '',
+    sql: `-- Requête jointe : UnitéLégale × Établissement siège
+-- Remplace $UL et $ET par les URLs complètes ci-dessous
+
+WITH ul AS (
+    SELECT siren, denominationUniteLegale, categorieEntreprise,
+           activitePrincipaleUniteLegale, trancheEffectifsUniteLegale
+    FROM read_parquet('https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockUniteLegale_utf8.parquet')
+    WHERE etatAdministratifUniteLegale = 'A'
+      AND activitePrincipaleUniteLegale IN ('62.01Z', '58.29A', '58.29B', '58.29C')
+      AND categorieEntreprise IN ('PME', 'ETI')
+),
+et AS (
+    SELECT siren, siret, codePostalEtablissement, libelleCommuneEtablissement,
+           caractereEmployeurEtablissement, trancheEffectifsEtablissement
+    FROM read_parquet('https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockEtablissement_utf8.parquet')
+    WHERE etatAdministratifEtablissement = 'A'
+      AND etablissementSiege = 'true'
+      AND codePostalEtablissement LIKE '31%'
+)
+SELECT ul.siren, ul.denominationUniteLegale, ul.categorieEntreprise,
+       ul.activitePrincipaleUniteLegale, ul.trancheEffectifsUniteLegale,
+       et.siret, et.codePostalEtablissement, et.libelleCommuneEtablissement,
+       et.caractereEmployeurEtablissement
+FROM ul
+JOIN et USING (siren)
+WHERE et.caractereEmployeurEtablissement = 'O'
+ORDER BY ul.denominationUniteLegale
+LIMIT 500`
+  }
+};
+
+window.applyPreset = function(key) {
+  const p = PRESETS[key];
+  if (p.url) document.getElementById('url').value = p.url;
+  document.getElementById('sql').value = p.sql;
+};
+
+window.clearAll = function() {
+  document.getElementById('results-wrap').style.display = 'none';
+  document.getElementById('results-wrap').innerHTML = '';
+  document.getElementById('meta').innerHTML = '';
+  document.getElementById('export-btn').style.display = 'none';
+  setStatus('', '');
+  lastRows = [];
+  lastCols = [];
+};
+
+let db = null;
+let lastRows = [];
+let lastCols = [];
+
+function setStatus(type, msg) {
+  const el = document.getElementById('status');
+  if (!type) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.className = 'status ' + type;
+  if (type === 'loading') {
+    el.innerHTML = `<div class="spinner"></div><span>${msg}</span>`;
+  } else {
+    el.textContent = msg;
+  }
+  el.style.display = type === 'loading' ? 'flex' : 'block';
+}
+
+async function getDB() {
+  if (db) return db;
+  setStatus('loading', 'Initialisation DuckDB WASM…');
+  const duckdb = await import('https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.29.0/+esm');
+  const bundles = duckdb.getJsDelivrBundles();
+  const bundle = await duckdb.selectBundle(bundles);
+  const worker_url = URL.createObjectURL(
+    new Blob([`importScripts("${bundle.mainWorker}");`], {type: 'text/javascript'})
+  );
+  const worker = new Worker(worker_url);
+  const logger = new duckdb.ConsoleLogger();
+  db = new duckdb.AsyncDuckDB(logger, worker);
+  await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+  URL.revokeObjectURL(worker_url);
+  return db;
+}
+
+function resolveSQL(rawSQL, url) {
+  // Replace $URL placeholder; leave bare URL queries untouched
+  if (rawSQL.includes('$URL')) {
+    if (!url) throw new Error("L'URL est vide — renseigne le champ URL ou retire $URL de la requête");
+    return rawSQL.replace(/\$URL/g, `'${url}'`);
+  }
+  return rawSQL;
+}
+
+async function executeSQL(sql) {
+  const t0 = performance.now();
+  const instance = await getDB();
+  const conn = await instance.connect();
+  try {
+    const result = await conn.query(sql);
+    const cols = result.schema.fields.map(f => f.name);
+    const rows = result.toArray().map(r => {
+      const obj = {};
+      cols.forEach(c => { obj[c] = r[c] ?? null; });
+      return obj;
+    });
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+    return {cols, rows, elapsed};
+  } finally {
+    await conn.close();
+  }
+}
+
+async function runQuery() {
+  const url = document.getElementById('url').value.trim();
+  const rawSQL = document.getElementById('sql').value.trim();
+  if (!rawSQL) { setStatus('error', 'SQL manquant'); return; }
+
+  window.clearAll();
+  setStatus('loading', 'Chargement DuckDB WASM…');
+
+  try {
+    const sql = resolveSQL(rawSQL, url);
+    setStatus('loading', 'Exécution…');
+    const {cols, rows, elapsed} = await executeSQL(sql);
+    lastCols = cols;
+    lastRows = rows;
+    renderTable(cols, rows);
+    setStatus('ok', `${rows.length} ligne${rows.length !== 1 ? 's' : ''} — ${elapsed}s`);
+    if (rows.length > 0) document.getElementById('export-btn').style.display = 'inline-block';
+  } catch (err) {
+    setStatus('error', err.message || String(err));
+  }
+}
+
+window.describeOnly = function() {
+  const url = document.getElementById('url').value.trim();
+  if (!url) { setStatus('error', 'URL manquante'); return; }
+  document.getElementById('sql').value = `DESCRIBE SELECT * FROM read_parquet($URL) LIMIT 1`;
+  runQuery();
+};
+
+window.countOnly = function() {
+  const url = document.getElementById('url').value.trim();
+  if (!url) { setStatus('error', 'URL manquante'); return; }
+  document.getElementById('sql').value = `SELECT COUNT(*) AS total FROM read_parquet($URL)`;
+  runQuery();
+};
+
+window.runQuery = runQuery;
+
+function renderTable(cols, rows) {
+  const wrap = document.getElementById('results-wrap');
+  let html = '<table><thead><tr>';
+  cols.forEach(c => { html += `<th>${esc(c)}</th>`; });
+  html += '</tr></thead><tbody>';
+  rows.forEach(row => {
+    html += '<tr>';
+    cols.forEach(c => {
+      const v = row[c] === null ? '' : String(row[c]);
+      html += `<td title="${esc(v)}">${esc(v)}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+  wrap.style.display = 'block';
+  document.getElementById('meta').innerHTML =
+    `<span><span class="dot"></span>${rows.length} ligne${rows.length !== 1 ? 's' : ''}</span>` +
+    `<span>${cols.length} colonne${cols.length !== 1 ? 's' : ''}</span>`;
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+window.exportCsv = function() {
+  if (!lastRows.length) return;
+  const lines = [lastCols.map(csvCell).join(',')];
+  lastRows.forEach(row => {
+    lines.push(lastCols.map(c => csvCell(row[c] === null ? '' : String(row[c]))).join(','));
+  });
+  const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `parquet-query-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+function csvCell(v) {
+  const s = String(v ?? '');
+  return (s.includes(',') || s.includes('"') || s.includes('\n'))
+    ? `"${s.replace(/"/g,'""')}"` : s;
+}
+
+</script>
+</body>
+</html>
