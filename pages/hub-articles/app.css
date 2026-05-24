@@ -1,0 +1,34 @@
+/* centered page layout */
+body{padding:48px 24px 80px;display:flex;flex-direction:column;align-items:center}
+
+.hdr{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-.03em}
+.back{font-size:11px;color:var(--muted);margin-bottom:40px;text-decoration:none}
+.back:hover{color:var(--accent)}
+
+.sec{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin:32px 0 14px;width:100%;max-width:680px}
+
+.articles{display:flex;flex-direction:column;gap:16px;width:100%;max-width:680px}
+
+.preview-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;display:flex;transition:all .15s;cursor:pointer}
+.preview-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(112,86,215,.1);transform:translateY(-1px)}
+
+.preview-img{width:160px;min-width:160px;background:#f0f0f0;object-fit:cover;display:block}
+.preview-img-placeholder{width:160px;min-width:160px;background:linear-gradient(135deg,#f0eeff,#e8e0ff);display:flex;align-items:center;justify-content:center;font-size:36px}
+
+.preview-body{padding:18px 20px;display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+.preview-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:#fff8e1;color:#e6a817;letter-spacing:.05em;align-self:flex-start}
+.preview-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;line-height:1.4;color:var(--text)}
+.preview-desc{font-size:11px;color:var(--muted);line-height:1.6;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.preview-meta{font-size:10px;color:var(--muted);margin-top:4px}
+.preview-arrow{font-size:11px;color:var(--accent);align-self:flex-end}
+
+.loading{font-size:11px;color:var(--muted);font-style:italic}
+
+footer{margin-top:64px;font-size:10px;color:var(--muted);text-align:center;line-height:1.8}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--accent)}
+
+@media(max-width:520px){
+  .preview-img,.preview-img-placeholder{display:none}
+}

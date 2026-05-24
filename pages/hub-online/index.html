@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📚 pythia doc hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../app.css">
+<link rel="stylesheet" href="./app.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo" onclick="showWelcome()" title="← hub menu" style="cursor:pointer">
+    <img src="../../assets/images/pythia-logo.png" alt="pythia" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:18px\'>📚</span>'">
+    <div>
+      <div class="topbar-title">pythia doc hub</div>
+      <div class="topbar-sub">live docs · always current</div>
+    </div>
+  </div>
+  <div class="topbar-divider"></div>
+  <div class="breadcrumb" id="breadcrumb"><span>select a doc to get started</span></div>
+  <a class="topbar-back" href="../../index.html">← studio</a>
+</div>
+
+<div class="layout">
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-label">Docs</span>
+      <button class="collapse-btn" id="collapse-btn" onclick="toggleSidebar()">◀</button>
+    </div>
+    <div class="sidebar-search">
+      <input class="search-inp" id="search-inp" placeholder="🔍 filter…" oninput="renderSidebar(this.value)">
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </div>
+
+  <div class="content" id="content">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">📚</div>
+      <div class="welcome-title">pythia doc hub</div>
+      <div class="welcome-sub">Curated live docs for the pythia-for-snowflake stack. Click any entry to open in a new tab.</div>
+      <div class="welcome-grid" id="welcome-grid"></div>
+    </div>
+    <div id="doc-panel" style="display:none"></div>
+  </div>
+
+</div>
+
+<script src="./app.js"></script>
+</body>
+</html>

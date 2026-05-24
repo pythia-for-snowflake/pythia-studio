@@ -1,157 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📚 pythia doc hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f5f5f5;--sidebar:#ffffff;--border:#e0e0e0;--accent:#F7E24B;--accent2:#29b5e8;
-  --text:#1a1a1a;--muted:#999;--hover:#fffef0;--active-bg:#fffef0;--active-border:#F7E24B;
-  --tag-bg:#f0f9ff;--tag-color:#29b5e8;
-}
-body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
-
-/* ── top bar ── */
-.topbar{display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--sidebar);border-bottom:2px solid var(--border);flex-shrink:0}
-.topbar-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.topbar-logo span:first-child{font-size:18px}
-.topbar-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--accent);letter-spacing:-.02em;white-space:nowrap}
-.topbar-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.topbar-divider{width:1px;height:30px;background:var(--border);flex-shrink:0}
-.topbar-back{font-size:11px;color:var(--muted);text-decoration:none;padding:4px 10px;border:1.5px solid var(--border);border-radius:5px;transition:all .12s;white-space:nowrap}
-.topbar-back:hover{border-color:var(--accent);color:var(--accent);background:var(--hover)}
-.breadcrumb{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;flex:1;overflow:hidden;white-space:nowrap}
-.breadcrumb-sep{color:var(--border)}
-.breadcrumb b{color:var(--text);font-weight:700}
-
-/* ── layout ── */
-.layout{display:flex;flex:1;overflow:hidden}
-
-/* ── sidebar ── */
-.sidebar{width:260px;flex-shrink:0;background:var(--sidebar);border-right:2px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s ease}
-.sidebar.collapsed{width:48px}
-.sidebar-header{padding:12px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
-.sidebar-label{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden}
-.collapse-btn{background:none;border:1.5px solid var(--border);border-radius:5px;cursor:pointer;padding:2px 6px;font-size:12px;color:var(--muted);flex-shrink:0;transition:all .12s;font-family:inherit}
-.collapse-btn:hover{border-color:var(--accent);color:var(--accent)}
-.sidebar-search{padding:8px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
-.search-inp{width:100%;background:#fafafa;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:12px;padding:5px 9px;outline:none;color:var(--text);transition:border .12s}
-.search-inp:focus{border-color:var(--accent)}
-.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
-.sidebar-nav::-webkit-scrollbar{width:4px}
-.sidebar-nav::-webkit-scrollbar-thumb{background:#e0e0e0;border-radius:4px}
-
-/* nav items */
-.api-group{margin-bottom:2px}
-.api-group-header{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;transition:background .12s;border-left:3px solid transparent;user-select:none}
-.api-group-header:hover{background:var(--hover)}
-.api-group-header.active{background:var(--active-bg);border-left-color:var(--accent)}
-.api-icon{font-size:16px;flex-shrink:0}
-.api-info{flex:1;overflow:hidden}
-.api-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.api-tag{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--tag-bg);color:var(--tag-color);font-weight:700;letter-spacing:.05em;white-space:nowrap}
-.api-chevron{font-size:10px;color:var(--muted);transition:transform .15s;flex-shrink:0}
-.api-group-header.open .api-chevron{transform:rotate(90deg)}
-.api-pages{display:none;padding:0 0 4px 0}
-.api-pages.open{display:block}
-.page-link{display:flex;align-items:center;gap:6px;padding:5px 14px 5px 38px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .12s;border-left:3px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.page-link:hover{color:var(--text);background:var(--hover)}
-.page-link.active{color:var(--accent);font-weight:700;border-left-color:var(--accent);background:var(--active-bg)}
-.page-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.5}
-
-/* collapsed sidebar */
-.sidebar.collapsed .sidebar-label,.sidebar.collapsed .api-info,.sidebar.collapsed .api-chevron,
-.sidebar.collapsed .api-pages,.sidebar.collapsed .sidebar-search{display:none}
-.sidebar.collapsed .api-group-header{padding:10px;justify-content:center;border-left:none}
-.sidebar.collapsed .api-group-header.active{background:var(--active-bg)}
-.sidebar.collapsed .api-icon{font-size:18px}
-.sidebar.collapsed .sidebar-header{justify-content:center;padding:10px}
-
-/* ── content panel ── */
-.content{flex:1;overflow-y:auto;padding:32px 40px;background:var(--bg)}
-.content::-webkit-scrollbar{width:6px}
-.content::-webkit-scrollbar-thumb{background:#e0e0e0;border-radius:4px}
-
-/* welcome */
-.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center;padding:40px}
-.welcome-icon{font-size:48px}
-.welcome-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent)}
-.welcome-sub{font-size:12px;color:var(--muted);max-width:380px;line-height:1.8}
-.welcome-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;width:100%;max-width:600px;margin-top:8px}
-.wcard{border:1.5px solid var(--border);border-radius:8px;background:#fff;padding:10px 12px;cursor:pointer;transition:all .12s;text-align:left}
-.wcard:hover{border-color:var(--accent);background:var(--hover)}
-.wcard-icon{font-size:18px;margin-bottom:4px}
-.wcard-name{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--text)}
-.wcard-desc{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.5}
-
-/* doc card */
-.doc-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:28px 32px;max-width:700px}
-.doc-card-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
-.doc-card-icon{font-size:36px;line-height:1;flex-shrink:0}
-.doc-card-meta{flex:1}
-.doc-card-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px}
-.doc-card-tag{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--tag-bg);color:var(--tag-color);font-weight:700;letter-spacing:.06em;display:inline-block;margin-bottom:8px}
-.doc-card-desc{font-size:12px;color:var(--muted);line-height:1.7}
-.open-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .12s;flex-shrink:0;margin-top:4px}
-.open-btn:hover{background:#c9394f}
-.divider{height:1px;background:var(--border);margin:20px 0}
-.pages-title{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-.pages-grid{display:flex;flex-direction:column;gap:6px}
-.page-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;border:1.5px solid var(--border);background:#fafafa;transition:all .12s}
-.page-row:hover{border-color:var(--accent);background:var(--hover)}
-.page-row-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
-.page-row-label{flex:1;font-size:11px;color:var(--text)}
-.page-row-link{font-size:11px;color:var(--accent);text-decoration:none;font-weight:700;white-space:nowrap}
-.page-row-link:hover{text-decoration:underline}
-</style>
-</head>
-<body>
-
-<div class="topbar">
-  <div class="topbar-logo" onclick="showWelcome()" title="← hub menu" style="cursor:pointer">
-    <img src="../assets/pythia-logo.png" alt="pythia" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:18px\'>📚</span>'">
-    <div>
-      <div class="topbar-title">pythia doc hub</div>
-      <div class="topbar-sub">live docs · always current</div>
-    </div>
-  </div>
-  <div class="topbar-divider"></div>
-  <div class="breadcrumb" id="breadcrumb"><span>select a doc to get started</span></div>
-  <a class="topbar-back" href="../index.html">← studio</a>
-</div>
-
-<div class="layout">
-
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <span class="sidebar-label">Docs</span>
-      <button class="collapse-btn" id="collapse-btn" onclick="toggleSidebar()">◀</button>
-    </div>
-    <div class="sidebar-search">
-      <input class="search-inp" id="search-inp" placeholder="🔍 filter…" oninput="renderSidebar(this.value)">
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </div>
-
-  <div class="content" id="content">
-    <div class="welcome" id="welcome">
-      <div class="welcome-icon">📚</div>
-      <div class="welcome-title">pythia doc hub</div>
-      <div class="welcome-sub">Curated live docs for the pythia-for-snowflake stack. Click any entry to open in a new tab.</div>
-      <div class="welcome-grid" id="welcome-grid"></div>
-    </div>
-    <div id="doc-panel" style="display:none"></div>
-  </div>
-
-</div>
-
-<script>
 const DOCS = [
   {
-    id:"sf-core", name:"core API", icon:"❄️", logo:"../assets/snowflake-logo.png", tag:"latest · python",
+    id:"sf-core", name:"core API", icon:"❄️", logo:"../../assets/images/snowflake-logo.png", tag:"latest · python",
     desc:"Snowflake Python API — manage Snowflake objects (databases, schemas, tables, warehouses, tasks…) programmatically via snowflake.core.",
     url:"https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-overview",
     pages:[
@@ -160,7 +9,7 @@ const DOCS = [
     ]
   },
   {
-    id:"snowpark", name:"Snowpark", icon:"🐍", logo:"../assets/snowflake-logo.png", tag:"latest · python",
+    id:"snowpark", name:"Snowpark", icon:"🐍", logo:"../../assets/images/snowflake-logo.png", tag:"latest · python",
     desc:"Snowpark Python — DataFrame API, stored procedures, UDFs and ML pipelines running natively inside Snowflake.",
     url:"https://docs.snowflake.com/en/developer-guide/snowpark/python/index",
     pages:[
@@ -174,7 +23,7 @@ const DOCS = [
     ]
   },
   {
-    id:"streamlit", name:"Streamlit", icon:"🎈", logo:"../assets/streamlit-logo.png", tag:"1.52 · SiS",
+    id:"streamlit", name:"Streamlit", icon:"🎈", logo:"../../assets/images/streamlit-logo.png", tag:"1.52 · SiS",
     desc:"Streamlit API reference and Streamlit in Snowflake (SiS) guide — components, layouts, session state, widgets.",
     url:"https://docs.streamlit.io/develop/api-reference",
     pages:[
@@ -186,7 +35,7 @@ const DOCS = [
     ]
   },
   {
-    id:"telemetry", name:"Telemetry", icon:"📡", logo:"../assets/snowflake-logo.png", tag:"latest · python",
+    id:"telemetry", name:"Telemetry", icon:"📡", logo:"../../assets/images/snowflake-logo.png", tag:"latest · python",
     desc:"Snowflake event tables, OpenTelemetry tracing and logging for Snowpark stored procedures and UDFs.",
     url:"https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-tracing-overview",
     pages:[
@@ -197,7 +46,7 @@ const DOCS = [
     ]
   },
   {
-    id:"python", name:"Python 3.11", icon:"🐍", logo:"../assets/python-logo.png", tag:"3.11 · stdlib",
+    id:"python", name:"Python 3.11", icon:"🐍", logo:"../../assets/images/python-logo.png", tag:"3.11 · stdlib",
     desc:"Python 3.11 standard library — the version pinned across the pythia-for-snowflake suite.",
     url:"https://docs.python.org/3.11/library/index.html",
     pages:[
@@ -255,7 +104,7 @@ const DOCS = [
     ]
   },
   {
-    id:"anthropic", name:"Anthropic", icon:"🤖", logo:"../assets/anthropic-logo-orange.png", tag:"latest · API",
+    id:"anthropic", name:"Anthropic", icon:"🤖", logo:"../../assets/images/anthropic-logo-orange.png", tag:"latest · API",
     desc:"Anthropic Claude API — models, tool use, Claude Code CLI and SDK for building AI-powered workflows.",
     url:"https://docs.anthropic.com/en/api/getting-started",
     pages:[
@@ -362,7 +211,6 @@ function showDoc(id){
       </div>
       ${doc.pages.length?`<div class="divider"></div><div class="pages-title">Pages</div><div class="pages-grid">${pagesHtml}</div>`:''}
     </div>`;
-  // update breadcrumb
   document.getElementById('breadcrumb').innerHTML=`<span>${doc.name}</span>`;
   renderSidebar(document.getElementById('search-inp').value);
 }
@@ -374,6 +222,3 @@ function toggleSidebar(){
 }
 
 renderSidebar();
-</script>
-</body>
-</html>

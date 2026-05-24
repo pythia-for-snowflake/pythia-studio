@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧠 Snowflake Dev — Env Generator</title>
+<link rel="stylesheet" href="../../app.css">
+<link rel="stylesheet" href="./app.css">
+</head>
+<body>
+<div style="max-width:960px;margin:0 auto">
+
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:3px">
+  <img src="../../assets/images/pythia-logo.png" alt="" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:22px\'>🧠</span>'">
+  <h1>snowflake dev — env generator</h1>
+  <a href="../../index.html" class="back-btn">← studio</a>
+</div>
+<p class="sub">conda environment · dependencies · pre-commit hooks · commit convention · offline docs</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="setTab('env',this)">⚙️ Environment</button>
+  <button class="tab"        onclick="setTab('mapping',this)">🗺️ Emoji ↔ Type</button>
+  <button class="tab"        onclick="setTab('commit',this)">✍️ Commit-msg</button>
+  <button class="tab"        onclick="setTab('gitmoji',this)">😄 Gitmojis</button>
+  <button class="tab"        onclick="setTab('docs',this)">📚 Offline docs</button>
+  <button class="tab"        onclick="setTab('guide',this)">🚀 First repo</button>
+  <button class="tab"        onclick="setTab('structure',this)">📁 Structure</button>
+</div>
+
+<!-- ═══ ENV ═══ -->
+<div id="panel-env" class="panel active">
+<div class="g2">
+<div>
+  <div class="profile-switch">
+    <button class="profile-btn active" id="btn-pkg" onclick="setProfile('package')">
+      📦 Python package<br><span style="font-size:10px;font-weight:400;color:#aaa">src/ layout — snowflake-kit, provider, tools</span>
+    </button>
+    <button class="profile-btn" id="btn-data" onclick="setProfile('data-project')">
+      🗄️ Data project<br><span style="font-size:10px;font-weight:400;color:#aaa">resources/ layout — template & instances</span>
+    </button>
+  </div>
+
+  <div class="sec">conda environment name</div>
+  <input class="inp" id="env-name" value="snowflake-kit" oninput="render()" placeholder="my-env">
+
+  <div class="blk"><span>📦 Project dependencies</span><button class="tgl" onclick="toggleAll('deps')">Select all</button></div>
+  <div class="row locked">
+    <div class="cb lk"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="iname">snowflake-core <span class="tag tag-b">base</span></div><div class="idesc">Snowflake Python Core API</div></div>
+  </div>
+  <div class="row locked">
+    <div class="cb lk"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="iname">snowflake-snowpark-python <span class="tag tag-b">base</span></div><div class="idesc">Snowpark Python (DataFrames, UDFs, sprocs)</div></div>
+  </div>
+  <div class="row locked">
+    <div class="cb lk"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="iname">snowflake-telemetry-python <span class="tag tag-b">base</span></div><div class="idesc">Tracing & telemetry events</div></div>
+  </div>
+  <div id="deps-list"></div>
+
+  <div class="divider"></div>
+  <div class="blk"><span>🪝 Pre-commit hooks</span><button class="tgl" onclick="toggleAll('hooks')">Select all</button></div>
+  <div id="hooks-list"></div>
+</div>
+<div>
+  <div class="sec">Generated commands</div>
+  <div id="badges-env" style="margin-bottom:14px"></div>
+  <div class="sl">Full script</div>
+  <div class="cmd" id="cmd-full"><button class="cpb" onclick="cpCmd('cmd-full',this)">copy</button></div>
+  <div class="divider"></div>
+  <div style="font-size:11px;color:#bbb;margin-bottom:8px">Step by step</div>
+  <div class="sl">1. Create env</div><div class="cmd" id="cmd-create"><button class="cpb" onclick="cpCmd('cmd-create',this)">copy</button></div>
+  <div class="sl">2. Project dependencies</div><div class="cmd" id="cmd-proj"><button class="cpb" onclick="cpCmd('cmd-proj',this)">copy</button></div>
+  <div class="sl">3. pre-commit + hook libs</div><div class="cmd" id="cmd-hooks"><button class="cpb" onclick="cpCmd('cmd-hooks',this)">copy</button></div>
+  <div class="sl">4. Activate hooks</div><div class="cmd" id="cmd-install"><button class="cpb" onclick="cpCmd('cmd-install',this)">copy</button></div>
+  <div class="sbox"><div class="sec" style="margin-bottom:7px">Packages summary</div><div id="pkg-sum"></div></div>
+</div>
+</div>
+</div>
+
+<!-- ═══ MAPPING ═══ -->
+<div id="panel-mapping" class="panel">
+<div class="g2">
+<div>
+  <div class="blk"><span>🗺️ Emoji ↔ Type mapping</span><button class="tgl" onclick="addTypePrompt()">+ New type</button></div>
+  <div class="ib y" style="margin-top:0;margin-bottom:12px;font-size:10.5px">
+    Each emoji belongs to <strong>exactly one type</strong>. The hook validates the combination.<br>
+    Click an emoji to add/remove. A greyed emoji is already used by another type.
+  </div>
+  <div id="new-type-row" style="display:none;margin-bottom:10px">
+    <div class="add-row">
+      <input class="add-inp" id="new-type-inp" placeholder="Type name (e.g. hotfix)" onkeydown="if(event.key==='Enter')confirmAddType()">
+      <button class="add-btn" onclick="confirmAddType()">Add</button>
+      <button class="tgl" onclick="cancelAddType()">Cancel</button>
+    </div>
+  </div>
+  <table class="maptable">
+    <thead><tr><th style="width:110px">Type</th><th>Allowed emojis</th><th style="width:32px"></th></tr></thead>
+    <tbody id="map-tbody"></tbody>
+  </table>
+</div>
+<div>
+  <div class="blk">👁️ Mapping preview</div>
+  <div class="ib y" style="margin-top:0;margin-bottom:10px;font-size:10.5px">
+    The hook validates: the emoji must match the declared type exactly.
+  </div>
+  <div id="map-preview"></div>
+  <div class="divider"></div>
+  <div class="blk">📊 Coverage</div>
+  <div id="map-coverage"></div>
+</div>
+</div>
+</div>
+
+<!-- ═══ COMMIT-MSG ═══ -->
+<div id="panel-commit" class="panel">
+<div class="g2">
+<div>
+  <div class="blk">📂 Scopes</div>
+  <div class="tag-list" id="scopes-list"></div>
+  <div class="add-row">
+    <input class="add-inp" id="scope-inp" placeholder="e.g. api" onkeydown="if(event.key==='Enter')addTag('scopes','scope-inp')">
+    <button class="add-btn" onclick="addTag('scopes','scope-inp')">+ Add</button>
+  </div>
+  <div class="divider"></div>
+  <div class="blk">🎫 Ticket prefixes</div>
+  <div class="tag-list" id="tickets-list"></div>
+  <div class="add-row">
+    <input class="add-inp" id="ticket-inp" placeholder="e.g. JIRA" onkeydown="if(event.key==='Enter')addTag('tickets','ticket-inp')">
+    <button class="add-btn" onclick="addTag('tickets','ticket-inp')">+ Add</button>
+  </div>
+  <div class="divider"></div>
+  <div class="blk">💾 Special case "save"</div>
+  <div class="row on-t" style="cursor:default">
+    <div class="cb t"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="iname t">💾 save: &lt;desc&gt; [skip ci]</div><div class="idesc">Always included — WIP commit without triggering CI</div></div>
+  </div>
+  <div class="divider"></div>
+  <div class="ib y" style="margin-top:0">
+    <strong>Expected format</strong><br>
+    <code style="background:#fef3c7">&lt;emoji&gt; &lt;type&gt;(&lt;scope&gt;): &lt;description&gt;</code><br>
+    <span style="font-size:10px">scope and ticket are optional · emoji determines the allowed type</span>
+  </div>
+</div>
+<div>
+  <div class="sec">Generated hook</div>
+  <div class="cmd" id="cmd-hook"><button class="cpb" onclick="cpCmd('cmd-hook',this)">copy</button></div>
+  <div class="sl" style="margin-top:10px">Installation</div>
+  <div class="cmd" id="cmd-hook-install"><button class="cpb" onclick="cpCmd('cmd-hook-install',this)">copy</button></div>
+  <div class="ib t">
+    <strong>💡 Two installation methods</strong><br>
+    <strong>A)</strong> <code class="t">git config core.hooksPath scripts/hooks</code><br>
+    <strong>B)</strong> <code class="t">pre-commit install --hook-type commit-msg</code>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ GITMOJI ═══ -->
+<div id="panel-gitmoji" class="panel">
+<div class="g2">
+<div>
+  <div class="blk">🔍 All gitmojis</div>
+  <input class="inp" id="gm-search" placeholder="Search by description…" oninput="renderGmTable()" style="margin-bottom:10px">
+  <table class="gmt"><thead><tr><th>Emoji</th><th>Usage</th><th>Assigned type</th></tr></thead><tbody id="gm-table"></tbody></table>
+</div>
+<div>
+  <div class="blk">✅ Emojis used in mapping</div>
+  <div id="gm-used-panel"></div>
+</div>
+</div>
+</div>
+
+<!-- ═══ DOCS ═══ -->
+<div id="panel-docs" class="panel">
+<div class="g2">
+<div>
+  <div class="blk">🐍 Python modules to document</div>
+  <div style="font-size:11px;color:#aaa;margin-bottom:8px;line-height:1.5">Doc generated locally from installed source — browsable offline.</div>
+  <div id="docs-modules"></div>
+  <div class="divider"></div>
+  <div class="blk">🔧 Documentation tool</div>
+  <div id="doc-tools"></div>
+  <div class="divider"></div>
+  <div class="blk">🌐 External APIs</div>
+  <div style="font-size:11px;color:#aaa;margin-bottom:8px;line-height:1.5">Specs in <code>docs/api/</code> alongside the code that uses them (Swagger, WSDL, XSD).</div>
+  <div id="ext-apis"></div>
+</div>
+<div>
+  <div class="sec">Generated commands</div>
+  <div class="sl">Generate Python offline docs</div>
+  <div class="cmd" id="cmd-docs-py"><button class="cpb" onclick="cpCmd('cmd-docs-py',this)">copy</button></div>
+  <div id="cmd-api-block" style="display:none">
+    <div class="sl">Integrate external API specs</div>
+    <div class="cmd" id="cmd-docs-api"><button class="cpb" onclick="cpCmd('cmd-docs-api',this)">copy</button></div>
+  </div>
+  <div class="ib t">
+    <strong>💡 Convention</strong><br>
+    📁 <code class="t">docs/api/snowflake-core/</code> → Python offline doc<br>
+    📁 <code class="t">docs/api/snowpark/</code> → Snowpark offline doc<br>
+    📁 <code class="t">docs/api/&lt;service&gt;/</code> → swagger / wsdl / xsd
+  </div>
+  <div class="ib t" style="margin-top:8px">
+    <strong>🌐 Serve locally</strong>
+    <div class="cmd" style="margin-top:7px;background:#e8fdf8;border-color:#99f6e4">python -m http.server 8080 --directory docs/api/<button class="cpb" onclick="cpTxt('python -m http.server 8080 --directory docs/api/',this)">copy</button></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ GUIDE ═══ -->
+<div id="panel-guide" class="panel">
+<div style="display:flex;gap:8px;margin-bottom:16px">
+  <button class="tgl" id="guide-gh-btn" onclick="setGuide('gh')" style="border-color:#60defb;color:#60defb">🐙 GitHub</button>
+  <button class="tgl" id="guide-gl-btn" onclick="setGuide('gl')">🦊 GitLab</button>
+</div>
+<div id="guide-content"></div>
+</div>
+
+<!-- ═══ STRUCTURE ═══ -->
+<div id="panel-structure" class="panel">
+<div class="g2">
+<div>
+  <div class="blk">📁 Project structure</div>
+  <div style="font-size:11px;color:#aaa;margin-bottom:10px;line-height:1.5">
+    Switch between profiles above to see the matching layout.
+  </div>
+  <div class="cmd" id="struct-tree"><button class="cpb" onclick="cpCmd('struct-tree',this)">copy</button></div>
+  <div class="divider"></div>
+  <div class="blk">🔗 Path ↔ purpose</div>
+  <div id="path-map"></div>
+</div>
+<div>
+  <div class="blk">📋 pyproject.toml</div>
+  <div class="cmd" id="pyproject-block"><button class="cpb" onclick="cpCmd('pyproject-block',this)">copy</button></div>
+  <div class="blk">📋 .gitignore</div>
+  <div class="cmd" id="gitignore-block"><button class="cpb" onclick="cpCmd('gitignore-block',this)">copy</button></div>
+  <div class="ib y"><strong>💡 docs/api/ — two conventions</strong><br>Ignore generated HTML (lighter repo) · or version it for offline-first teams (e.g. snowflake-kit).</div>
+</div>
+</div>
+</div>
+
+</div>
+<script src="./app.js"></script>
+</body>
+</html>

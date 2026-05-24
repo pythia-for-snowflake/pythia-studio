@@ -1,347 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🧠 Snowflake Dev — Env Generator</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Courier New',monospace;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:24px 16px 60px}
-h1{font-size:18px;font-weight:700;color:#60defb;letter-spacing:-.02em}
-.sub{color:#bbb;font-size:12px;margin-top:3px}
-.tabs{display:flex;flex-wrap:wrap;background:#fff;border-radius:8px 8px 0 0;margin-top:18px;border-bottom:2px solid #e0e0e0}
-.tab{padding:10px 14px;font-size:11.5px;font-weight:500;cursor:pointer;border:none;background:none;font-family:inherit;color:#888;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .12s;white-space:nowrap}
-.tab:hover{color:#1a1a1a}
-.tab.active{color:#60defb;border-bottom-color:#60defb;background:#f0fdff;font-weight:700}
-.panel{display:none;padding:20px 0 0}.panel.active{display:block}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-@media(max-width:680px){.g2{grid-template-columns:1fr}}
-.sec{font-size:10px;letter-spacing:.12em;color:#bbb;text-transform:uppercase;margin-bottom:7px}
-.blk{font-size:12px;font-weight:700;color:#555;margin:16px 0 8px;display:flex;justify-content:space-between;align-items:center}
-.blk:first-child{margin-top:0}
-.cat{font-size:11px;color:#ccc;margin-bottom:4px;padding-left:2px}
-.divider{height:1px;background:#eee;margin:14px 0}
-.inp{background:#fff;border:1.5px solid #e0e0e0;border-radius:6px;color:#1a1a1a;font-family:inherit;font-size:13px;padding:7px 11px;width:100%;outline:none;transition:border .12s}
-.inp:focus{border-color:#60defb}
-.row{display:flex;align-items:flex-start;gap:9px;padding:7px 11px;border-radius:6px;cursor:pointer;border:1px solid transparent;margin-bottom:3px;transition:all .12s;user-select:none}
-.row:hover:not(.locked){background:#f0fdff;border-color:#b8f4ff}
-.row.on-p{background:#f0fdff;border-color:#60defb}
-.row.on-t{background:#f0fdfa;border-color:#0f766e}
-.row.locked{cursor:default;background:#fafafa;border-color:#e8e8e8}
-.cb{width:15px;height:15px;border:1.5px solid #ccc;border-radius:3px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;background:#fff;transition:all .12s}
-.cb.p{background:#60defb;border-color:#60defb}
-.cb.t{background:#0f766e;border-color:#0f766e}
-.cb.lk{background:#e8e8e8;border-color:#ccc}
-.radio{width:15px;height:15px;border:1.5px solid #ccc;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;background:#fff}
-.radio.on{border-color:#0f766e}
-.rdot{width:8px;height:8px;border-radius:50%;background:#0f766e}
-.iname{font-size:12px;color:#555;font-weight:400}
-.iname.p{color:#60defb;font-weight:700}
-.iname.t{color:#0f766e;font-weight:700}
-.idesc{font-size:11px;color:#bbb;margin-top:1px}
-.idet{font-size:10px;color:#ccc;margin-top:1px}
-.tag{display:inline-block;background:#f2f2f2;border:1px solid #e0e0e0;border-radius:3px;padding:1px 5px;font-size:10px;color:#aaa;margin-left:5px}
-.tag-b{background:#f0fdff;border-color:#b8f4ff;color:#60defb}
-.sl{font-size:11px;color:#bbb;margin-bottom:2px;margin-top:10px}
-.cmd{background:#fff;border:1px solid #e8e8e8;border-radius:7px;padding:12px 46px 12px 14px;font-size:11px;color:#333;position:relative;white-space:pre-wrap;word-break:break-all;line-height:1.75;margin-bottom:4px}
-.cpb{position:absolute;top:8px;right:8px;background:#f5f5f5;border:1px solid #e0e0e0;color:#999;padding:3px 9px;border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;transition:all .12s}
-.cpb:hover,.cpb.ok{background:#f0fdff;border-color:#60defb;color:#60defb}
-.badge{display:inline-block;background:#f0fdff;border:1px solid #b8f4ff;color:#60defb;border-radius:3px;padding:2px 7px;font-size:11px;margin:0 4px 4px 0}
-.badge-t{background:#f0fdfa;border:1px solid #99f6e4;color:#0f766e}
-.tgl{background:#fff;border:1px solid #e0e0e0;color:#aaa;padding:2px 9px;border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;transition:all .12s}
-.tgl:hover{border-color:#60defb;color:#60defb;background:#f0fdff}
-.pkg{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;margin:2px}
-.pkg-b{background:#f0f0f0;border:1px solid #e0e0e0;color:#666}
-.pkg-h{background:#f0fdff;border:1px solid #b8f4ff;color:#60defb}
-.ib{padding:11px 13px;border-radius:7px;font-size:11px;line-height:1.6;margin-top:10px}
-.ib.t{background:#f0fdfa;border:1px solid #99f6e4;color:#0f766e}
-.ib.p{background:#f0fdff;border:1px solid #b8f4ff;color:#c0395a}
-.ib.y{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
-code{background:#f0f0f0;padding:0 3px;border-radius:2px;font-family:inherit;font-size:10px}
-code.t{background:#d1fae5}
-.sbox{padding:11px 13px;background:#fff;border:1px solid #eee;border-radius:7px;margin-top:12px}
-.etag{display:inline-flex;align-items:center;gap:4px;background:#f0f0f0;border:1px solid #ddd;border-radius:4px;padding:2px 7px;font-size:11px}
-.etag .x{cursor:pointer;color:#aaa;font-size:13px;line-height:1}
-.etag .x:hover{color:#60defb}
-.tag-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
-.add-row{display:flex;gap:6px;margin-top:8px}
-.add-inp{flex:1;font-family:inherit;font-size:11px;padding:4px 8px;border:1px solid #e0e0e0;border-radius:4px;outline:none}
-.add-inp:focus{border-color:#60defb}
-.add-btn{background:#60defb;color:#fff;border:none;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit}
-.add-btn:hover{background:#c9394f}
-/* Profile switcher */
-.profile-switch{display:flex;gap:8px;margin-bottom:16px;padding:12px 14px;background:#fff;border:1px solid #eee;border-radius:8px}
-.profile-btn{flex:1;padding:8px 12px;border-radius:6px;border:1.5px solid #e0e0e0;cursor:pointer;font-family:inherit;font-size:11px;font-weight:500;color:#888;background:#fff;transition:all .12s;text-align:center}
-.profile-btn:hover{border-color:#60defb;color:#60defb}
-.profile-btn.active{border-color:#60defb;color:#60defb;background:#f0fdff;font-weight:700}
-/* Mapping table */
-.maptable{width:100%;border-collapse:collapse;font-size:11.5px}
-.maptable th{text-align:left;padding:7px 10px;border-bottom:2px solid #e0e0e0;color:#888;font-size:10px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
-.maptable td{padding:6px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
-.maptable tr:hover td{background:#fafafa}
-.type-badge{display:inline-block;background:#f0f0f0;border:1px solid #e0e0e0;border-radius:4px;padding:2px 8px;font-size:11px;color:#555;font-weight:600;min-width:80px;text-align:center}
-.em-btn{font-size:17px;cursor:pointer;border-radius:5px;padding:2px 4px;border:1.5px solid transparent;transition:all .1s;line-height:1;background:none}
-.em-btn:hover{background:#f0fdff;border-color:#b8f4ff}
-.em-btn.sel{background:#f0fdff;border-color:#60defb}
-.picker-wrap{position:relative;display:inline-block}
-.picker-popup{display:none;position:absolute;top:100%;left:0;z-index:100;background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:10px;box-shadow:0 4px 16px rgba(0,0,0,.1);min-width:280px}
-.picker-popup.open{display:block}
-.picker-search{width:100%;font-family:inherit;font-size:11px;padding:4px 8px;border:1px solid #e0e0e0;border-radius:4px;outline:none;margin-bottom:8px}
-.picker-search:focus{border-color:#60defb}
-.picker-grid{display:flex;flex-wrap:wrap;gap:3px;max-height:180px;overflow-y:auto}
-.pg-btn{font-size:18px;cursor:pointer;border-radius:4px;padding:3px 4px;border:1.5px solid transparent;background:none;transition:all .1s;line-height:1}
-.pg-btn:hover{background:#f0fdff;border-color:#b8f4ff}
-.pg-btn.sel{background:#f0fdff;border-color:#60defb}
-.pg-btn.used{opacity:.3;cursor:not-allowed}
-.gmt{width:100%;border-collapse:collapse;font-size:11px}
-.gmt th{text-align:left;padding:6px 8px;border-bottom:2px solid #e0e0e0;color:#888;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
-.gmt td{padding:5px 8px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
-.gmt tr:hover td{background:#f9f9f9}
-.gmt tr.gsel td{background:#f0fdff}
-.step{display:flex;gap:12px;margin-bottom:14px}
-.step-num{width:24px;height:24px;border-radius:50%;background:#60defb;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.step-body{flex:1}
-.step-title{font-size:12px;font-weight:700;color:#333;margin-bottom:3px}
-.step-desc{font-size:11px;color:#888;line-height:1.5;margin-bottom:4px}
-.pmap{display:flex;align-items:center;gap:9px;margin-bottom:5px}
-</style>
-</head>
-<body>
-<div style="max-width:960px;margin:0 auto">
-
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:3px">
-  <img src="../assets/pythia-logo.png" alt="" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:22px\'>🧠</span>'">
-  <h1>snowflake dev — env generator</h1>
-  <a href="../index.html" style="margin-left:auto;font-size:11px;color:#bbb;text-decoration:none;padding:3px 10px;border:1.5px solid #e0e0e0;border-radius:5px;white-space:nowrap" onmouseover="this.style.borderColor='#60defb';this.style.color='#60defb'" onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#bbb'">← studio</a>
-</div>
-<p class="sub">conda environment · dependencies · pre-commit hooks · commit convention · offline docs</p>
-
-<div class="tabs">
-  <button class="tab active" onclick="setTab('env',this)">⚙️ Environment</button>
-  <button class="tab"        onclick="setTab('mapping',this)">🗺️ Emoji ↔ Type</button>
-  <button class="tab"        onclick="setTab('commit',this)">✍️ Commit-msg</button>
-  <button class="tab"        onclick="setTab('gitmoji',this)">😄 Gitmojis</button>
-  <button class="tab"        onclick="setTab('docs',this)">📚 Offline docs</button>
-  <button class="tab"        onclick="setTab('guide',this)">🚀 First repo</button>
-  <button class="tab"        onclick="setTab('structure',this)">📁 Structure</button>
-</div>
-
-<!-- ═══ ENV ═══ -->
-<div id="panel-env" class="panel active">
-<div class="g2">
-<div>
-  <!-- Profile switcher -->
-  <div class="profile-switch">
-    <button class="profile-btn active" id="btn-pkg" onclick="setProfile('package')">
-      📦 Python package<br><span style="font-size:10px;font-weight:400;color:#aaa">src/ layout — snowflake-kit, provider, tools</span>
-    </button>
-    <button class="profile-btn" id="btn-data" onclick="setProfile('data-project')">
-      🗄️ Data project<br><span style="font-size:10px;font-weight:400;color:#aaa">resources/ layout — template & instances</span>
-    </button>
-  </div>
-
-  <div class="sec">conda environment name</div>
-  <input class="inp" id="env-name" value="snowflake-kit" oninput="render()" placeholder="my-env">
-
-  <div class="blk"><span>📦 Project dependencies</span><button class="tgl" onclick="toggleAll('deps')">Select all</button></div>
-  <div class="row locked">
-    <div class="cb lk"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div><div class="iname">snowflake-core <span class="tag tag-b">base</span></div><div class="idesc">Snowflake Python Core API</div></div>
-  </div>
-  <div class="row locked">
-    <div class="cb lk"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div><div class="iname">snowflake-snowpark-python <span class="tag tag-b">base</span></div><div class="idesc">Snowpark Python (DataFrames, UDFs, sprocs)</div></div>
-  </div>
-  <div class="row locked">
-    <div class="cb lk"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div><div class="iname">snowflake-telemetry-python <span class="tag tag-b">base</span></div><div class="idesc">Tracing & telemetry events</div></div>
-  </div>
-  <div id="deps-list"></div>
-
-  <div class="divider"></div>
-  <div class="blk"><span>🪝 Pre-commit hooks</span><button class="tgl" onclick="toggleAll('hooks')">Select all</button></div>
-  <div id="hooks-list"></div>
-</div>
-<div>
-  <div class="sec">Generated commands</div>
-  <div id="badges-env" style="margin-bottom:14px"></div>
-  <div class="sl">Full script</div>
-  <div class="cmd" id="cmd-full"><button class="cpb" onclick="cpCmd('cmd-full',this)">copy</button></div>
-  <div class="divider"></div>
-  <div style="font-size:11px;color:#bbb;margin-bottom:8px">Step by step</div>
-  <div class="sl">1. Create env</div><div class="cmd" id="cmd-create"><button class="cpb" onclick="cpCmd('cmd-create',this)">copy</button></div>
-  <div class="sl">2. Project dependencies</div><div class="cmd" id="cmd-proj"><button class="cpb" onclick="cpCmd('cmd-proj',this)">copy</button></div>
-  <div class="sl">3. pre-commit + hook libs</div><div class="cmd" id="cmd-hooks"><button class="cpb" onclick="cpCmd('cmd-hooks',this)">copy</button></div>
-  <div class="sl">4. Activate hooks</div><div class="cmd" id="cmd-install"><button class="cpb" onclick="cpCmd('cmd-install',this)">copy</button></div>
-  <div class="sbox"><div class="sec" style="margin-bottom:7px">Packages summary</div><div id="pkg-sum"></div></div>
-</div>
-</div>
-</div>
-
-<!-- ═══ MAPPING ═══ -->
-<div id="panel-mapping" class="panel">
-<div class="g2">
-<div>
-  <div class="blk"><span>🗺️ Emoji ↔ Type mapping</span><button class="tgl" onclick="addTypePrompt()">+ New type</button></div>
-  <div class="ib y" style="margin-top:0;margin-bottom:12px;font-size:10.5px">
-    Each emoji belongs to <strong>exactly one type</strong>. The hook validates the combination.<br>
-    Click an emoji to add/remove. A greyed emoji is already used by another type.
-  </div>
-  <div id="new-type-row" style="display:none;margin-bottom:10px">
-    <div class="add-row">
-      <input class="add-inp" id="new-type-inp" placeholder="Type name (e.g. hotfix)" onkeydown="if(event.key==='Enter')confirmAddType()">
-      <button class="add-btn" onclick="confirmAddType()">Add</button>
-      <button class="tgl" onclick="cancelAddType()">Cancel</button>
-    </div>
-  </div>
-  <table class="maptable">
-    <thead><tr><th style="width:110px">Type</th><th>Allowed emojis</th><th style="width:32px"></th></tr></thead>
-    <tbody id="map-tbody"></tbody>
-  </table>
-</div>
-<div>
-  <div class="blk">👁️ Mapping preview</div>
-  <div class="ib y" style="margin-top:0;margin-bottom:10px;font-size:10.5px">
-    The hook validates: the emoji must match the declared type exactly.
-  </div>
-  <div id="map-preview"></div>
-  <div class="divider"></div>
-  <div class="blk">📊 Coverage</div>
-  <div id="map-coverage"></div>
-</div>
-</div>
-</div>
-
-<!-- ═══ COMMIT-MSG ═══ -->
-<div id="panel-commit" class="panel">
-<div class="g2">
-<div>
-  <div class="blk">📂 Scopes</div>
-  <div class="tag-list" id="scopes-list"></div>
-  <div class="add-row">
-    <input class="add-inp" id="scope-inp" placeholder="e.g. api" onkeydown="if(event.key==='Enter')addTag('scopes','scope-inp')">
-    <button class="add-btn" onclick="addTag('scopes','scope-inp')">+ Add</button>
-  </div>
-  <div class="divider"></div>
-  <div class="blk">🎫 Ticket prefixes</div>
-  <div class="tag-list" id="tickets-list"></div>
-  <div class="add-row">
-    <input class="add-inp" id="ticket-inp" placeholder="e.g. JIRA" onkeydown="if(event.key==='Enter')addTag('tickets','ticket-inp')">
-    <button class="add-btn" onclick="addTag('tickets','ticket-inp')">+ Add</button>
-  </div>
-  <div class="divider"></div>
-  <div class="blk">💾 Special case "save"</div>
-  <div class="row on-t" style="cursor:default">
-    <div class="cb t"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div><div class="iname t">💾 save: &lt;desc&gt; [skip ci]</div><div class="idesc">Always included — WIP commit without triggering CI</div></div>
-  </div>
-  <div class="divider"></div>
-  <div class="ib y" style="margin-top:0">
-    <strong>Expected format</strong><br>
-    <code style="background:#fef3c7">&lt;emoji&gt; &lt;type&gt;(&lt;scope&gt;): &lt;description&gt;</code><br>
-    <span style="font-size:10px">scope and ticket are optional · emoji determines the allowed type</span>
-  </div>
-</div>
-<div>
-  <div class="sec">Generated hook</div>
-  <div class="cmd" id="cmd-hook"><button class="cpb" onclick="cpCmd('cmd-hook',this)">copy</button></div>
-  <div class="sl" style="margin-top:10px">Installation</div>
-  <div class="cmd" id="cmd-hook-install"><button class="cpb" onclick="cpCmd('cmd-hook-install',this)">copy</button></div>
-  <div class="ib t">
-    <strong>💡 Two installation methods</strong><br>
-    <strong>A)</strong> <code class="t">git config core.hooksPath scripts/hooks</code><br>
-    <strong>B)</strong> <code class="t">pre-commit install --hook-type commit-msg</code>
-  </div>
-</div>
-</div>
-</div>
-
-<!-- ═══ GITMOJI ═══ -->
-<div id="panel-gitmoji" class="panel">
-<div class="g2">
-<div>
-  <div class="blk">🔍 All gitmojis</div>
-  <input class="inp" id="gm-search" placeholder="Search by description…" oninput="renderGmTable()" style="margin-bottom:10px">
-  <table class="gmt"><thead><tr><th>Emoji</th><th>Usage</th><th>Assigned type</th></tr></thead><tbody id="gm-table"></tbody></table>
-</div>
-<div>
-  <div class="blk">✅ Emojis used in mapping</div>
-  <div id="gm-used-panel"></div>
-</div>
-</div>
-</div>
-
-<!-- ═══ DOCS ═══ -->
-<div id="panel-docs" class="panel">
-<div class="g2">
-<div>
-  <div class="blk">🐍 Python modules to document</div>
-  <div style="font-size:11px;color:#aaa;margin-bottom:8px;line-height:1.5">Doc generated locally from installed source — browsable offline.</div>
-  <div id="docs-modules"></div>
-  <div class="divider"></div>
-  <div class="blk">🔧 Documentation tool</div>
-  <div id="doc-tools"></div>
-  <div class="divider"></div>
-  <div class="blk">🌐 External APIs</div>
-  <div style="font-size:11px;color:#aaa;margin-bottom:8px;line-height:1.5">Specs in <code>docs/api/</code> alongside the code that uses them (Swagger, WSDL, XSD).</div>
-  <div id="ext-apis"></div>
-</div>
-<div>
-  <div class="sec">Generated commands</div>
-  <div class="sl">Generate Python offline docs</div>
-  <div class="cmd" id="cmd-docs-py"><button class="cpb" onclick="cpCmd('cmd-docs-py',this)">copy</button></div>
-  <div id="cmd-api-block" style="display:none">
-    <div class="sl">Integrate external API specs</div>
-    <div class="cmd" id="cmd-docs-api"><button class="cpb" onclick="cpCmd('cmd-docs-api',this)">copy</button></div>
-  </div>
-  <div class="ib t">
-    <strong>💡 Convention</strong><br>
-    📁 <code class="t">docs/api/snowflake-core/</code> → Python offline doc<br>
-    📁 <code class="t">docs/api/snowpark/</code> → Snowpark offline doc<br>
-    📁 <code class="t">docs/api/&lt;service&gt;/</code> → swagger / wsdl / xsd
-  </div>
-  <div class="ib t" style="margin-top:8px">
-    <strong>🌐 Serve locally</strong>
-    <div class="cmd" style="margin-top:7px;background:#e8fdf8;border-color:#99f6e4">python -m http.server 8080 --directory docs/api/<button class="cpb" onclick="cpTxt('python -m http.server 8080 --directory docs/api/',this)">copy</button></div>
-  </div>
-</div>
-</div>
-</div>
-
-<!-- ═══ GUIDE ═══ -->
-<div id="panel-guide" class="panel">
-<div style="display:flex;gap:8px;margin-bottom:16px">
-  <button class="tgl" id="guide-gh-btn" onclick="setGuide('gh')" style="border-color:#60defb;color:#60defb">🐙 GitHub</button>
-  <button class="tgl" id="guide-gl-btn" onclick="setGuide('gl')">🦊 GitLab</button>
-</div>
-<div id="guide-content"></div>
-</div>
-
-<!-- ═══ STRUCTURE ═══ -->
-<div id="panel-structure" class="panel">
-<div class="g2">
-<div>
-  <div class="blk">📁 Project structure</div>
-  <div style="font-size:11px;color:#aaa;margin-bottom:10px;line-height:1.5">
-    Switch between profiles above to see the matching layout.
-  </div>
-  <div class="cmd" id="struct-tree"><button class="cpb" onclick="cpCmd('struct-tree',this)">copy</button></div>
-  <div class="divider"></div>
-  <div class="blk">🔗 Path ↔ purpose</div>
-  <div id="path-map"></div>
-</div>
-<div>
-  <div class="blk">📋 pyproject.toml</div>
-  <div class="cmd" id="pyproject-block"><button class="cpb" onclick="cpCmd('pyproject-block',this)">copy</button></div>
-  <div class="blk">📋 .gitignore</div>
-  <div class="cmd" id="gitignore-block"><button class="cpb" onclick="cpCmd('gitignore-block',this)">copy</button></div>
-  <div class="ib y"><strong>💡 docs/api/ — two conventions</strong><br>Ignore generated HTML (lighter repo) · or version it for offline-first teams (e.g. snowflake-kit).</div>
-</div>
-</div>
-</div>
-
-</div>
-<script>
 const PY="3.11", SF="1.12.0";
 const chk=w=>`<svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="${w}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const name=()=>(document.getElementById('env-name')?.value||'my-env').replace(/\s/g,'-')||'my-env';
@@ -460,7 +116,6 @@ const EXT_APIS=[
   {id:"graphql", label:"GraphQL schema",            ext:".graphql",        tool:"graphdoc",           cmd:f=>`npx graphdoc -s ${f} -o docs/api/graphql/`},
 ];
 
-// Profile structures
 const PROFILES = {
   package: {
     name: n => n,
@@ -524,7 +179,6 @@ const S={
   tickets: ["Closes","Refs"],
 };
 
-// helpers
 const setText=(id,txt)=>{const el=document.getElementById(id);if(!el)return;const btn=el.querySelector('.cpb');el.textContent=txt;if(btn)el.appendChild(btn);};
 function cpCmd(id,btn){const el=document.getElementById(id);navigator.clipboard.writeText((el.childNodes[0]?.textContent||el.textContent).trim());btn.textContent="✓ copied";btn.classList.add('ok');setTimeout(()=>{btn.textContent="copy";btn.classList.remove('ok');},1800);}
 function cpTxt(t,btn){navigator.clipboard.writeText(t);btn.textContent="✓ copied";btn.classList.add('ok');setTimeout(()=>{btn.textContent="copy";btn.classList.remove('ok');},1800);}
@@ -539,7 +193,6 @@ function setProfile(p){
   S.profile=p;
   document.getElementById('btn-pkg').classList.toggle('active',p==='package');
   document.getElementById('btn-data').classList.toggle('active',p==='data-project');
-  // update env name suggestion
   const inp=document.getElementById('env-name');
   if(inp.value==='snowflake-kit'||inp.value==='my-data-project'){
     inp.value=p==='package'?'snowflake-kit':'my-data-project';
@@ -547,7 +200,6 @@ function setProfile(p){
   render();
 }
 
-// mapping
 function usedEmojis(){const m=new Map();for(const[t,es]of Object.entries(S.mapping))for(const e of es)m.set(e,t);return m;}
 function toggleEmojiForType(type,emoji){if(S.mapping[type].has(emoji)){S.mapping[type].delete(emoji);}else{for(const[,es]of Object.entries(S.mapping))es.delete(emoji);S.mapping[type].add(emoji);}render();}
 function removeType(type){delete S.mapping[type];render();}
@@ -717,7 +369,6 @@ function render(){
   const hookPip=[...new Set(selHookItems.flatMap(i=>i.pip))];
   const totalPip=new Set([...allProjDeps,"pre-commit",...hookPip]).size;
 
-  // ENV
   document.getElementById('deps-list').innerHTML=DEPS.map(d=>rowHTML({...d,checked:S.deps.has(d.id),key:'deps'})).join('');
   document.getElementById('hooks-list').innerHTML=HOOKS_DATA.map(cat=>`<div style="margin-bottom:10px"><div class="cat">${cat.cat}</div>${cat.items.map(i=>rowHTML({...i,checked:S.hooks.has(i.id),key:'hooks'})).join('')}</div>`).join('');
 
@@ -734,19 +385,15 @@ function render(){
   if(tgls[0])tgls[0].textContent=allDI.every(id=>S.deps.has(id))?"Deselect all":"Select all";
   if(tgls[1])tgls[1].textContent=allHI.every(id=>S.hooks.has(id))?"Deselect all":"Select all";
 
-  // MAPPING
   renderMapping();
 
-  // COMMIT-MSG
   document.getElementById('scopes-list').innerHTML=S.scopes.map(v=>tagHTML('scopes',v)).join('');
   document.getElementById('tickets-list').innerHTML=S.tickets.map(v=>tagHTML('tickets',v)).join('');
   setText('cmd-hook',generateHook());
   setText('cmd-hook-install',`mkdir -p scripts/hooks\n# paste the generated hook into scripts/hooks/commit-msg\nchmod +x scripts/hooks/commit-msg\n\n# Option A\ngit config core.hooksPath scripts/hooks\n\n# Option B (pre-commit)\npre-commit install --hook-type commit-msg`);
 
-  // GITMOJI
   renderGmTable();
 
-  // DOCS
   document.getElementById('docs-modules').innerHTML=DOC_MODULES.map(d=>rowHTML({id:d.id,label:d.label,desc:d.desc,det:`pip: ${d.pip}`,checked:S.docs.has(d.id),color:'t',key:'docs'})).join('');
   document.getElementById('doc-tools').innerHTML=DOC_TOOLS.map(t=>radioHTML({...t,checked:S.docTool===t.id})).join('');
   document.getElementById('ext-apis').innerHTML=EXT_APIS.map(a=>rowHTML({id:a.id,label:a.label,desc:a.tool,det:`files: ${a.ext}`,checked:S.apis.has(a.id),color:'t',key:'apis'})).join('');
@@ -760,18 +407,13 @@ function render(){
   document.getElementById('cmd-api-block').style.display=selApis.length?'block':'none';
   if(selApis.length)setText('cmd-docs-api',selApis.map(a=>`# ${a.label}\nmkdir -p docs/api\n${a.cmd('<file'+a.ext+'>')}`).join('\n\n'));
 
-  // STRUCTURE — profile-aware
   setText('struct-tree', prof.tree(n));
   document.getElementById('path-map').innerHTML=prof.paths.map(r=>`<div class="pmap"><code style="background:${r.bg};color:${r.tc};border:1px solid ${r.bg==='#f0f0f0'?'#e0e0e0':r.tc+'44'};border-radius:4px;padding:3px 7px;font-size:10px;white-space:nowrap">${r.p}</code><span style="font-size:11px;color:#888">${r.l}</span></div>`).join('');
   setText('pyproject-block', prof.pyproject(n));
   setText('gitignore-block',`# Environments\n.conda/\n__pycache__/\n*.pyc\n.env\n\n# Generated docs\ndocs/api/\n\n# Provider cache\n.snowflake-provider/\n\n# Tools\n.ruff_cache/\n.mypy_cache/\n.pre-commit-cache/\n\n# Snowflake credentials\n*.p8\nconnection.json\n\n# Local runner args\n.local/\n\n# Plan output\nout/`);
 
-  // GUIDE
   renderGuide();
 }
 
 render();
 setGuide('gh');
-</script>
-</body>
-</html>

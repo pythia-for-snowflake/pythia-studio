@@ -9,14 +9,13 @@ No build step — open any `.html` directly or serve via GitHub Pages.
 
 ## Tools
 
-| Tool | File | Description |
+| Tool | Path | Description |
 |------|------|-------------|
-| Pythia QueryFile | `tools/duckdb-explorer.html` | Query local XLSX, CSV, Parquet and S3/HTTP files — multi-source, auto-preview, column stats. Requires local FastAPI backend. |
-| Pythia Design | `tools/palette-title-generator.html` | Signature color → harmony → semantic tokens → app title PNG export |
-| Env Generator | `tools/env-generator.html` | conda env · dependencies · pre-commit hooks · commit convention |
-| Doc Hub — online | `tools/hub-online.html` | Curated live docs: Snowflake, Snowpark, Streamlit, DuckDB, Python, Anthropic |
-| Doc Hub — offline | `tools/hub-offline.html` | Manage local wget mirrors of API docs |
-| Articles | `tools/hub-articles.html` | Articles that validate the pythia architecture approach |
+| Pythia QueryFile | `pages/duckdb-explorer/` | Query local XLSX, CSV, Parquet and S3/HTTP files — multi-source, auto-preview, column stats. Requires local FastAPI backend. |
+| Pythia Design | `pages/palette-title-generator/` | Signature color → harmony → semantic tokens → app title PNG export |
+| Env Generator | `pages/env-generator/` | conda env · dependencies · pre-commit hooks · commit convention |
+| Stack Reference | `pages/hub-online/` | Curated live docs: Snowflake, Snowpark, Streamlit, DuckDB, Python, Anthropic |
+| Articles | `pages/hub-articles/` | Articles that validate the pythia architecture approach |
 
 ---
 
@@ -25,14 +24,22 @@ No build step — open any `.html` directly or serve via GitHub Pages.
 ```
 pythia-studio/
 ├── index.html              ← GitHub Pages entry point
-├── assets/                 ← images
-├── pdoc-pythia.css         ← shared pdoc theme (referenced by snowflake-kit docs)
-├── tools/                  ← HTML tool pages
+├── app.css                 ← shared CSS tokens and base styles
+├── assets/
+│   ├── images/             ← logos and icons
+│   └── pdoc/
+│       └── pythia.css      ← shared pdoc theme (referenced by snowflake-kit docs)
+├── pages/                  ← one directory per tool (index.html + app.css + app.js)
+│   ├── duckdb-explorer/
+│   ├── palette-title-generator/
+│   ├── env-generator/
+│   ├── hub-online/
+│   └── hub-articles/
 ├── duckdb_explorer/        ← FastAPI/DuckDB backend for Pythia QueryFile
 │   ├── server.py           ← /health · /upload · /query endpoints
 │   └── requirements.txt
 └── scripts/
-    ├── check_links.sh      ← validates all external URLs in tools/
+    ├── check_links.sh      ← validates all external URLs in pages/
     └── run_tests.sh        ← visual regression tests across 3 browsers
 ```
 

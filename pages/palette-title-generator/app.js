@@ -1,103 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🔮 pythia design</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400..900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400..800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..1000&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Courier New',monospace;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:24px 16px 60px}
-.page{max-width:1200px;margin:0 auto}
-
-/* header */
-.hdr-row{display:flex;align-items:center;gap:10px;margin-bottom:3px}
-.hdr-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#e07baa;letter-spacing:-.03em}
-.back-btn{margin-left:auto;font-size:11px;color:#bbb;text-decoration:none;padding:3px 10px;border:1.5px solid #e0e0e0;border-radius:5px;white-space:nowrap;transition:all .12s}
-.back-btn:hover{border-color:#e07baa;color:#e07baa}
-.hdr-sub{font-size:12px;color:#bbb;margin-bottom:16px}
-
-/* topbar */
-.topbar{display:flex;align-items:center;gap:6px;padding:8px 10px;background:#fff;border:1.5px solid #e0e0e0;border-radius:8px 8px 0 0;flex-wrap:wrap}
-.tb-btn{background:#fff;border:1.5px solid #e0e0e0;color:#555;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;font-weight:500;transition:all .12s;white-space:nowrap}
-.tb-btn:hover{border-color:#e07baa;color:#e07baa}
-.tb-btn.active{background:#fdf0f7;border-color:#e07baa;color:#e07baa;font-weight:700}
-.tb-tog{background:#fff;border:1.5px solid #e0e0e0;color:#888;padding:3px 9px;border-radius:5px;cursor:pointer;font-size:11px;font-family:'Courier New',monospace;transition:all .12s;white-space:nowrap}
-.tb-tog:hover{border-color:#e07baa;color:#e07baa}
-.tb-tog.on{background:#fdf0f7;border-color:#e07baa;color:#e07baa;font-weight:700}
-.tb-lbl{font-size:10px;color:#bbb;letter-spacing:.08em;text-transform:uppercase}
-.tb-div{width:1px;height:22px;background:#e0e0e0;flex-shrink:0}
-
-/* popovers */
-.pop{position:absolute;top:0;left:0;right:0;z-index:50;background:#fff;border:1.5px solid #e0e0e0;border-top:none;border-radius:0 0 8px 8px;box-shadow:0 8px 24px rgba(0,0,0,.10);padding:16px 18px 18px;max-height:72vh;overflow-y:auto}
-.pop-hdr{display:flex;align-items:flex-start;margin-bottom:14px;gap:8px}
-.pop-title{font-size:12px;letter-spacing:.12em;color:#e07baa;text-transform:uppercase;font-weight:700}
-.pop-sub{font-size:11px;color:#888;margin-top:2px}
-.blk2{font-size:10px;letter-spacing:.1em;color:#bbb;text-transform:uppercase;margin-bottom:7px;margin-top:14px}
-.blk2:first-child{margin-top:0}
-.close-btn{background:#fff;border:1px solid #e0e0e0;color:#888;padding:3px 9px;border-radius:4px;cursor:pointer;font-size:11px;font-family:inherit;margin-left:auto;white-space:nowrap;flex-shrink:0}
-.close-btn:hover{border-color:#e07baa;color:#e07baa}
-
-/* misc */
-.hbtn{font-size:11px;cursor:pointer;padding:3px 10px;border-radius:5px;border:1.5px solid #e0e0e0;background:#fff;color:#888;font-family:inherit;transition:all .12s}
-.hbtn:hover{border-color:#e07baa;color:#e07baa}
-.hbtn.on{background:#fdf0f7;border-color:#e07baa;color:#e07baa;font-weight:700}
-input.mock-slider{opacity:0;position:absolute;top:18px;left:0;width:100%;cursor:pointer;margin:0}
-.msr{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;line-height:1;vertical-align:middle;font-size:16px;font-style:normal;display:inline-block;user-select:none}
-
-/* mock */
-.mock{display:flex;border-left:1.5px solid #e0e0e0;border-right:1.5px solid #e0e0e0;border-bottom:1.5px solid #e0e0e0;border-radius:0 0 8px 8px;overflow:hidden;min-height:680px}
-</style>
-</head>
-<body>
-<div class="page">
-
-  <div class="hdr-row">
-    <img src="../assets/pythia-logo.png" alt="pythia" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:22px\'>🔮</span>'">
-    <h1 class="hdr-title">pythia design</h1>
-    <a href="../index.html" class="back-btn">← studio</a>
-  </div>
-  <p class="hdr-sub">palette · type · logo · live streamlit preview · for snowflake-kit-streamlit</p>
-
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <button class="tb-btn" id="tbtn-palette" onclick="togglePop('palette')"><span class="msr" style="margin-right:5px">palette</span>Palette ▾</button>
-    <button class="tb-btn" id="tbtn-font"    onclick="togglePop('font')"><span class="msr" style="margin-right:5px">font_download</span>Font ▾</button>
-    <button class="tb-btn" id="tbtn-logo"    onclick="togglePop('logo')"><span class="msr" style="margin-right:5px">badge</span>Logo ▾</button>
-    <button class="tb-btn" id="tbtn-export"  onclick="togglePop('export')"><span class="msr" style="margin-right:5px">download</span>Export ▾</button>
-    <span style="flex:1"></span>
-    <span class="tb-lbl">env</span>
-    <button class="tb-tog" id="tog-sis"   onclick="S.env='sis';render()">❄️ SiS</button>
-    <button class="tb-tog" id="tog-local" onclick="S.env='local';render()">🎈 Local</button>
-    <div class="tb-div"></div>
-    <span class="tb-lbl">mode</span>
-    <button class="tb-tog" id="tog-light" onclick="S.mode='light';render()">☀️ Light</button>
-    <button class="tb-tog" id="tog-dark"  onclick="S.mode='dark';render()">🌙 Dark</button>
-    <div class="tb-div"></div>
-    <button class="tb-tog" id="tog-sb"    onclick="S.sidebarOpen=!S.sidebarOpen;render()">◧ sidebar open</button>
-  </div>
-
-  <!-- POPOVER CONTAINER -->
-  <div style="position:relative">
-    <div id="pop-palette" class="pop" style="display:none"></div>
-    <div id="pop-font"    class="pop" style="display:none"></div>
-    <div id="pop-logo"    class="pop" style="display:none"></div>
-    <div id="pop-export"  class="pop" style="display:none"></div>
-  </div>
-
-  <!-- STREAMLIT MOCK -->
-  <div class="mock" id="mock"></div>
-
-</div>
-<script>
 // ═══ COLOR MATH ═══════════════════════════════════════════════════════
 function hexToOklch(hex){
   let r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
@@ -502,8 +402,6 @@ function buildPalettePop(closeHtml){
       <input type="text" value="${v}" maxlength="7" oninput="setSemTxt('${k}',this.value)" style="width:72px;font-family:'Courier New',monospace;font-size:12px;padding:4px 7px;border:1.5px solid #e0e0e0;border-radius:5px;color:#1a1a1a;font-family:inherit">
     </div>`).join('');
 
-  const badges=(f)=>Object.entries(f).map(([k,v])=>`<span style="background:${v};color:#fff;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:700;margin:2px">${k}</span>`).join('');
-
   const shadeRow=(k,base,isDark)=>{
     const li=`color-mix(in oklch,${base},${isDark?'black 80%':'white 90%'})`;
     const dk=`color-mix(in oklch,${base},${isDark?'white 15%':'black 25%'})`;
@@ -654,7 +552,6 @@ function buildLogoPop(closeHtml){
   const surf=getSurface(S.mode);
   const MSR=`font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;font-size:16px;line-height:1;display:inline-block`;
 
-  /* ── Row 1 left — A: mode pills + title + remove ── */
   const modePills=[{id:'text',icon:'title',label:'Text'},{id:'emoji',icon:'emoji_language',label:'Emoji'},{id:'material',icon:'interests',label:'Material'},{id:'image',icon:'image',label:'Image'}]
     .map(m=>{const on=S.logoMode===m.id;
       return`<button onclick="S.logoMode='${m.id}';render()" style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;border:1.5px solid ${on?PINK:'#e0e0e0'};background:${on?PINK_T:'#fff'};color:${on?PINK:'#888'};cursor:pointer;font-size:11px;font-weight:${on?700:400};font-family:inherit;white-space:nowrap;transition:all .12s">
@@ -663,7 +560,6 @@ function buildLogoPop(closeHtml){
   const hasImage=S.logoMode==='image'&&(S.logoImageSrc==='disk'?S.logoImageData:S.logoImageUrl);
   const removeBtn=hasImage?`<button onclick="S.logoImageSrc==='disk'?(S.logoImageData=null):(S.logoImageUrl='');render()" style="padding:5px 10px;border:1.5px solid #e0e0e0;border-radius:6px;cursor:pointer;font-size:11px;color:#888;background:#fff;font-family:inherit;white-space:nowrap;flex-shrink:0">✕ remove</button>`:'';
 
-  /* ── Row 1 left — B: size / position+gap (position hidden in text mode) ── */
   const posBlock=S.logoMode!=='text'?`
     <span style="width:1px;height:14px;background:#e8e8e8;display:inline-block;margin:0 2px"></span>
     <span style="font-size:11px;color:#bbb">position</span>
@@ -676,13 +572,11 @@ function buildLogoPop(closeHtml){
     ${posBlock}
   </div>`;
 
-  /* ── Row 1 right: preview ── */
   const previewCol=`<div class="blk2">Preview · st.logo(size='${S.logoSize}')</div>
     <div style="background:${surf.sidebar};border-radius:8px;padding:10px 16px;display:flex;align-items:center;min-height:${logoSizeH+20}px;overflow:hidden">
       <div style="height:${logoSizeH+4}px;overflow:clip;display:flex;align-items:center">${logoContent(logoSizeH,titleColor,tf)}</div>
     </div>`;
 
-  /* ── Row 2: mode-specific picker (full width) ── */
   let pickerSection='';
   if(S.logoMode==='text'){
     pickerSection=`<div style="font-size:11px;color:#bbb;line-height:1.7">Text only — no icon. The app title above is rendered directly with the selected title font and weight from <strong>Font ▾</strong>.</div>`;
@@ -927,7 +821,6 @@ async function downloadPng(kind){
     else{ctx.font=`${S.titleWeight} ${fs}px ${fam},sans-serif`;ctx.fillStyle=sigColor;ctx.textBaseline='middle';ctx.textAlign='center';ctx.fillText((S.titleText||'A')[0].toUpperCase(),cx,cy);}
     trigDl(canvas,`icon-${S.emojiVendor}.png`);return;
   }
-  // wide
   const measC=document.createElement('canvas'),measCtx=measC.getContext('2d');
   measCtx.font=`${S.titleWeight} ${fs}px ${fam},sans-serif`;
   measCtx.letterSpacing=(S.letterSpacing*fs)+'px';
@@ -972,6 +865,3 @@ async function initData(){
 }
 
 initData();
-</script>
-</body>
-</html>
