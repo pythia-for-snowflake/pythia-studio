@@ -9,7 +9,7 @@ DIR="$(dirname "$0")"
 TIMEOUT=12
 FAIL=0
 
-urls=$(grep -rhoE 'https?://[]a-zA-Z0-9._~:/?#[@!$&'"'"'()*+,;=%-]+' "$DIR"/../tools/*.html \
+urls=$(grep -rhoE 'https?://[]a-zA-Z0-9._~:/?#[@!$&'"'"'()*+,;=%-]+' "$DIR"/../index.html "$DIR"/../pages/**/*.html \
   | sort -u \
   | grep -v 'fonts\.googleapis\|fonts\.gstatic\|cdn\.jsdelivr\|githubusercontent\.com/googlefonts\|hfg-gmuend\|twemoji\|microlink\.io')
 
