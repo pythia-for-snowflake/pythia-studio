@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🐤 Pythia QueryFile — pythia-studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&display=block&icon_names=calendar_today,clear_all,data_object,download,play_arrow,query_stats,schedule,sql,tag,text_fields,toggle_on" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Courier New',monospace;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:24px 16px 60px}
+.page{max-width:900px;margin:0 auto}
+
+/* material symbols baseline */
+.ms{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased;display:inline-block;vertical-align:middle;user-select:none}
+
+/* header */
+.hdr-row{display:flex;align-items:center;gap:10px;margin-bottom:3px}
+.hdr-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#F7E24B;letter-spacing:-.03em}
+.back-btn{margin-left:auto;font-size:11px;color:#bbb;text-decoration:none;padding:3px 10px;border:1.5px solid #e0e0e0;border-radius:5px;white-space:nowrap;transition:all .12s}
+.back-btn:hover{border-color:#F7E24B;color:#b8860b}
+.hdr-sub{font-size:12px;color:#bbb;margin-bottom:16px}
+
+/* banner */
+.banner{background:#fffde7;border:1px solid #F7E24B;border-radius:8px;padding:14px 16px;margin-top:16px;font-size:11px;line-height:2;color:#92400e}
+.banner strong{font-weight:700}
+.banner code{background:#fef9c3;padding:1px 6px;border-radius:3px;font-family:inherit}
+
+/* sections */
+.section{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:16px;margin-top:16px}
+.label{font-size:10px;letter-spacing:.12em;color:#bbb;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.label .ms{font-size:15px;opacity:.55}
+
+/* inputs */
+.inp{background:#fff;border:1.5px solid #e0e0e0;border-radius:6px;color:#1a1a1a;font-family:inherit;font-size:12px;padding:8px 11px;width:100%;outline:none;transition:border .12s}
+.inp:focus{border-color:#F7E24B}
+textarea.inp{height:110px;resize:vertical;line-height:1.6}
+
+/* buttons */
+.btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.btn{background:#f5f5f5;border:1.5px solid #e0e0e0;border-radius:6px;color:#555;font-family:inherit;font-size:11px;font-weight:600;padding:7px 14px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{border-color:#F7E24B;color:#b8860b;background:#fffde7}
+.btn .ms{font-size:15px}
+.btn.primary{background:#F7E24B;border-color:#F7E24B;color:#1a1a1a;font-weight:700}
+.btn.primary:hover{background:#f0d800;border-color:#f0d800}
+.btn.ghost{background:none;border-color:#e0e0e0;color:#aaa}
+.btn.ghost:hover{border-color:#F7E24B;color:#b8860b;background:#fffde7}
+.spacer{flex:1}
+
+/* status */
+.status{font-size:11px;margin-top:14px;padding:9px 13px;border-radius:6px;display:none;line-height:1.5}
+.status.loading{display:flex;align-items:center;gap:9px;background:#fffde7;border:1px solid #F7E24B;color:#92400e}
+.status.error{display:block;background:#fff0f0;border:1px solid #fca5a5;color:#b91c1c;white-space:pre-wrap;word-break:break-word}
+.status.ok{display:block;background:#fffde7;border:1px solid #F7E24B;color:#b8860b}
+.spinner{width:14px;height:14px;border:2px solid #F7E24B;border-top-color:#b8860b;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* setup block */
+.setup{background:#fff;border:1px solid #e0e0e0;border-radius:8px;margin-top:16px;overflow:hidden}
+.setup-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;user-select:none}
+.setup-hdr:hover{background:#fafafa}
+.setup-title{font-size:10px;letter-spacing:.12em;color:#bbb;text-transform:uppercase;flex:1}
+.setup-chevron{font-size:11px;color:#ccc;transition:transform .15s}
+.setup-chevron.open{transform:rotate(90deg)}
+.setup-body{display:none;padding:0 14px 14px;border-top:1px solid #f0f0f0}
+.setup-body.open{display:block}
+.cmd-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.cmd-lbl{font-size:10px;color:#bbb;width:54px;flex-shrink:0;letter-spacing:.04em}
+.cmd{flex:1;background:#f5f5f5;border:1px solid #e8e8e8;border-radius:5px;padding:6px 10px;font-size:11px;color:#333;font-family:'Courier New',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cpb{background:#fff;border:1px solid #e0e0e0;color:#aaa;padding:4px 9px;border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;flex-shrink:0;transition:all .12s}
+.cpb:hover,.cpb.ok{background:#fffde7;border-color:#F7E24B;color:#b8860b}
+
+/* sources table */
+.src-table{width:100%;border-collapse:collapse}
+.src-table thead th{position:static;background:none;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#bbb;padding:4px 6px;text-align:left;border-bottom:1px solid #f0f0f0;font-weight:600}
+.src-table thead th:first-child{width:130px}
+.src-td{padding:4px 3px;border-bottom:1px solid #f9f9f9;vertical-align:middle}
+.src-upload{background:#f5f5f5;border:1.5px solid #e0e0e0;border-radius:5px;color:#555;font-family:inherit;font-size:14px;line-height:1;padding:5px 9px;cursor:pointer;transition:all .12s}
+.src-upload:hover{border-color:#F7E24B;color:#b8860b;background:#fffde7}
+.src-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:15px;padding:4px 7px;border-radius:4px;transition:all .1s;line-height:1;font-family:inherit}
+.src-del:hover{color:#e53e3e;background:#fff0f0}
+.src-add{background:none;border:1.5px dashed #e0e0e0;color:#bbb;border-radius:6px;font-family:inherit;font-size:11px;cursor:pointer;padding:7px;width:100%;margin-top:8px;transition:all .12s}
+.src-add:hover{border-color:#F7E24B;color:#b8860b;background:#fffde7}
+
+/* tabs */
+.tab-container{margin-top:14px;display:none}
+.tab-bar{display:flex;border-bottom:2px solid #e0e0e0}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:7px 16px;font-family:inherit;font-size:11px;font-weight:700;color:#bbb;cursor:pointer;transition:all .12s;letter-spacing:.03em}
+.tab-btn:hover{color:#b8860b}
+.tab-btn.active{color:#b8860b;border-bottom-color:#F7E24B}
+.tab-btn.tab-result{font-style:italic;font-weight:600}
+.tab-pane{display:none;background:#fff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 8px 8px;overflow:auto;max-height:480px}
+.tab-pane.active{display:block}
+
+/* enhanced preview table */
+.tbl-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:11px}
+
+/* single header row — col name · type · stats btn */
+.hdr-col th{position:sticky;top:0;background:#f2f2f2;padding:6px 10px;text-align:left;border-bottom:2px solid #e0e0e0;z-index:2;white-space:nowrap}
+.col-hdr{display:flex;align-items:center;gap:5px}
+.c-name{font-size:11px;font-weight:700;color:#555}
+.c-sep{color:#ddd;font-size:10px}
+.c-type{font-size:9px;color:#bbb;letter-spacing:.03em;display:flex;align-items:center;gap:2px}
+.c-type .ms{font-size:14px}
+.stats-btn{margin-left:auto;background:none;border:none;cursor:pointer;color:#d4d4d4;padding:1px 2px;border-radius:3px;transition:color .1s;line-height:1;display:inline-flex;align-items:center;flex-shrink:0}
+.stats-btn:hover{color:#b8860b}
+.stats-btn.active{color:#F7E24B}
+.stats-btn .ms{font-size:14px}
+
+/* stats values row (conditional) */
+.hdr-sv th{background:#fffde7;padding:7px 10px;text-align:left;border-bottom:2px solid #F7E24B;font-weight:400;vertical-align:top}
+.hdr-sv th.empty{background:#fefef8}
+.sv-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px}
+.sv-item{display:flex;flex-direction:column;gap:1px}
+.sv-lbl{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#ccc}
+.sv-val{font-size:11px;color:#555}
+
+/* data rows */
+tbody td{padding:5px 10px;border-bottom:1px solid #f5f5f5;color:#1a1a1a;white-space:nowrap;max-width:280px;overflow:hidden;text-overflow:ellipsis}
+tbody tr:hover td{background:#fffde7}
+
+/* result tab padding */
+.tab-pane.active>*{padding:16px}
+.tab-pane.active>.tbl-wrap{padding:0}
+
+/* meta */
+.meta{font-size:10px;color:#bbb;padding:8px 16px 14px;display:flex;gap:12px;flex-wrap:wrap}
+.meta span{display:flex;gap:4px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:#F7E24B;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hdr-row">
+    <img src="../assets/pythia-logo.png" alt="pythia" height="28" style="display:block" onerror="this.outerHTML='<span style=\'font-size:22px\'>🐤</span>'">
+    <h1 class="hdr-title">Pythia QueryFile</h1>
+    <a href="../index.html" class="back-btn">&#8592; studio</a>
+  </div>
+  <p class="hdr-sub">XLSX &middot; CSV &middot; Parquet &middot; JSON &middot; local paths &middot; S3 &middot; HTTP &mdash; powered by DuckDB</p>
+
+  <div class="setup">
+    <div class="setup-hdr" onclick="toggleSetup()">
+      <span class="setup-title">Local setup</span>
+      <span id="setup-chevron" class="setup-chevron">&#9658;</span>
+    </div>
+    <div id="setup-body" class="setup-body">
+      <div class="cmd-row">
+        <span class="cmd-lbl">1 · get</span>
+        <span class="cmd">curl -O https://raw.githubusercontent.com/pythia-for-snowflake/pythia-studio/main/duckdb_explorer/server.py</span>
+        <button class="cpb" onclick="copy(this,'curl -O https://raw.githubusercontent.com/pythia-for-snowflake/pythia-studio/main/duckdb_explorer/server.py')">copy</button>
+      </div>
+      <div class="cmd-row">
+        <span class="cmd-lbl">2 · install</span>
+        <span class="cmd">pip install duckdb fastapi uvicorn python-multipart</span>
+        <button class="cpb" onclick="copy(this,'pip install duckdb fastapi uvicorn python-multipart')">copy</button>
+      </div>
+      <div class="cmd-row">
+        <span class="cmd-lbl">3 · start</span>
+        <span class="cmd">uvicorn server:app --port 8000</span>
+        <button class="cpb" onclick="copy(this,'uvicorn server:app --port 8000')">copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="banner" class="banner" style="display:none">
+    <strong>&#9888;&#65039; Backend not running.</strong> Follow the Local setup steps above, then reload this page.
+  </div>
+
+  <div class="section">
+    <div class="label">Query Files</div>
+    <table class="src-table">
+      <thead>
+        <tr>
+          <th>Alias</th>
+          <th>Source &mdash; local path, S3, or HTTP URL</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="sources-tbody"></tbody>
+    </table>
+    <button class="src-add" onclick="addSource()">+ Add source</button>
+    <input type="file" id="file-picker"
+      accept=".xlsx,.xls,.csv,.tsv,.parquet,.json,.ndjson,.jsonl"
+      style="display:none" />
+  </div>
+
+  <div class="section">
+    <div class="label"><span class="ms">sql</span></div>
+    <textarea id="sql" class="inp">-- Add a source above to auto-generate the query</textarea>
+    <div class="btn-row">
+      <button class="btn primary" onclick="runQuery()"><span class="ms">play_arrow</span> Run</button>
+      <button class="btn ghost" onclick="clearAll()"><span class="ms">clear_all</span> Clear</button>
+      <div class="spacer"></div>
+      <button id="export-btn" class="btn" onclick="exportCsv()" style="display:none"><span class="ms">download</span> Export CSV</button>
+    </div>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <div id="tab-container" class="tab-container">
+    <div id="tab-bar" class="tab-bar"></div>
+    <div id="tab-content"></div>
+  </div>
+
+</div>
+<script>
+const SERVER = 'http://localhost:8000';
+const PLACEHOLDER = '-- Add a source above to auto-generate the query';
+
+let lastRows = [];
+let lastCols = [];
+let nextId = 1;
+let sources = [{id: nextId++, alias: 't1', source: ''}];
+let previews = {}; // id → preview data
+let activeTab = null; // String(id) or 'result'
+let resultTab = null;
+let currentUploadRow = 0;
+let previewTimers = {};
+
+/* ── setup ── */
+
+function toggleSetup() {
+  const body = document.getElementById('setup-body');
+  const chev = document.getElementById('setup-chevron');
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+function copy(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('ok'); }, 1500);
+  });
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// safe encode for a single-quoted JS string inside an HTML onclick attribute
+function jsq(s) {
+  return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/</g,'\\x3c').replace(/>/g,'\\x3e');
+}
+
+/* ── sources table ── */
+
+function renderSources() {
+  document.getElementById('sources-tbody').innerHTML = sources.map((s, i) => `
+    <tr>
+      <td class="src-td">
+        <input class="inp" type="text" placeholder="t${i + 1}" value="${esc(s.alias)}"
+          oninput="onAliasChange(${i}, this.value)"
+          style="font-size:11px;padding:6px 8px">
+      </td>
+      <td class="src-td">
+        <input class="inp" type="text"
+          placeholder="/Users/me/data.xlsx  ·  s3://bucket/key.parquet  ·  https://…"
+          value="${esc(s.source)}"
+          oninput="onSourceChange(${i}, this.value)"
+          style="font-size:11px;padding:6px 8px">
+      </td>
+      <td class="src-td" style="width:36px;text-align:center">
+        <button class="src-upload" onclick="pickFile(${i})" title="Pick local file">+</button>
+      </td>
+      <td class="src-td" style="width:32px;text-align:center">
+        ${sources.length > 1
+          ? `<button class="src-del" onclick="removeSource(${i})" title="Remove">&times;</button>`
+          : ''}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function onAliasChange(i, val) {
+  sources[i].alias = val.trim();
+  const id = sources[i].id;
+  if (previews[id]) previews[id].alias = val.trim() || `t${i + 1}`;
+  updateSQL();
+  renderTabContainer();
+}
+
+function onSourceChange(i, val) {
+  sources[i].source = val.trim();
+  updateSQL();
+  if (val.trim()) {
+    schedulePreview(i);
+  } else {
+    clearTimeout(previewTimers[sources[i].id]);
+    delete previews[sources[i].id];
+    renderTabContainer();
+  }
+}
+
+function addSource() {
+  const id = nextId++;
+  sources.push({id, alias: `t${sources.length + 1}`, source: ''});
+  renderSources();
+}
+
+function removeSource(i) {
+  const removed = sources.splice(i, 1)[0];
+  clearTimeout(previewTimers[removed.id]);
+  delete previews[removed.id];
+  if (activeTab === String(removed.id)) activeTab = null;
+  renderSources();
+  updateSQL();
+  renderTabContainer();
+}
+
+window.pickFile = function (i) {
+  currentUploadRow = i;
+  document.getElementById('file-picker').click();
+};
+
+/* ── format detection ── */
+
+function detectFormat(src) {
+  const s = src.split('?')[0].toLowerCase();
+  if (s.endsWith('.xlsx') || s.endsWith('.xls')) return 'xlsx';
+  if (s.endsWith('.csv') || s.endsWith('.tsv')) return 'csv';
+  if (s.endsWith('.parquet')) return 'parquet';
+  if (s.endsWith('.json') || s.endsWith('.ndjson') || s.endsWith('.jsonl')) return 'json';
+  return 'auto';
+}
+
+function srcToFn(src) {
+  const fmt = detectFormat(src);
+  const q = `'${src.replace(/'/g, "''")}'`;
+  return ({
+    xlsx:    `read_xlsx(${q})`,
+    csv:     `read_csv(${q}, auto_detect=true)`,
+    parquet: `read_parquet(${q})`,
+    json:    `read_json(${q})`,
+    auto:    q,
+  })[fmt];
+}
+
+/* ── type helpers ── */
+
+function typeIcon(colType) {
+  const t = String(colType).toUpperCase();
+  if (/INT|BIGINT|HUGEINT|TINYINT|SMALLINT|FLOAT|DOUBLE|DECIMAL|NUMERIC|REAL/.test(t)) return 'tag';
+  if (/VARCHAR|TEXT|STRING|CHAR|CLOB/.test(t)) return 'text_fields';
+  if (/TIMESTAMP|DATETIME/.test(t)) return 'schedule';
+  if (/DATE/.test(t)) return 'calendar_today';
+  if (/BOOL/.test(t)) return 'toggle_on';
+  if (/JSON|STRUCT|MAP|LIST|ARRAY|OBJECT/.test(t)) return 'data_object';
+  return 'tag';
+}
+
+function shortType(colType) {
+  return String(colType).replace(/\(.*\)/, '').toUpperCase();
+}
+
+/* ── SQL generation ── */
+
+function updateSQL() {
+  const active = sources.filter(s => s.source);
+  if (!active.length) {
+    document.getElementById('sql').value = PLACEHOLDER;
+    return;
+  }
+  if (active.length === 1) {
+    const s = active[0];
+    document.getElementById('sql').value =
+      `SELECT *\nFROM ${srcToFn(s.source)} AS ${s.alias || 't1'}\nLIMIT 100`;
+    return;
+  }
+  const ctes = active.map(s =>
+    `  ${s.alias || 't'} AS (\n    SELECT * FROM ${srcToFn(s.source)}\n  )`
+  ).join(',\n');
+  const a = active[0].alias || 't1';
+  const b = active[1].alias || 't2';
+  document.getElementById('sql').value =
+    `WITH\n${ctes}\n\nSELECT *\nFROM ${a}\nJOIN ${b} ON ${a}.id = ${b}.id\nLIMIT 100`;
+}
+
+/* ── preview ── */
+
+function schedulePreview(i) {
+  const s = sources[i];
+  if (!s) return;
+  clearTimeout(previewTimers[s.id]);
+  previewTimers[s.id] = setTimeout(() => fetchPreview(s.id), 700);
+}
+
+async function fetchPreview(id) {
+  const s = sources.find(x => x.id === id);
+  if (!s || !s.source) { delete previews[id]; renderTabContainer(); return; }
+
+  previews[id] = {loading: true, alias: s.alias || 't'};
+  if (!activeTab) setActiveTab(String(id));
+  renderTabContainer();
+
+  const fn = srcToFn(s.source);
+  let cols_desc = null, rows_desc = null, err_desc = null;
+  let cols_data = null, rows_data = null, err_data = null;
+
+  try {
+    const desc = await postQuery(`DESCRIBE SELECT * FROM ${fn} LIMIT 1`);
+    cols_desc = desc.columns;
+    rows_desc = desc.rows;
+    const ncols = rows_desc.length;
+    const orderBy = ncols > 0
+      ? ' ORDER BY ' + Array.from({length: Math.min(3, ncols)}, (_, i) => i + 1).join(', ')
+      : '';
+    try {
+      const data = await postQuery(`SELECT * FROM ${fn}${orderBy} LIMIT 10`);
+      cols_data = data.columns;
+      rows_data = data.rows;
+    } catch (e) { err_data = e.message; }
+  } catch (e) { err_desc = e.message; }
+
+  previews[id] = {loading: false, alias: s.alias || 't', cols_desc, rows_desc, err_desc, cols_data, rows_data, err_data, colStats: {}};
+  renderTabContainer();
+}
+
+async function postQuery(sql) {
+  const resp = await fetch(`${SERVER}/query`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({sql}),
+  });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.error || 'Server error');
+  return data;
+}
+
+/* ── column stats (toggle per column) ── */
+
+window.fetchColStats = async function (sourceId, colName) {
+  const id = Number(sourceId);
+  const p = previews[id];
+  if (!p) return;
+
+  if (!p.colStats) p.colStats = {};
+
+  // toggle off if already loaded
+  if (p.colStats[colName] && !p.colStats[colName].loading) {
+    delete p.colStats[colName];
+    renderTabContainer();
+    return;
+  }
+
+  const s = sources.find(x => x.id === id);
+  if (!s) return;
+
+  p.colStats[colName] = {loading: true};
+  renderTabContainer();
+
+  const fn = srcToFn(s.source);
+  const qc = `"${colName.replace(/"/g, '""')}"`;
+  try {
+    const data = await postQuery(
+      `SELECT COUNT(${qc}) AS cnt, COUNT(DISTINCT ${qc}) AS uniq, ` +
+      `MIN(${qc}) AS mn, MAX(${qc}) AS mx FROM ${fn}`
+    );
+    const r = data.rows[0] || [];
+    p.colStats[colName] = {loading: false, cnt: r[0], uniq: r[1], mn: r[2], mx: r[3]};
+  } catch (e) {
+    p.colStats[colName] = {loading: false, error: e.message};
+  }
+  renderTabContainer();
+};
+
+/* ── enhanced table (3-row header + data) ── */
+
+function fmtStat(v) {
+  if (v === null || v === undefined) return '<span style="color:#ccc">—</span>';
+  return esc(String(v));
+}
+
+function enhancedTable(cols, rows, rows_desc, id) {
+  if (!cols || !cols.length) return '<div style="color:#bbb;font-size:11px;padding:16px">No data</div>';
+
+  const p = previews[id];
+  const typeMap = {};
+  if (rows_desc) rows_desc.forEach(r => { typeMap[r[0]] = r[1]; });
+
+  const hasStats = p && p.colStats && Object.keys(p.colStats).length > 0;
+
+  let html = '<div class="tbl-wrap"><table><thead>';
+
+  // Single header row — name · type icon · stats button
+  html += '<tr class="hdr-col">';
+  cols.forEach(c => {
+    const t = typeMap[c] || '';
+    const stats = p && p.colStats && p.colStats[c];
+    const active = stats && !stats.loading;
+    html += `<th><div class="col-hdr">`;
+    html += `<span class="c-name">${esc(String(c))}</span>`;
+    html += `<span class="c-type" title="${esc(shortType(t))}"><span class="ms">${typeIcon(t)}</span></span>`;
+    html += `<button class="stats-btn${active ? ' active' : ''}" onclick="fetchColStats(${id},'${jsq(c)}')" title="${active ? 'Hide stats' : 'Column stats'}"><span class="ms">query_stats</span></button>`;
+    html += `</div></th>`;
+  });
+  html += '</tr>';
+
+  // Row 4 — stats values (only if any stats loaded/loading)
+  if (hasStats) {
+    html += '<tr class="hdr-sv">';
+    cols.forEach(c => {
+      const stats = p.colStats[c];
+      if (!stats) {
+        html += '<th class="empty"></th>';
+      } else if (stats.loading) {
+        html += '<th style="color:#bbb;font-size:10px">…</th>';
+      } else if (stats.error) {
+        html += `<th style="color:#b91c1c;font-size:10px">${esc(stats.error)}</th>`;
+      } else {
+        html += `<th><div class="sv-grid">`;
+        html += `<div class="sv-item"><span class="sv-lbl">count</span><span class="sv-val">${fmtStat(stats.cnt)}</span></div>`;
+        html += `<div class="sv-item"><span class="sv-lbl">distinct</span><span class="sv-val">${fmtStat(stats.uniq)}</span></div>`;
+        html += `<div class="sv-item"><span class="sv-lbl">min</span><span class="sv-val">${fmtStat(stats.mn)}</span></div>`;
+        html += `<div class="sv-item"><span class="sv-lbl">max</span><span class="sv-val">${fmtStat(stats.mx)}</span></div>`;
+        html += `</div></th>`;
+      }
+    });
+    html += '</tr>';
+  }
+
+  html += '</thead><tbody>';
+  (rows || []).forEach(row => {
+    html += '<tr>';
+    row.forEach(v => {
+      const s = v === null ? '' : String(v);
+      html += `<td title="${esc(s)}">${esc(s)}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  return html;
+}
+
+/* simple table for result tab (no schema info) */
+function miniTable(cols, rows) {
+  if (!cols || !cols.length) return '<div style="color:#bbb;font-size:11px;padding:16px">No data</div>';
+  let html = '<div class="tbl-wrap"><table><thead><tr>';
+  cols.forEach(c => { html += `<th>${esc(String(c))}</th>`; });
+  html += '</tr></thead><tbody>';
+  rows.forEach(row => {
+    html += '<tr>';
+    row.forEach(v => {
+      const s = v === null ? '' : String(v);
+      html += `<td title="${esc(s)}">${esc(s)}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  return html;
+}
+
+/* ── tab container ── */
+
+window.setActiveTab = function (tab) {
+  activeTab = tab;
+  renderTabContainer();
+};
+
+function renderTabContainer() {
+  const container  = document.getElementById('tab-container');
+  const tabBar     = document.getElementById('tab-bar');
+  const tabContent = document.getElementById('tab-content');
+
+  const previewSources = sources.filter(s => s.source && previews[s.id] !== undefined);
+  const hasResult = resultTab !== null;
+
+  if (!previewSources.length && !hasResult) {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'block';
+
+  const validTabs = [
+    ...previewSources.map(s => String(s.id)),
+    hasResult ? 'result' : null,
+  ].filter(Boolean);
+  if (!activeTab || !validTabs.includes(activeTab)) activeTab = validTabs[0] || null;
+
+  // tab bar
+  let tabHtml = '';
+  previewSources.forEach(s => {
+    const p = previews[s.id];
+    const label = p.alias || 't';
+    const isActive = activeTab === String(s.id);
+    tabHtml += `<button class="tab-btn${isActive ? ' active' : ''}${p.loading ? ' loading' : ''}" onclick="setActiveTab('${s.id}')">${esc(label)}${p.loading ? ' …' : ''}</button>`;
+  });
+  if (hasResult) {
+    tabHtml += `<button class="tab-btn tab-result${activeTab === 'result' ? ' active' : ''}" onclick="setActiveTab('result')">result</button>`;
+  }
+  tabBar.innerHTML = tabHtml;
+
+  // panes
+  let paneHtml = '';
+  previewSources.forEach(s => {
+    const p = previews[s.id];
+    const isActive = activeTab === String(s.id);
+    paneHtml += `<div class="tab-pane${isActive ? ' active' : ''}">`;
+    if (p.loading) {
+      paneHtml += `<div style="color:#bbb;font-size:11px;padding:16px">Loading preview…</div>`;
+    } else if (p.err_desc) {
+      paneHtml += `<div style="color:#b91c1c;font-size:11px;padding:16px">${esc(p.err_desc)}</div>`;
+    } else {
+      const cols = p.cols_data || (p.rows_desc ? p.rows_desc.map(r => r[0]) : []);
+      paneHtml += enhancedTable(cols, p.err_data ? [] : (p.rows_data || []), p.rows_desc, s.id);
+      if (p.err_data) {
+        paneHtml += `<div style="color:#b91c1c;font-size:11px;padding:8px 16px 14px">${esc(p.err_data)}</div>`;
+      }
+    }
+    paneHtml += '</div>';
+  });
+
+  if (hasResult) {
+    const isActive = activeTab === 'result';
+    paneHtml += `<div class="tab-pane${isActive ? ' active' : ''}">`;
+    if (resultTab.error) {
+      paneHtml += `<div style="color:#b91c1c;font-size:11px;white-space:pre-wrap;padding:16px">${esc(resultTab.error)}</div>`;
+    } else {
+      const n = resultTab.rows.length;
+      paneHtml += miniTable(resultTab.cols, resultTab.rows);
+      paneHtml += `<div class="meta"><span><span class="dot"></span>${n} row${n !== 1 ? 's' : ''}</span><span>${resultTab.cols.length} col${resultTab.cols.length !== 1 ? 's' : ''}</span></div>`;
+    }
+    paneHtml += '</div>';
+  }
+  tabContent.innerHTML = paneHtml;
+}
+
+/* ── server health ── */
+
+async function checkServer() {
+  try {
+    const r = await fetch(`${SERVER}/health`, {signal: AbortSignal.timeout(2000)});
+    if (!r.ok) throw new Error();
+  } catch {
+    document.getElementById('banner').style.display = 'block';
+  }
+}
+checkServer();
+
+/* ── status bar ── */
+
+function setStatus(type, msg) {
+  const el = document.getElementById('status');
+  if (!type) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.className = 'status ' + type;
+  if (type === 'loading') {
+    el.innerHTML = `<div class="spinner"></div><span>${msg}</span>`;
+    el.style.display = 'flex';
+  } else {
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+}
+
+/* ── run query ── */
+
+async function runQuery() {
+  const sql = document.getElementById('sql').value.trim();
+  if (!sql || sql === PLACEHOLDER) { setStatus('error', 'SQL is empty'); return; }
+  setStatus('loading', 'Running…');
+  document.getElementById('export-btn').style.display = 'none';
+  try {
+    const resp = await fetch(`${SERVER}/query`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({sql}),
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      const msg = data.error || 'Server error';
+      setStatus('error', msg);
+      resultTab = {cols: [], rows: [], error: msg};
+      activeTab = 'result';
+      renderTabContainer();
+      return;
+    }
+    lastCols = data.columns;
+    lastRows = data.rows;
+    resultTab = {cols: data.columns, rows: data.rows};
+    const n = data.rows.length;
+    setStatus('ok', `${n} row${n !== 1 ? 's' : ''}`);
+    if (n > 0) document.getElementById('export-btn').style.display = 'inline-flex';
+    activeTab = 'result';
+    renderTabContainer();
+  } catch (e) {
+    const msg = e.message.includes('Failed to fetch')
+      ? 'Cannot reach server — is uvicorn running on port 8000?'
+      : e.message;
+    setStatus('error', msg);
+    resultTab = {cols: [], rows: [], error: msg};
+    activeTab = 'result';
+    renderTabContainer();
+  }
+}
+window.runQuery = runQuery;
+
+/* ── clear ── */
+
+window.clearAll = function () {
+  Object.values(previewTimers).forEach(clearTimeout);
+  sources = [{id: nextId++, alias: 't1', source: ''}];
+  previews = {};
+  activeTab = null;
+  resultTab = null;
+  lastRows = [];
+  lastCols = [];
+  previewTimers = {};
+  renderSources();
+  renderTabContainer();
+  document.getElementById('sql').value = PLACEHOLDER;
+  document.getElementById('export-btn').style.display = 'none';
+  setStatus('', '');
+};
+
+/* ── export ── */
+
+window.exportCsv = function () {
+  if (!lastRows.length) return;
+  const lines = [lastCols.map(csvCell).join(',')];
+  lastRows.forEach(row => lines.push(row.map(v => csvCell(v === null ? '' : String(v))).join(',')));
+  const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `duckdb-export-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+function csvCell(v) {
+  const s = String(v ?? '');
+  return (s.includes(',') || s.includes('"') || s.includes('\n'))
+    ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+/* ── init ── */
+
+document.addEventListener('DOMContentLoaded', function () {
+  renderSources();
+
+  document.getElementById('file-picker').addEventListener('change', async function () {
+    const file = this.files[0];
+    if (!file) return;
+    const i = currentUploadRow;
+    const uploadBtns = document.getElementById('sources-tbody').querySelectorAll('.src-upload');
+    const btn = uploadBtns[i];
+    if (btn) { btn.textContent = '…'; btn.disabled = true; }
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const resp = await fetch(`${SERVER}/upload`, {method: 'POST', body: fd});
+      const data = await resp.json();
+      if (!resp.ok) {
+        setStatus('error', data.error || 'Upload failed');
+        if (btn) { btn.textContent = '+'; btn.disabled = false; }
+        return;
+      }
+      sources[i].source = data.path;
+      renderSources();
+      updateSQL();
+      fetchPreview(sources[i].id);
+    } catch (e) {
+      setStatus('error', 'Upload failed — is the server running?');
+      if (btn) { btn.textContent = '+'; btn.disabled = false; }
+    } finally {
+      this.value = '';
+    }
+  });
+});
+</script>
+</body>
+</html>
