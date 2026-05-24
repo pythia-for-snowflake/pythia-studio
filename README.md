@@ -11,9 +11,10 @@ No build step — open any `.html` directly or serve via GitHub Pages.
 
 | Tool | File | Description |
 |------|------|-------------|
+| Pythia QueryFile | `tools/duckdb-explorer.html` | Query local XLSX, CSV, Parquet and S3/HTTP files — multi-source, auto-preview, column stats. Requires local FastAPI backend. |
 | Pythia Design | `tools/palette-title-generator.html` | Signature color → harmony → semantic tokens → app title PNG export |
 | Env Generator | `tools/env-generator.html` | conda env · dependencies · pre-commit hooks · commit convention |
-| Doc Hub — online | `tools/hub-online.html` | Curated live docs: Snowflake, Snowpark, Streamlit, Python, Anthropic |
+| Doc Hub — online | `tools/hub-online.html` | Curated live docs: Snowflake, Snowpark, Streamlit, DuckDB, Python, Anthropic |
 | Doc Hub — offline | `tools/hub-offline.html` | Manage local wget mirrors of API docs |
 | Articles | `tools/hub-articles.html` | Articles that validate the pythia architecture approach |
 
@@ -27,6 +28,9 @@ pythia-studio/
 ├── assets/                 ← images
 ├── pdoc-pythia.css         ← shared pdoc theme (referenced by snowflake-kit docs)
 ├── tools/                  ← HTML tool pages
+├── duckdb_explorer/        ← FastAPI/DuckDB backend for Pythia QueryFile
+│   ├── server.py           ← /health · /upload · /query endpoints
+│   └── requirements.txt
 └── scripts/
     ├── check_links.sh      ← validates all external URLs in tools/
     └── run_tests.sh        ← visual regression tests across 3 browsers
@@ -60,6 +64,7 @@ Tests also run automatically on `git push` when `.html`, `.css`, or `.js` files 
 ## Stack
 
 Static HTML · CSS · vanilla JS — no dependencies, no framework, no build.  
+Pythia QueryFile backend: Python 3.11 · FastAPI · DuckDB · uvicorn.  
 Tests: Python 3.11 · Playwright · pytest · Pillow.
 
 ---
