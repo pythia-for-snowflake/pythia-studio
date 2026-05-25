@@ -1,7 +1,7 @@
-# AGENT.md — pythia-studio
-*Update date : 2026-05-24 16:54*
+# AGENT.md — pinky-studio
+*Update date : 2026-05-25 16:31*
 
-Browser-based tools for the pythia-for-snowflake suite.
+Browser-based tools for the pinky-and-snowflake suite.
 No build step — open any `.html` directly or serve via GitHub Pages.
 
 ---
@@ -102,7 +102,7 @@ See workspace-level CLAUDE.md for the full emoji ↔ type table.
 
 ---
 
-## Agents available (in pythia-for-snowflake workspace)
+## Agents available (in pinky workspace)
 
 | Command | What it does |
 |---------|-------------|

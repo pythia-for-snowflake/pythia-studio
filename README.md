@@ -1,10 +1,10 @@
-# 🔮 pythia-studio
-*Update date : 2026-05-24 16:54*
+# 🔮 pinky-studio
+*Update date : 2026-05-25 16:31*
 
-Browser-based tools for the [pythia-for-snowflake](https://github.com/pythia-for-snowflake) suite.  
+Browser-based tools for the [pinky-and-snowflake](https://github.com/pinky-and-snowflake) suite.  
 No build step — open any `.html` directly or serve via GitHub Pages.
 
-**→ [pythia-for-snowflake.github.io/pythia-studio](https://pythia-for-snowflake.github.io/pythia-studio)**
+**→ [pinky-and-snowflake.github.io/pinky-studio](https://pinky-and-snowflake.github.io/pinky-studio)**
 
 ---
 
@@ -77,21 +77,21 @@ Tests: Python 3.11 · Playwright · pytest · Pillow.
 
 ---
 
-## Part of pythia-for-snowflake
+## Part of pinky-and-snowflake
 
 Repo links point to the org once public; private during development.  
 The studio index fetches live status from a Gist — no deploy needed when a repo launches.
 
 | Repo | Role | Status |
 |------|------|--------|
-| [`snowflake-kit`](https://github.com/pythia-for-snowflake/snowflake-kit) | Pure Python utils — fmt, validate, security, sql | public |
-| [`snowflake-kit-streamlit`](https://github.com/pythia-for-snowflake/snowflake-kit-streamlit) | Streamlit in Snowflake framework | soon |
-| [`snowflake-kit-snowpark`](https://github.com/pythia-for-snowflake/snowflake-kit-snowpark) | Snowpark helpers, Excel | soon |
-| [`snowflake-kit-connect`](https://github.com/pythia-for-snowflake/snowflake-kit-connect) | Third-party connectors — HTTP, Workday, INSEE | soon |
-| [`snowflake-kit-airflow`](https://github.com/pythia-for-snowflake/snowflake-kit-airflow) | Airflow integration — PythiaTaskSensor | soon |
-| [`snowflake-provider`](https://github.com/pythia-for-snowflake/snowflake-provider) | IaC engine — YAML → Snowflake objects | soon |
-| [`snowflake-tools`](https://github.com/pythia-for-snowflake/snowflake-tools) | Local dev CLI | soon |
-| [`pythia-monitor`](https://github.com/pythia-for-snowflake/pythia-monitor) | Native App — Snowsight replicas + cost guardrails | soon |
+| [`pinky-core`](https://github.com/pinky-and-snowflake/pinky-core) | Pure Python utils — fmt, validate, security, sql | public |
+| [`pinky-streamlit`](https://github.com/pinky-and-snowflake/pinky-streamlit) | Streamlit in Snowflake framework | soon |
+| [`pinky-snowpark`](https://github.com/pinky-and-snowflake/pinky-snowpark) | Snowpark helpers, Excel | soon |
+| [`pinky-connect`](https://github.com/pinky-and-snowflake/pinky-connect) | Third-party connectors — HTTP, Workday, INSEE | soon |
+| [`pinky-airflow`](https://github.com/pinky-and-snowflake/pinky-airflow) | Airflow integration — PinkyTaskSensor | soon |
+| [`snowflake-provider`](https://github.com/pinky-and-snowflake/snowflake-provider) | IaC engine — YAML → Snowflake objects | soon |
+| [`snowflake-tools`](https://github.com/pinky-and-snowflake/snowflake-tools) | Local dev CLI | soon |
+| [`pinky-monitor`](https://github.com/pinky-and-snowflake/pinky-monitor) | Native App — Snowsight replicas + cost guardrails | soon |
 
 ---
 
