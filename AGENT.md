@@ -1,4 +1,5 @@
 # AGENT.md — pythia-studio
+*Update date : 2026-05-24 16:54*
 
 Browser-based tools for the pythia-for-snowflake suite.
 No build step — open any `.html` directly or serve via GitHub Pages.
@@ -9,8 +10,8 @@ No build step — open any `.html` directly or serve via GitHub Pages.
 
 `pythia-studio` is a collection of **standalone HTML tools** that support local development,
 design, and exploration workflows around the pythia suite.
-Each tool is a single self-contained `.html` file with no build pipeline and no external runtime
-(except where a local backend is explicitly required).
+Each tool lives in its own directory under `pages/` — `index.html` + `app.css` + `app.js`.
+No build step, no framework, no external runtime (except where a local backend is explicitly required).
 
 ---
 
@@ -19,37 +20,44 @@ Each tool is a single self-contained `.html` file with no build pipeline and no 
 ```
 pythia-studio/
 ├── index.html              ← landing page (card grid, loads repos.json from Gist)
+├── app.css                 ← shared CSS tokens and base styles (loaded by every page)
 ├── repos.json              ← product/API card data (fetched from Gist, kept in sync locally)
-├── assets/                 ← logos, icons, fonts used by the static pages
-├── tools/                  ← one .html file per tool
-│   ├── duckdb-explorer.html    ← Pythia QueryFile — local file explorer (FastAPI/DuckDB backend)
-│   ├── palette-title-generator.html
-│   ├── env-generator.html
-│   ├── hub-online.html
-│   ├── hub-articles.html
-│   └── hub-offline.html
+├── assets/
+│   ├── images/             ← logos and icons (pythia, snowflake, streamlit, anthropic…)
+│   └── pdoc/
+│       └── pythia.css      ← shared CSS for pdoc API reference pages
+├── pages/                  ← one directory per tool
+│   ├── duckdb-explorer/    ← Pythia QueryFile — local file explorer (FastAPI/DuckDB backend)
+│   ├── palette-title-generator/
+│   ├── env-generator/
+│   ├── hub-online/
+│   └── hub-articles/
 ├── duckdb_explorer/        ← FastAPI backend for Pythia QueryFile
 │   ├── server.py           ← /health · /upload · /query endpoints
 │   └── requirements.txt
 ├── scripts/                ← dev helpers (serve, lint…)
 ├── tests/                  ← backend tests (pytest)
-├── pdoc-pythia.css         ← shared CSS for pdoc API reference pages
 ├── LICENSE
 ├── README.md
 └── AGENT.md                ← this file
 ```
 
+Each page directory contains:
+- `index.html` — page structure (loads `../../app.css` then `./app.css`)
+- `app.css` — page-specific styles; overrides `:root` tokens for the page's accent color
+- `app.js` — page logic
+
 ---
 
 ## Tools overview
 
-| Tool | File | Backend required |
+| Tool | Path | Backend required |
 |------|------|-----------------|
-| Pythia QueryFile | `tools/duckdb-explorer.html` | Yes — `uvicorn duckdb_explorer.server:app` |
-| Pythia Design | `tools/palette-title-generator.html` | No |
-| Env Generator | `tools/env-generator.html` | No |
-| Stack Reference | `tools/hub-online.html` | No |
-| Articles | `tools/hub-articles.html` | No |
+| Pythia QueryFile | `pages/duckdb-explorer/` | Yes — `uvicorn duckdb_explorer.server:app` |
+| Pythia Design | `pages/palette-title-generator/` | No |
+| Env Generator | `pages/env-generator/` | No |
+| Stack Reference | `pages/hub-online/` | No |
+| Articles | `pages/hub-articles/` | No |
 
 ### Pythia QueryFile — backend
 
@@ -81,11 +89,13 @@ Format: `<emoji> <type>(<scope>): <description>`
 
 | Scope | Covers |
 |-------|--------|
-| `queryfile` | `tools/duckdb-explorer.html` + `duckdb_explorer/` backend |
-| `studio` | `index.html`, `repos.json`, global layout/landing page |
-| `tools` | Any other tool under `tools/` |
-| `assets` | `assets/` — logos, icons |
-| `docs` | `README.md`, `AGENT.md`, `pdoc-pythia.css` |
+| `queryfile` | `pages/duckdb-explorer/` + `duckdb_explorer/` backend |
+| `studio` | `index.html`, `app.css`, `repos.json`, global layout/landing page |
+| `design` | `pages/palette-title-generator/` |
+| `env` | `pages/env-generator/` |
+| `hub` | `pages/hub-online/`, `pages/hub-articles/` |
+| `assets` | `assets/` — logos, icons, pdoc CSS |
+| `docs` | `README.md`, `AGENT.md` |
 | `ci` | `scripts/`, `tests/`, GitHub Actions |
 
 See workspace-level CLAUDE.md for the full emoji ↔ type table.
