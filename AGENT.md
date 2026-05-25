@@ -1,15 +1,15 @@
-# AGENT.md — pythia-studio
-*Update date : 2026-05-24 16:54*
+# AGENT.md — pinky-studio
+*Update date : 2026-05-25 16:31*
 
-Browser-based tools for the pythia-for-snowflake suite.
+Browser-based tools for the pinky-and-snowflake suite.
 No build step — open any `.html` directly or serve via GitHub Pages.
 
 ---
 
 ## What this repo is
 
-`pythia-studio` is a collection of **standalone HTML tools** that support local development,
-design, and exploration workflows around the pythia suite.
+`pinky-studio` is a collection of **standalone HTML tools** that support local development,
+design, and exploration workflows around the pinky suite.
 Each tool lives in its own directory under `pages/` — `index.html` + `app.css` + `app.js`.
 No build step, no framework, no external runtime (except where a local backend is explicitly required).
 
@@ -18,21 +18,21 @@ No build step, no framework, no external runtime (except where a local backend i
 ## Repository structure
 
 ```
-pythia-studio/
+pinky-studio/
 ├── index.html              ← landing page (card grid, loads repos.json from Gist)
 ├── app.css                 ← shared CSS tokens and base styles (loaded by every page)
 ├── repos.json              ← product/API card data (fetched from Gist, kept in sync locally)
 ├── assets/
-│   ├── images/             ← logos and icons (pythia, snowflake, streamlit, anthropic…)
+│   ├── images/             ← logos and icons (pinky, snowflake, streamlit, anthropic…)
 │   └── pdoc/
-│       └── pythia.css      ← shared CSS for pdoc API reference pages
+│       └── pythia.css      ← shared CSS for pdoc API reference pages (filename unchanged)
 ├── pages/                  ← one directory per tool
-│   ├── duckdb-explorer/    ← Pythia QueryFile — local file explorer (FastAPI/DuckDB backend)
+│   ├── duckdb-explorer/    ← Pinky QueryFile — local file explorer (FastAPI/DuckDB backend)
 │   ├── palette-title-generator/
 │   ├── env-generator/
 │   ├── hub-online/
 │   └── hub-articles/
-├── duckdb_explorer/        ← FastAPI backend for Pythia QueryFile
+├── duckdb_explorer/        ← FastAPI backend for Pinky QueryFile
 │   ├── server.py           ← /health · /upload · /query endpoints
 │   └── requirements.txt
 ├── scripts/                ← dev helpers (serve, lint…)
@@ -53,16 +53,16 @@ Each page directory contains:
 
 | Tool | Path | Backend required |
 |------|------|-----------------|
-| Pythia QueryFile | `pages/duckdb-explorer/` | Yes — `uvicorn duckdb_explorer.server:app` |
-| Pythia Design | `pages/palette-title-generator/` | No |
+| Pinky QueryFile | `pages/duckdb-explorer/` | Yes — `uvicorn duckdb_explorer.server:app` |
+| Pinky Design | `pages/palette-title-generator/` | No |
 | Env Generator | `pages/env-generator/` | No |
 | Stack Reference | `pages/hub-online/` | No |
 | Articles | `pages/hub-articles/` | No |
 
-### Pythia QueryFile — backend
+### Pinky QueryFile — backend
 
 ```bash
-# from pythia-studio/
+# from pinky-studio/
 uvicorn duckdb_explorer.server:app --port 8000
 ```
 
@@ -76,7 +76,7 @@ uvicorn duckdb_explorer.server:app --port 8000
 
 - HTML / CSS / vanilla JS — no framework, no bundler
 - DuckDB (via FastAPI backend) — `duckdb>=1.2.0`
-- FastAPI + uvicorn — local backend for Pythia QueryFile only
+- FastAPI + uvicorn — local backend for Pinky QueryFile only
 - Python 3.11 (backend only)
 - Material Symbols Outlined — Google Fonts CDN (icon ligatures)
 - Syne + Courier New — UI fonts
@@ -102,7 +102,7 @@ See workspace-level CLAUDE.md for the full emoji ↔ type table.
 
 ---
 
-## Agents available (in pythia-for-snowflake workspace)
+## Agents available (in pinky workspace)
 
 | Command | What it does |
 |---------|-------------|

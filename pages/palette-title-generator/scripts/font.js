@@ -80,7 +80,7 @@ function buildFontPop(closeHtml){
     {fn:'st.header()',   fam:bf.v, sz:22, fw:700,           sp:0,              color:h2Color,    outline:false,      text:'Data pipeline overview'},
     {fn:'st.subheader()',fam:bf.v, sz:17, fw:600,           sp:0,              color:h3Color,    outline:false,      text:'Configuration'},
     {fn:'st.text()',     fam:bf.v, sz:14, fw:400,           sp:0,              color:d.full&&getSurface(S.mode).appText, outline:false, text:'Run your pipelines, HTTP calls, IaC, and monitoring inside the platform.'},
-    {fn:'st.caption()',  fam:bf.v, sz:12, fw:400,           sp:0,              color:getSurface(S.mode).appTextDim, outline:false, text:'Last updated · March 2026 · pythia-for-snowflake'},
+    {fn:'st.caption()',  fam:bf.v, sz:12, fw:400,           sp:0,              color:getSurface(S.mode).appTextDim, outline:false, text:'Last updated · March 2026 · pinky-and-snowflake'},
   ].map(r=>`<div style="padding:6px 0;border-bottom:1px solid #f5f5f5">
     <div style="font-size:9px;color:#bbb;font-family:'Courier New',monospace;letter-spacing:.06em;margin-bottom:3px">${r.fn}</div>
     <div style="font-family:${r.fam};font-size:${r.sz}px;font-weight:${r.fw};letter-spacing:${r.sp}em;line-height:1.3;${r.outline?`-webkit-text-stroke:${S.outlineSize}px ${r.color};color:transparent`:`color:${r.color}`}">${r.text}</div>
