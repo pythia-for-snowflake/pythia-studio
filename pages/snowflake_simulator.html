@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>❄ Snowflake Cost Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&display=swap" rel="stylesheet">
+
+<!-- ① global app.css — ne pas modifier -->
+<style>
+/* ── reset ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#7056d7;
+  --accent-dark:#5a42bb;
+  --on-accent:#fff;
+  --hover-bg:#f3f0ff;
+  --bg:#f5f5f5;
+  --border:#e0e0e0;
+  --text:#1a1a1a;
+  --muted:#bbb;
+}
+body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 16px 60px}
+.page{max-width:900px;margin:0 auto}
+.hdr-row{display:flex;align-items:center;gap:10px;margin-bottom:3px}
+.hdr-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-.03em}
+.back-btn{margin-left:auto;font-size:11px;color:var(--muted);text-decoration:none;padding:3px 10px;border:1.5px solid var(--border);border-radius:5px;white-space:nowrap;transition:all .12s}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.hdr-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.section{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:16px}
+.label{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.inp{background:#fff;border:1.5px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:12px;padding:8px 11px;width:100%;outline:none;transition:border .12s}
+.inp:focus{border-color:var(--accent)}
+.btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.btn{background:#f5f5f5;border:1.5px solid var(--border);border-radius:6px;color:#555;font-family:inherit;font-size:11px;font-weight:600;padding:7px 14px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--hover-bg)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
+.btn.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
+.btn.ghost{background:none;border-color:var(--border);color:var(--muted)}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent);background:var(--hover-bg)}
+.spacer{flex:1}
+</style>
+
+<!-- ② page app.css — doc-hub chrome (topbar / sidebar / layout) + overrides accent -->
+<style>
+:root{
+  --accent:#F7E24B;
+  --accent-dark:#b8a000;
+  --on-accent:#1a1a1a;
+  --hover-bg:#fffef0;
+  --accent2:#29b5e8;
+  --tag-bg:#f0f9ff;
+  --tag-color:#29b5e8;
+  --sidebar:#ffffff;
+  --active-bg:#fffef0;
+  --active-border:#F7E24B;
+}
+body{height:100vh;padding:0;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--sidebar);border-bottom:2px solid var(--border);flex-shrink:0}
+.topbar-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topbar-logo span:first-child{font-size:18px}
+.topbar-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--accent);letter-spacing:-.02em;white-space:nowrap}
+.topbar-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.topbar-divider{width:1px;height:30px;background:var(--border);flex-shrink:0}
+.topbar-back{font-size:11px;color:var(--muted);text-decoration:none;padding:4px 10px;border:1.5px solid var(--border);border-radius:5px;transition:all .12s;white-space:nowrap}
+.topbar-back:hover{border-color:var(--accent);color:var(--accent);background:var(--hover-bg)}
+.breadcrumb{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;flex:1;overflow:hidden;white-space:nowrap}
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:260px;flex-shrink:0;background:var(--sidebar);border-right:2px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s ease}
+.sidebar.collapsed{width:48px}
+.sidebar-header{padding:12px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.sidebar-label{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.collapse-btn{background:none;border:1.5px solid var(--border);border-radius:5px;cursor:pointer;padding:2px 6px;font-size:12px;color:var(--muted);flex-shrink:0;transition:all .12s;font-family:inherit}
+.collapse-btn:hover{border-color:var(--accent);color:var(--accent)}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-nav::-webkit-scrollbar{width:4px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:#e0e0e0;border-radius:4px}
+.api-group{margin-bottom:2px}
+.api-group-header{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;transition:background .12s;border-left:3px solid transparent;user-select:none}
+.api-group-header:hover{background:var(--hover-bg)}
+.api-group-header.active{background:var(--active-bg);border-left-color:var(--accent)}
+.api-icon{font-size:16px;flex-shrink:0}
+.api-info{flex:1;overflow:hidden}
+.api-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.api-tag{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--tag-bg);color:var(--tag-color);font-weight:700;letter-spacing:.05em;white-space:nowrap}
+.api-chevron{font-size:10px;color:var(--muted);transition:transform .15s;flex-shrink:0}
+.api-group-header.open .api-chevron{transform:rotate(90deg)}
+.api-pages{display:none;padding:0 0 4px 0}
+.api-pages.open{display:block}
+.page-link{display:flex;align-items:center;gap:6px;padding:5px 14px 5px 38px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .12s;border-left:3px solid transparent}
+.page-link:hover{color:var(--text);background:var(--hover-bg)}
+.page-link.active{color:var(--accent);font-weight:700;border-left-color:var(--accent);background:var(--active-bg)}
+.page-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.5}
+.sidebar.collapsed .sidebar-label,.sidebar.collapsed .api-info,.sidebar.collapsed .api-chevron,
+.sidebar.collapsed .api-pages,.sidebar.collapsed .sidebar-search{display:none}
+.sidebar.collapsed .api-group-header{padding:10px;justify-content:center;border-left:none}
+.sidebar.collapsed .api-group-header.active{background:var(--active-bg)}
+.sidebar.collapsed .api-icon{font-size:18px}
+.sidebar.collapsed .sidebar-header{justify-content:center;padding:10px}
+.content{flex:1;overflow-y:auto;padding:32px 40px;background:var(--bg)}
+.content::-webkit-scrollbar{width:6px}
+.content::-webkit-scrollbar-thumb{background:#e0e0e0;border-radius:4px}
+</style>
+
+<!-- ③ simulator-specific styles — uniquement ce qui n'existe pas dans les deux CSS ci-dessus -->
+<style>
+/* summary bar */
+.sim-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.sim-metric{flex:1;min-width:110px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 11px;text-align:center}
+.sim-metric.accent{border-color:var(--accent-dark)}
+.sim-metric-lbl{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.sim-metric-val{font-size:16px;font-weight:700;color:var(--accent-dark)}
+.sim-metric-val.blue{color:#29b5e8}
+.sim-metric-val.green{color:#16a34a}
+.sim-metric-val.amber{color:#d97706}
+.sim-metric-val.dim{color:var(--muted)}
+.sim-metric-sub{font-size:9px;color:var(--muted);margin-top:2px}
+
+/* tab panels */
+.sim-tab{display:none}
+.sim-tab.active{display:block}
+
+/* grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+
+/* field */
+.fld{margin-bottom:8px}
+.fld-note{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.5}
+
+/* inputs override for simulator (use .inp from global) */
+select.inp{padding:7px 9px}
+
+/* section title inside simulator */
+.stitle{font-size:10px;font-weight:700;color:var(--accent-dark);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.stitle-arrow{color:var(--accent)}
+
+/* wh card */
+.wh-card{background:#fafafa;border:1px solid var(--border);border-radius:6px;padding:11px 13px;margin-bottom:7px;position:relative}
+.wh-remove{position:absolute;top:9px;right:9px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;line-height:1;padding:2px;font-family:inherit;transition:color .12s}
+.wh-remove:hover{color:#dc2626}
+.add-wh{width:100%;padding:7px 0;background:none;border:1.5px dashed var(--border);border-radius:6px;color:var(--muted);font-size:10px;font-family:inherit;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-top:3px;transition:all .12s}
+.add-wh:hover{border-color:var(--accent);color:var(--accent-dark)}
+
+/* sep */
+.sep{height:1px;background:var(--border);margin:12px 0}
+
+/* info boxes */
+.info{border-radius:6px;padding:8px 12px;font-size:10px;line-height:1.6;margin-bottom:10px}
+.info.blue{background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1}
+.info.amber{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.info.green{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+
+/* compare rows (total tab) */
+.cmp-row{display:flex;justify-content:space-between;font-size:11px;padding:6px 0;border-bottom:1px solid var(--border)}
+.cmp-lbl{color:var(--muted)}
+.cmp-val{color:var(--text);font-weight:500}
+
+/* total edition cards */
+.ed-cards{display:flex;gap:10px;margin-top:8px}
+.ed-card{flex:1;background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.ed-card.recommended{border-color:var(--accent);background:var(--hover-bg)}
+.ed-badge{display:inline-block;font-size:9px;padding:2px 7px;background:var(--accent);color:var(--on-accent);border-radius:3px;letter-spacing:.08em;margin-bottom:6px;font-weight:700}
+.ed-label{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.ed-total{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--text)}
+.ed-card.recommended .ed-total{color:var(--accent-dark)}
+.ed-sub{font-size:9px;color:var(--muted);margin-top:4px}
+
+/* flex helpers */
+.flex-gap{display:flex;gap:10px}
+.flex-gap > *{flex:1}
+.flex-col{display:flex;flex-direction:column;gap:10px}
+
+/* note */
+.note{font-size:9px;color:var(--muted);margin-top:6px;line-height:1.6}
+.note-center{font-size:9px;color:var(--muted);margin-top:14px;text-align:center;line-height:1.8}
+</style>
+</head>
+<body>
+
+<!-- topbar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <!-- Remplacer par : <img src="../../assets/images/pythia-logo.png" alt="pythia" height="28" style="display:block"> -->
+    <span>❄</span>
+    <div>
+      <div class="topbar-title">snowflake cost simulator</div>
+      <div class="topbar-sub">AWS EU Paris / Frankfurt · mai 2026</div>
+    </div>
+  </div>
+  <div class="topbar-divider"></div>
+  <div class="breadcrumb" id="breadcrumb"><span id="bc-text">Compute &amp; Tasks</span></div>
+  <a class="topbar-back" href="../../index.html">← studio</a>
+</div>
+
+<div class="layout">
+
+  <!-- sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-label">Simulator</span>
+      <button class="collapse-btn" id="collapse-btn" onclick="toggleSidebar()">◀</button>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+
+      <div class="api-group">
+        <div class="api-group-header active" id="nav-compute" onclick="switchTab('compute')">
+          <span class="api-icon">⚡</span>
+          <div class="api-info">
+            <div class="api-name">Compute &amp; Tasks</div>
+            <span class="api-tag">WH · Tasks · AI</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-group">
+        <div class="api-group-header" id="nav-storage" onclick="switchTab('storage')">
+          <span class="api-icon">🗄</span>
+          <div class="api-info">
+            <div class="api-name">Stockage</div>
+            <span class="api-tag">SF · Iceberg · PG</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-group">
+        <div class="api-group-header" id="nav-api" onclick="switchTab('api')">
+          <span class="api-icon">🔌</span>
+          <div class="api-info">
+            <div class="api-name">API FastAPI</div>
+            <span class="api-tag">SPCS · Fargate · λ</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-group">
+        <div class="api-group-header" id="nav-total" onclick="switchTab('total')">
+          <span class="api-icon">📊</span>
+          <div class="api-info">
+            <div class="api-name">Récapitulatif</div>
+            <span class="api-tag">Total · Std · Ent</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- content -->
+  <div class="content">
+
+    <!-- summary bar (always visible) -->
+    <div class="sim-bar">
+      <div class="sim-metric"><div class="sim-metric-lbl">Standard /mois</div><div class="sim-metric-val dim" id="s-std">—</div></div>
+      <div class="sim-metric accent"><div class="sim-metric-lbl">Enterprise /mois</div><div class="sim-metric-val" id="s-ent">—</div></div>
+      <div class="sim-metric"><div class="sim-metric-lbl">Compute crédits</div><div class="sim-metric-val blue" id="s-cred" style="font-size:13px">—</div></div>
+      <div class="sim-metric"><div class="sim-metric-lbl">API SPCS /mois</div><div class="sim-metric-val amber" id="s-spcs">—</div></div>
+      <div class="sim-metric"><div class="sim-metric-lbl">API Fargate /mois</div><div class="sim-metric-val green" id="s-fargate">—</div></div>
+    </div>
+
+    <!-- ── TAB COMPUTE ────────────────────────────────────────────── -->
+    <div class="sim-tab active" id="tab-compute">
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Virtual Warehouses</div>
+        <div id="wh-list"></div>
+        <button class="add-wh" onclick="addWH()">+ ajouter un warehouse</button>
+        <div class="g2" style="margin-top:10px">
+          <div class="sim-metric"><div class="sim-metric-lbl">Total WH crédits/mois</div><div class="sim-metric-val blue" id="wh-creds">—</div></div>
+          <div class="sim-metric accent"><div class="sim-metric-lbl">Coût Enterprise</div><div class="sim-metric-val" id="wh-cost-ent">—</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Compute Pool Streamlit — SYSTEM_COMPUTE_POOL_CPU</div>
+        <div class="info green">✓ 1er nœud idle CPU_X64_S pris en charge par Snowflake · ⚠ GPU non dispo AWS Paris</div>
+        <div class="g2">
+          <div class="fld">
+            <div class="label">Utilisateurs simultanés max</div>
+            <input class="inp" type="number" min="1" id="st-users" value="10">
+            <p class="fld-note">Ratio 2 users / instance CPU_X64_S · 1er nœud gratuit</p>
+          </div>
+          <div class="fld">
+            <div class="label">Heures actives / jour</div>
+            <input class="inp" type="number" min="0" max="24" id="st-hours" value="8">
+          </div>
+        </div>
+        <div class="g3">
+          <div class="sim-metric"><div class="sim-metric-lbl">Nœuds total</div><div class="sim-metric-val blue" id="st-nodes">—</div><div class="sim-metric-sub">dont 1 gratuit</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">Nœuds facturés</div><div class="sim-metric-val blue" id="st-billable">—</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">Crédits / mois</div><div class="sim-metric-val blue" id="st-creds">—</div><div class="sim-metric-sub" id="st-cost-sub">—</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Serverless Tasks</div>
+        <div class="g3">
+          <div class="fld"><div class="label">Nb tâches / jour</div><input class="inp" type="number" min="0" id="task-count" value="100"></div>
+          <div class="fld">
+            <div class="label">Durée moyenne (sec)</div>
+            <input class="inp" type="number" min="1" id="task-dur" value="30">
+            <p class="fld-note">Min facturable : 60 sec</p>
+          </div>
+          <div class="fld">
+            <div class="label">Taille compute équivalente</div>
+            <select class="inp" id="task-size">
+              <option value="0">XS — 1 cr/h</option>
+              <option value="1" selected>S — 2 cr/h</option>
+              <option value="2">M — 4 cr/h</option>
+              <option value="3">L — 8 cr/h</option>
+            </select>
+          </div>
+        </div>
+        <p class="fld-note">Multiplicateur ×0.9 · facturation à la seconde</p>
+        <div class="g3" style="margin-top:8px">
+          <div class="sim-metric"><div class="sim-metric-lbl">Compute-hours/mois</div><div class="sim-metric-val blue" id="task-ch">—</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">Crédits / mois</div><div class="sim-metric-val blue" id="task-creds">—</div></div>
+          <div class="sim-metric accent"><div class="sim-metric-lbl">Coût Enterprise</div><div class="sim-metric-val" id="task-cost">—</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Snowpipe</div>
+        <div class="g2">
+          <div class="fld">
+            <div class="label">Volume ingéré / jour (GB)</div>
+            <input class="inp" type="number" min="0" id="pipe-gb" value="10">
+            <p class="fld-note">0.0037 cr/GB · CSV/JSON non compressé, observé Parquet</p>
+          </div>
+          <div class="sim-metric"><div class="sim-metric-lbl">Crédits / mois</div><div class="sim-metric-val blue" id="pipe-creds">—</div><div class="sim-metric-sub" id="pipe-cost-sub">—</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Cortex AI / LLM</div>
+        <div class="info blue">AI Credits facturés $2.00/cr (tarif global fixe) — indépendant de l'édition</div>
+        <div class="g2">
+          <div class="fld">
+            <div class="label">Modèle</div>
+            <select class="inp" id="llm-model">
+              <option value="0">llama3.3-70b (in:0.36 out:0.36 cr/M)</option>
+              <option value="1">claude-haiku-4-5 (in:0.55 out:2.75 cr/M)</option>
+              <option value="2" selected>claude-sonnet-4-6 (in:1.65 out:8.25 cr/M)</option>
+              <option value="3">claude-opus-4-6 (in:2.75 out:13.75 cr/M)</option>
+              <option value="4">deepseek-r1 (in:0.68 out:2.70 cr/M)</option>
+              <option value="5">mistral-large2 (in:1.00 out:3.00 cr/M)</option>
+            </select>
+          </div>
+          <div></div>
+          <div class="fld"><div class="label">Tokens input / mois (millions)</div><input class="inp" type="number" min="0" id="llm-in" value="10"></div>
+          <div class="fld"><div class="label">Tokens output / mois (millions)</div><input class="inp" type="number" min="0" id="llm-out" value="3"></div>
+        </div>
+        <div class="g3">
+          <div class="sim-metric"><div class="sim-metric-lbl">AI crédits input</div><div class="sim-metric-val blue" id="ai-cred-in">—</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">AI crédits output</div><div class="sim-metric-val blue" id="ai-cred-out">—</div></div>
+          <div class="sim-metric accent"><div class="sim-metric-lbl">Coût total</div><div class="sim-metric-val" id="ai-usd">—</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Data Transfer</div>
+        <div class="g3">
+          <div class="fld">
+            <div class="label">Intra-région AWS (GB)</div>
+            <input class="inp" type="number" value="0" disabled style="opacity:.4">
+            <p class="fld-note">Gratuit</p>
+          </div>
+          <div class="fld">
+            <div class="label">Inter-région AWS (GB)</div>
+            <input class="inp" type="number" min="0" id="dt-inter" value="50">
+            <p class="fld-note">$20/TB</p>
+          </div>
+          <div class="fld">
+            <div class="label">Vers internet / autre cloud (GB)</div>
+            <input class="inp" type="number" min="0" id="dt-out" value="0">
+            <p class="fld-note">$90/TB</p>
+          </div>
+        </div>
+        <div class="sim-metric" style="margin-top:8px"><div class="sim-metric-lbl">Coût data transfer / mois</div><div class="sim-metric-val blue" id="dt-cost">—</div></div>
+      </div>
+
+    </div><!-- /tab-compute -->
+
+    <!-- ── TAB STOCKAGE ───────────────────────────────────────────── -->
+    <div class="sim-tab" id="tab-storage">
+
+      <div class="info blue">Comparaison des 3 stratégies de stockage — OLAP pur → Tables SF · Multi-engine → Iceberg · OLTP → Postgres</div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>① Tables natives Snowflake</div>
+        <div class="g2">
+          <div>
+            <div class="label">Documents / fichiers</div>
+            <div class="fld"><div class="label">Volume (GB)</div><input class="inp" type="number" min="0" id="sto-doc-gb" value="100"></div>
+          </div>
+          <div>
+            <div class="label">Tables Snowflake</div>
+            <div class="g2">
+              <div class="fld"><div class="label">Millions de lignes</div><input class="inp" type="number" min="0" id="sto-rows" value="50"></div>
+              <div class="fld"><div class="label">Nb colonnes</div><input class="inp" type="number" min="1" id="sto-cols" value="20"></div>
+            </div>
+            <p class="fld-note">~8 octets/cellule compressé (columnar store)</p>
+          </div>
+        </div>
+        <div class="g3" style="margin-top:10px">
+          <div class="sim-metric"><div class="sim-metric-lbl">Tables estimé (GB)</div><div class="sim-metric-val blue" id="sto-table-gb">—</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">Total (GB)</div><div class="sim-metric-val blue" id="sto-total-gb">—</div></div>
+          <div class="sim-metric accent"><div class="sim-metric-lbl">Coût SF ($24.50/TB)</div><div class="sim-metric-val" id="sto-sf-cost">—</div></div>
+        </div>
+        <div class="info blue" style="margin-top:10px">✓ Performances optimales · compression auto · zéro gestion<br>✗ $24.50/TB vs $0.023/GB S3 — ratio ~×26</div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>② Iceberg sur S3</div>
+        <div class="g2">
+          <div class="fld">
+            <div class="label">Volume S3 (GB)</div>
+            <input class="inp" type="number" min="0" id="iceberg-gb" value="500">
+            <p class="fld-note">Stockage sur ton compte AWS à $0.023/GB</p>
+          </div>
+          <div class="sim-metric accent"><div class="sim-metric-lbl">Coût stockage S3/mois</div><div class="sim-metric-val green" id="iceberg-cost">—</div><div class="sim-metric-sub">+ compute Snowflake pour lecture</div></div>
+        </div>
+        <div class="info amber">
+          ✓ ~×26 moins cher · interopérable Spark / Athena / DuckDB<br>
+          ✓ Idéal pour data products exposés via plusieurs engines<br>
+          ✗ Légère latence vs tables natives · gestion des métadonnées
+        </div>
+        <div class="g2">
+          <div class="sim-metric"><div class="sim-metric-lbl">Économie vs SF natif (même vol.)</div><div class="sim-metric-val green" id="iceberg-saving">—</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">Ratio coût stockage</div><div class="sim-metric-val blue" id="iceberg-ratio" style="font-size:10px">—</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>③ Snowflake Postgres Managed</div>
+        <div class="info amber">Instance PostgreSQL hébergée dans Snowflake — OLTP transactionnel. Pas un remplacement des tables SF pour l'analytique.</div>
+        <div class="g3">
+          <div class="fld">
+            <div class="label">Instance (AWS EU Frankfurt)</div>
+            <select class="inp" id="pg-instance">
+              <option value="0">STANDARD_M — 0.0356 cr/h</option>
+              <option value="1">STANDARD_L — 0.0712 cr/h</option>
+              <option value="2">STANDARD_XL — 0.1424 cr/h</option>
+              <option value="3">STANDARD_2X — 0.2848 cr/h</option>
+              <option value="4">HIGHMEM_L — 0.1024 cr/h</option>
+              <option value="5">HIGHMEM_XL — 0.2048 cr/h</option>
+              <option value="6">HIGHMEM_2XL — 0.4096 cr/h</option>
+              <option value="7">BURST_S — 0.0136 cr/h</option>
+            </select>
+          </div>
+          <div class="fld">
+            <div class="label">Haute disponibilité</div>
+            <select class="inp" id="pg-ha">
+              <option value="0">Non (single node)</option>
+              <option value="1">Oui (HA — ×2)</option>
+            </select>
+            <p class="fld-note">Double le coût compute + stockage</p>
+          </div>
+          <div class="fld">
+            <div class="label">Stockage Postgres (GB)</div>
+            <input class="inp" type="number" min="1" id="pg-storage-gb" value="100">
+            <p class="fld-note">$117.76/TB/mois AWS EU</p>
+          </div>
+        </div>
+        <div class="g3">
+          <div class="sim-metric"><div class="sim-metric-lbl">Crédits compute/mois</div><div class="sim-metric-val blue" id="pg-compute-creds">—</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">Coût stockage/mois</div><div class="sim-metric-val blue" id="pg-stor-cost">—</div></div>
+          <div class="sim-metric accent"><div class="sim-metric-lbl">Coût total/mois</div><div class="sim-metric-val amber" id="pg-total-cost">—</div></div>
+        </div>
+        <div class="info blue" style="margin-top:10px">
+          ✓ Idéal si FastAPI a besoin d'écriture transactionnelle · même plan de contrôle Snowflake<br>
+          ✗ Cher pour stockage pur ($117/TB vs $23/TB SF ou $0.023/GB S3)
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Comparaison stockage — même volume</div>
+        <div class="g3" id="sto-compare"></div>
+      </div>
+
+    </div><!-- /tab-storage -->
+
+    <!-- ── TAB API ─────────────────────────────────────────────────── -->
+    <div class="sim-tab" id="tab-api">
+
+      <div class="info blue">Comparaison hébergement FastAPI : SPCS (dans Snowflake) vs AWS natif (Fargate / Lambda). API always-on requise pour CRM/ERP avec SLA.</div>
+
+      <div class="flex-gap" style="align-items:flex-start;margin-top:16px">
+
+        <!-- SPCS -->
+        <div class="section" style="margin-top:0;flex:1">
+          <div class="stitle"><span class="stitle-arrow">▸</span>Option A — SPCS</div>
+          <div class="info amber" id="spcs-infobox">Pool mutualisé · always-on</div>
+          <div class="fld">
+            <div class="label">Instance SPCS</div>
+            <select class="inp" id="api-spcs-instance">
+              <option value="0">CPU_X64_XS (2vCPU 8GB) — 0.06 cr/h</option>
+              <option value="1" selected>CPU_X64_S (4vCPU 16GB) — 0.11 cr/h</option>
+              <option value="2">CPU_X64_M (8vCPU 32GB) — 0.22 cr/h</option>
+              <option value="3">CPU_X64_SL (16vCPU 64GB) — 0.41 cr/h</option>
+            </select>
+          </div>
+          <div class="fld">
+            <div class="label">Nb nœuds always-on (MIN_NODES)</div>
+            <input class="inp" type="number" min="1" max="20" id="api-spcs-nodes" value="2">
+            <p class="fld-note">Min 2 recommandé pour HA</p>
+          </div>
+          <div class="fld">
+            <div class="label">Nb data products exposés</div>
+            <input class="inp" type="number" min="1" id="api-products" value="3">
+          </div>
+          <div class="sep"></div>
+          <div class="g2">
+            <div class="sim-metric"><div class="sim-metric-lbl">Crédits SPCS/mois</div><div class="sim-metric-val blue" id="spcs-creds">—</div></div>
+            <div class="sim-metric accent"><div class="sim-metric-lbl">Coût Enterprise/mois</div><div class="sim-metric-val amber" id="spcs-cost">—</div></div>
+          </div>
+          <p class="note" id="spcs-note" style="margin-top:8px"></p>
+          <div class="info blue" style="margin-top:8px">
+            ✓ Plan de contrôle unifié · Private Link natif<br>
+            ✗ Cher pour compute applicatif · cold start 2-3 min
+          </div>
+        </div>
+
+        <!-- AWS natif -->
+        <div class="flex-col" style="flex:1">
+
+          <div class="section" style="margin-top:0">
+            <div class="stitle"><span class="stitle-arrow">▸</span>Option B — AWS Fargate (always-on)</div>
+            <div class="g2">
+              <div class="fld">
+                <div class="label">vCPU / task</div>
+                <select class="inp" id="fargate-vcpu">
+                  <option value="0.25">0.25 vCPU</option>
+                  <option value="0.5" selected>0.5 vCPU</option>
+                  <option value="1">1 vCPU</option>
+                  <option value="2">2 vCPU</option>
+                  <option value="4">4 vCPU</option>
+                </select>
+              </div>
+              <div class="fld">
+                <div class="label">RAM / task (GB)</div>
+                <select class="inp" id="fargate-gb">
+                  <option value="0.5">0.5 GB</option>
+                  <option value="1" selected>1 GB</option>
+                  <option value="2">2 GB</option>
+                  <option value="4">4 GB</option>
+                  <option value="8">8 GB</option>
+                </select>
+              </div>
+            </div>
+            <div class="fld">
+              <div class="label">Nb tasks always-on</div>
+              <input class="inp" type="number" min="1" id="fargate-tasks" value="2">
+              <p class="fld-note">Min 2 pour HA derrière un ALB</p>
+            </div>
+            <div class="sim-metric accent"><div class="sim-metric-lbl">Coût Fargate/mois</div><div class="sim-metric-val green" id="fargate-cost">—</div></div>
+            <p class="note" style="margin-top:6px">$0.0466/vCPU/h + $0.0051/GB/h · EU (Paris)</p>
+          </div>
+
+          <div class="section" style="margin-top:0">
+            <div class="stitle"><span class="stitle-arrow">▸</span>Option C — AWS Lambda (on-demand)</div>
+            <div class="info amber">Cold start Python ~1-2 sec · risqué pour CRM temps réel</div>
+            <div class="g3">
+              <div class="fld"><div class="label">Requêtes/mois (M)</div><input class="inp" type="number" min="0" step="0.1" id="lambda-req-m" value="1"></div>
+              <div class="fld">
+                <div class="label">Mémoire (MB)</div>
+                <select class="inp" id="lambda-mem">
+                  <option value="128">128 MB</option>
+                  <option value="256">256 MB</option>
+                  <option value="512" selected>512 MB</option>
+                  <option value="1024">1024 MB</option>
+                  <option value="2048">2048 MB</option>
+                </select>
+              </div>
+              <div class="fld"><div class="label">Durée moyenne (ms)</div><input class="inp" type="number" min="1" id="lambda-dur-ms" value="200"></div>
+            </div>
+            <div class="g2">
+              <div class="sim-metric"><div class="sim-metric-lbl">Coût requêtes</div><div class="sim-metric-val blue" id="lambda-req-cost">—</div></div>
+              <div class="sim-metric accent"><div class="sim-metric-lbl">Coût total Lambda/mois</div><div class="sim-metric-val green" id="lambda-total-cost">—</div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Comparaison API — récapitulatif</div>
+        <div class="g3" id="api-compare"></div>
+        <div class="info green" style="margin-top:10px">
+          💡 Fargate always-on recommandé pour CRM/ERP avec SLA — simplicité AWS, coût maîtrisé.<br>
+          Garder SPCS uniquement si Private Link Snowflake est un prérequis contractuel fort.
+        </div>
+      </div>
+
+    </div><!-- /tab-api -->
+
+    <!-- ── TAB TOTAL ───────────────────────────────────────────────── -->
+    <div class="sim-tab" id="tab-total">
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Récapitulatif compute Snowflake</div>
+        <div id="total-compute-rows"></div>
+        <div id="total-flat-rows"></div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Options stockage (hors tables natives)</div>
+        <div class="g3">
+          <div class="sim-metric"><div class="sim-metric-lbl">Iceberg S3</div><div class="sim-metric-val green" id="t-iceberg">—</div><div class="sim-metric-sub">sur ton compte AWS</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">Postgres managed</div><div class="sim-metric-val amber" id="t-pg">—</div><div class="sim-metric-sub" id="t-pg-sub">—</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">Postgres compute seul</div><div class="sim-metric-val blue" id="t-pg-compute">—</div><div class="sim-metric-sub" id="t-pg-compute-sub">—</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Options API FastAPI</div>
+        <div class="g3">
+          <div class="sim-metric"><div class="sim-metric-lbl">SPCS mutualisé</div><div class="sim-metric-val amber" id="t-spcs">—</div><div class="sim-metric-sub" id="t-spcs-sub">—</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">AWS Fargate</div><div class="sim-metric-val green" id="t-fargate">—</div><div class="sim-metric-sub" id="t-fargate-sub">—</div></div>
+          <div class="sim-metric"><div class="sim-metric-lbl">AWS Lambda</div><div class="sim-metric-val blue" id="t-lambda">—</div><div class="sim-metric-sub" id="t-lambda-sub">—</div></div>
+        </div>
+      </div>
+
+      <div class="section" style="border-color:var(--accent)">
+        <div class="stitle"><span class="stitle-arrow">▸</span>Total mensuel Snowflake <span style="font-weight:400;color:var(--muted)">(hors API &amp; stockage alternatif)</span></div>
+        <div class="ed-cards">
+          <div class="ed-card">
+            <div class="ed-label">Standard · $2.60/cr</div>
+            <div class="ed-total" id="total-std-big">—</div>
+            <div class="ed-sub" id="total-std-sub">—</div>
+          </div>
+          <div class="ed-card recommended">
+            <div class="ed-badge">RECOMMANDÉ</div>
+            <div class="ed-label">Enterprise · $3.90/cr</div>
+            <div class="ed-total" id="total-ent-big">—</div>
+            <div class="ed-sub" id="total-ent-sub">—</div>
+          </div>
+        </div>
+        <p class="note-center">
+          Estimations basées sur Snowflake Service Consumption Table (mai 2026) · AWS EU Paris/Frankfurt<br>
+          Ajouter selon choix : Iceberg <span id="foot-iceberg">—</span>/mois · Postgres <span id="foot-pg">—</span>/mois · API Fargate <span id="foot-fargate">—</span>/mois
+        </p>
+      </div>
+
+    </div><!-- /tab-total -->
+
+  </div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+// ── Constants ────────────────────────────────────────────────────────────────
+const PRICES={std:2.60,ent:3.90};
+const WH_SIZES=[{l:"XS",c:1},{l:"S",c:2},{l:"M",c:4},{l:"L",c:8},{l:"XL",c:16},{l:"2XL",c:32},{l:"3XL",c:64},{l:"4XL",c:128}];
+const TASK_SIZES=[{c:1},{c:2},{c:4},{c:8}];
+const LLM=[{i:0.36,o:0.36},{i:0.55,o:2.75},{i:1.65,o:8.25},{i:2.75,o:13.75},{i:0.68,o:2.70},{i:1.00,o:3.00}];
+const PG_CPH=[0.0356,0.0712,0.1424,0.2848,0.1024,0.2048,0.4096,0.0136];
+const SPCS_CPH=[0.06,0.11,0.22,0.41];
+const SF_TB=24.50,S3_GB=0.023,PG_TB=117.76,PIPE_GB=0.0037,AI_CR=2.00,DT_I=20,DT_O=90,DAYS=30,H=720,ST_CPH=0.11;
+const FG_VCPU=0.04656,FG_GB=0.00511,LBD_REQ=0.20,LBD_GBS=0.0000166667;
+
+let warehouses=[{name:"Transformation",size:1,hours:8,count:1},{name:"Ad-hoc",size:0,hours:4,count:1}];
+
+const fmtd=(n,d=2)=>isNaN(n)?"—":n.toLocaleString("fr-FR",{minimumFractionDigits:0,maximumFractionDigits:d});
+const usd=n=>isNaN(n)?"—":"$"+fmtd(n);
+const cred=n=>fmtd(n)+" cr";
+const gn=id=>parseFloat(document.getElementById(id)?.value)||0;
+const gi=id=>parseInt(document.getElementById(id)?.value)||0;
+const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+
+function compute(){
+  const whCredits=warehouses.reduce((a,w)=>a+WH_SIZES[w.size].c*w.hours*w.count*DAYS,0);
+  const stNodes=Math.ceil(gn("st-users")/2),stBillable=Math.max(0,stNodes-1);
+  const stCredits=stBillable*ST_CPH*gn("st-hours")*DAYS;
+  const effDur=Math.max(gn("task-dur"),60),taskCH=(gn("task-count")*effDur/3600)*DAYS;
+  const taskCredits=taskCH*TASK_SIZES[gi("task-size")].c*0.9;
+  const pipeCredits=gn("pipe-gb")*DAYS*PIPE_GB;
+  const m=LLM[gi("llm-model")],aiIn=gn("llm-in")*m.i,aiOut=gn("llm-out")*m.o,aiUsd=(aiIn+aiOut)*AI_CR;
+  const dtCost=(gn("dt-inter")/1024)*DT_I+(gn("dt-out")/1024)*DT_O;
+  const tableGb=(gn("sto-rows")*1e6*gn("sto-cols")*8)/(1024**3);
+  const totalNativeGb=gn("sto-doc-gb")+tableGb,stoSfCost=(totalNativeGb/1024)*SF_TB;
+  const icebergGb=gn("iceberg-gb"),icebergCost=icebergGb*S3_GB;
+  const pgHa=gi("pg-ha")===1,pgCph=PG_CPH[gi("pg-instance")]*(pgHa?2:1);
+  const pgComputeCredits=pgCph*H,pgComputeCost=pgComputeCredits*PRICES.ent;
+  const pgStorCost=(gn("pg-storage-gb")/1024)*PG_TB*(pgHa?2:1),pgTotalCost=pgComputeCost+pgStorCost;
+  const spcsCredits=SPCS_CPH[gi("api-spcs-instance")]*gn("api-spcs-nodes")*H,spcsCost=spcsCredits*PRICES.ent;
+  const fargateCost=(gn("fargate-vcpu")*FG_VCPU+gn("fargate-gb")*FG_GB)*gn("fargate-tasks")*H;
+  const lbdReqCost=gn("lambda-req-m")*LBD_REQ,lbdGbS=(gn("lambda-mem")/1024)*(gn("lambda-dur-ms")/1000)*gn("lambda-req-m")*1e6;
+  const lambdaTotalCost=lbdReqCost+lbdGbS*LBD_GBS;
+  const totalComputeCredits=whCredits+stCredits+taskCredits+pipeCredits;
+  const flatCosts=stoSfCost+aiUsd+dtCost;
+  return{whCredits,stCredits,stNodes,stBillable,taskCredits,taskCH,pipeCredits,
+    aiIn,aiOut,aiUsd,dtCost,stoSfCost,tableGb,totalNativeGb,
+    icebergGb,icebergCost,pgHa,pgComputeCredits,pgComputeCost,pgStorCost,pgTotalCost,
+    spcsCredits,spcsCost,fargateCost,lbdReqCost,lambdaTotalCost,
+    apiSpcsNodes:gn("api-spcs-nodes"),apiProducts:gn("api-products"),fargateTasks:gn("fargate-tasks"),lambdaReqM:gn("lambda-req-m"),
+    totalComputeCredits,flatCosts,
+    totalStd:totalComputeCredits*PRICES.std+flatCosts,totalEnt:totalComputeCredits*PRICES.ent+flatCosts};
+}
+
+function update(){
+  const R=compute();
+  // summary bar
+  set("s-std",usd(R.totalStd));set("s-ent",usd(R.totalEnt));
+  set("s-cred",cred(R.totalComputeCredits));set("s-spcs",usd(R.spcsCost));set("s-fargate",usd(R.fargateCost));
+  // compute tab
+  set("wh-creds",cred(R.whCredits));set("wh-cost-ent",usd(R.whCredits*PRICES.ent));
+  set("st-nodes",R.stNodes);set("st-billable",R.stBillable);
+  set("st-creds",cred(R.stCredits));set("st-cost-sub",usd(R.stCredits*PRICES.ent)+" Enterprise");
+  set("task-ch",fmtd(R.taskCH));set("task-creds",cred(R.taskCredits));set("task-cost",usd(R.taskCredits*PRICES.ent));
+  set("pipe-creds",cred(R.pipeCredits));set("pipe-cost-sub",usd(R.pipeCredits*PRICES.ent)+" Enterprise");
+  set("ai-cred-in",cred(R.aiIn));set("ai-cred-out",cred(R.aiOut));set("ai-usd",usd(R.aiUsd));
+  set("dt-cost",usd(R.dtCost));
+  // storage tab
+  set("sto-table-gb",fmtd(R.tableGb,0));set("sto-total-gb",fmtd(R.totalNativeGb,0));
+  set("sto-sf-cost",usd(R.stoSfCost)+"/mois");
+  set("iceberg-cost",usd(R.icebergCost));
+  set("iceberg-saving",usd((R.icebergGb/1024)*SF_TB-R.icebergCost)+"/mois");
+  set("iceberg-ratio","SF: "+usd((R.icebergGb/1024)*SF_TB)+" vs S3: "+usd(R.icebergCost));
+  set("pg-compute-creds",cred(R.pgComputeCredits));set("pg-stor-cost",usd(R.pgStorCost));set("pg-total-cost",usd(R.pgTotalCost));
+  const maxV=Math.max(gn("sto-doc-gb"),gn("iceberg-gb"),gn("pg-storage-gb"));
+  document.getElementById("sto-compare").innerHTML=[
+    {l:"Tables SF",v:usd((maxV/1024)*SF_TB),s:"$24.50/TB · OLAP",cl:"blue"},
+    {l:"Iceberg S3",v:usd(maxV*S3_GB),s:"$0.023/GB · multi-engine",cl:"green"},
+    {l:"Postgres SF",v:usd((maxV/1024)*PG_TB),s:"$117/TB + compute · OLTP",cl:"amber"},
+  ].map(c=>`<div class="sim-metric"><div class="sim-metric-lbl">${c.l}</div><div class="sim-metric-val ${c.cl}">${c.v}<span style="font-size:9px;color:var(--muted)">/mois</span></div><div class="sim-metric-sub">${c.s}</div></div>`).join("");
+  // api tab
+  set("spcs-creds",cred(R.spcsCredits));set("spcs-cost",usd(R.spcsCost));
+  document.getElementById("spcs-infobox").textContent="Pool mutualisé · always-on · MIN_NODES="+R.apiSpcsNodes;
+  document.getElementById("spcs-note").textContent="Coût/data product : "+usd(R.spcsCost/R.apiProducts)+"/mois · Min facturable : 5 min · DT SPCS intra-région : $3.07/TB";
+  set("fargate-cost",usd(R.fargateCost));
+  set("lambda-req-cost",usd(R.lbdReqCost));set("lambda-total-cost",usd(R.lambdaTotalCost));
+  document.getElementById("api-compare").innerHTML=[
+    {l:"SPCS",v:R.spcsCost,s:"always-on · dans Snowflake",cl:"amber",n:usd(R.spcsCost/R.apiProducts)+"/data product"},
+    {l:"Fargate",v:R.fargateCost,s:"always-on · AWS natif",cl:"green",n:usd(R.fargateCost/R.apiProducts)+"/data product"},
+    {l:"Lambda",v:R.lambdaTotalCost,s:"on-demand · cold start",cl:"blue",n:"⚠ cold start ~1-2s"},
+  ].map(c=>`<div class="sim-metric"><div class="sim-metric-lbl">${c.l}</div><div class="sim-metric-val ${c.cl}">${usd(c.v)}<span style="font-size:9px;color:var(--muted)">/mois</span></div><div class="sim-metric-sub">${c.s}</div><div class="sim-metric-sub" style="color:var(--${c.cl==="amber"?"accent-dark":c.cl==="green"?"":"muted"})">${c.n}</div></div>`).join("");
+  // total tab
+  document.getElementById("total-compute-rows").innerHTML=[
+    {l:"Virtual Warehouses",c:R.whCredits},{l:"Streamlit SPCS (1 nœud offert)",c:R.stCredits},
+    {l:"Serverless Tasks (×0.9)",c:R.taskCredits},{l:"Snowpipe",c:R.pipeCredits},
+  ].map(r=>`<div class="cmp-row"><span class="cmp-lbl">${r.l}</span><span class="cmp-val">${cred(r.c)} → Std: ${usd(r.c*PRICES.std)} / Ent: ${usd(r.c*PRICES.ent)}</span></div>`).join("");
+  document.getElementById("total-flat-rows").innerHTML=[
+    {l:"Stockage Snowflake natif",v:usd(R.stoSfCost)},
+    {l:"Cortex AI",v:usd(R.aiUsd)+" (AI Credits $2/cr)"},
+    {l:"Data Transfer",v:usd(R.dtCost)},
+  ].map(r=>`<div class="cmp-row"><span class="cmp-lbl">${r.l}</span><span class="cmp-val">${r.v}</span></div>`).join("");
+  set("t-iceberg",usd(R.icebergCost)+"/mois");
+  set("t-pg",usd(R.pgTotalCost)+"/mois");set("t-pg-sub","compute + stockage"+(R.pgHa?" HA":""));
+  set("t-pg-compute",cred(R.pgComputeCredits));set("t-pg-compute-sub",usd(R.pgComputeCost)+" Enterprise");
+  set("t-spcs",usd(R.spcsCost)+"/mois");set("t-spcs-sub",R.apiSpcsNodes+" nœuds always-on");
+  set("t-fargate",usd(R.fargateCost)+"/mois");set("t-fargate-sub",R.fargateTasks+" tasks always-on");
+  set("t-lambda",usd(R.lambdaTotalCost)+"/mois");set("t-lambda-sub",fmtd(R.lambdaReqM)+"M req · cold start");
+  set("total-std-big",usd(R.totalStd));set("total-std-sub","/mois · "+cred(R.totalComputeCredits)+" compute");
+  set("total-ent-big",usd(R.totalEnt));set("total-ent-sub","/mois · "+cred(R.totalComputeCredits)+" compute");
+  set("foot-iceberg",usd(R.icebergCost));set("foot-pg",usd(R.pgTotalCost));set("foot-fargate",usd(R.fargateCost));
+}
+
+function renderWHList(){
+  document.getElementById("wh-list").innerHTML=warehouses.map((wh,i)=>`
+    <div class="wh-card">
+      <button class="wh-remove" onclick="removeWH(${i})">×</button>
+      <div class="g3">
+        <div class="fld"><div class="label">Nom</div><input class="inp" type="text" value="${wh.name}" oninput="updateWH(${i},'name',this.value)"></div>
+        <div class="fld"><div class="label">Taille</div>
+          <select class="inp" onchange="updateWH(${i},'size',+this.value)">
+            ${WH_SIZES.map((s,si)=>`<option value="${si}"${si===wh.size?" selected":""}>${s.l} — ${s.c} cr/h</option>`).join("")}
+          </select>
+        </div>
+        <div class="fld"><div class="label">Nb warehouses</div><input class="inp" type="number" min="1" value="${wh.count}" oninput="updateWH(${i},'count',+this.value)"></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="label">Heures actives / jour</div><input class="inp" type="number" min="0" max="24" step="0.5" value="${wh.hours}" oninput="updateWH(${i},'hours',+this.value)"></div>
+        <div class="sim-metric"><div class="sim-metric-lbl">Crédits / mois</div><div class="sim-metric-val blue">${cred(WH_SIZES[wh.size].c*wh.hours*wh.count*DAYS)}</div><div class="sim-metric-sub">${usd(WH_SIZES[wh.size].c*wh.hours*wh.count*DAYS*PRICES.ent)} Enterprise</div></div>
+      </div>
+    </div>`).join("");
+}
+
+function updateWH(i,k,v){warehouses[i][k]=v;renderWHList();update()}
+function addWH(){warehouses.push({name:"Nouveau WH",size:0,hours:4,count:1});renderWHList();update()}
+function removeWH(i){if(warehouses.length>1){warehouses.splice(i,1);renderWHList();update()}}
+
+const TAB_LABELS={compute:"Compute &amp; Tasks",storage:"Stockage",api:"API FastAPI",total:"Récapitulatif"};
+function switchTab(id){
+  document.querySelectorAll(".sim-tab").forEach(e=>e.classList.remove("active"));
+  document.querySelectorAll(".api-group-header").forEach(e=>e.classList.remove("active"));
+  document.getElementById("tab-"+id).classList.add("active");
+  document.getElementById("nav-"+id).classList.add("active");
+  document.getElementById("bc-text").innerHTML=TAB_LABELS[id];
+}
+
+let collapsed=false;
+function toggleSidebar(){
+  collapsed=!collapsed;
+  document.getElementById("sidebar").classList.toggle("collapsed",collapsed);
+  document.getElementById("collapse-btn").textContent=collapsed?"▶":"◀";
+}
+
+document.querySelectorAll("input:not([disabled]),select").forEach(el=>{
+  el.addEventListener("input",update);el.addEventListener("change",update);
+});
+
+renderWHList();
+update();
+</script>
+</body>
+</html>

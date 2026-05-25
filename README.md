@@ -1,4 +1,5 @@
 # 🔮 pythia-studio
+*Update date : 2026-05-24 16:54*
 
 Browser-based tools for the [pythia-for-snowflake](https://github.com/pythia-for-snowflake) suite.  
 No build step — open any `.html` directly or serve via GitHub Pages.
