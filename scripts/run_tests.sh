@@ -25,5 +25,5 @@ ARGS=(tests/ --browser chromium --browser firefox --browser webkit -v "$@")
 if command -v pytest &>/dev/null; then
   pytest "${ARGS[@]}"
 else
-  conda run -n pythia-studio pytest "${ARGS[@]}"
+  conda run -n pinky-studio pytest "${ARGS[@]}"
 fi
