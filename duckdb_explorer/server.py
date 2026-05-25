@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Local DuckDB query server for pythia-studio DuckDB Explorer.
+"""Local DuckDB query server for pinky-studio DuckDB Explorer.
 
-Start from the pythia-studio directory:
+Start from the pinky-studio directory:
     uvicorn duckdb_explorer.server:app --port 8000
 """
 

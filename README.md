@@ -1,4 +1,4 @@
-# 🔮 pinky-studio
+# 🐁 pinky-studio
 *Update date : 2026-05-25 16:31*
 
 Browser-based tools for the [pinky-and-snowflake](https://github.com/pinky-and-snowflake) suite.  
@@ -12,31 +12,31 @@ No build step — open any `.html` directly or serve via GitHub Pages.
 
 | Tool | Path | Description |
 |------|------|-------------|
-| Pythia QueryFile | `pages/duckdb-explorer/` | Query local XLSX, CSV, Parquet and S3/HTTP files — multi-source, auto-preview, column stats. Requires local FastAPI backend. |
-| Pythia Design | `pages/palette-title-generator/` | Signature color → harmony → semantic tokens → app title PNG export |
+| Pinky QueryFile | `pages/duckdb-explorer/` | Query local XLSX, CSV, Parquet and S3/HTTP files — multi-source, auto-preview, column stats. Requires local FastAPI backend. |
+| Pinky Design | `pages/palette-title-generator/` | Signature color → harmony → semantic tokens → app title PNG export |
 | Env Generator | `pages/env-generator/` | conda env · dependencies · pre-commit hooks · commit convention |
 | Stack Reference | `pages/hub-online/` | Curated live docs: Snowflake, Snowpark, Streamlit, DuckDB, Python, Anthropic |
-| Articles | `pages/hub-articles/` | Articles that validate the pythia architecture approach |
+| Articles | `pages/hub-articles/` | Articles that validate the pinky architecture approach |
 
 ---
 
 ## Structure
 
 ```
-pythia-studio/
+pinky-studio/
 ├── index.html              ← GitHub Pages entry point
 ├── app.css                 ← shared CSS tokens and base styles
 ├── assets/
 │   ├── images/             ← logos and icons
 │   └── pdoc/
-│       └── pythia.css      ← shared pdoc theme (referenced by snowflake-kit docs)
+│       └── pythia.css      ← shared pdoc theme (referenced by pinky-core docs)
 ├── pages/                  ← one directory per tool (index.html + app.css + app.js)
 │   ├── duckdb-explorer/
 │   ├── palette-title-generator/
 │   ├── env-generator/
 │   ├── hub-online/
 │   └── hub-articles/
-├── duckdb_explorer/        ← FastAPI/DuckDB backend for Pythia QueryFile
+├── duckdb_explorer/        ← FastAPI/DuckDB backend for Pinky QueryFile
 │   ├── server.py           ← /health · /upload · /query endpoints
 │   └── requirements.txt
 └── scripts/
@@ -53,8 +53,8 @@ External network calls (Gist, microlink) are mocked for stable baselines.
 
 ```bash
 # setup (once)
-conda create -n pythia-studio python=3.11 pip -y
-conda activate pythia-studio
+conda create -n pinky-studio python=3.11 pip -y
+conda activate pinky-studio
 pip install -r tests/requirements.txt
 playwright install
 
@@ -72,7 +72,7 @@ Tests also run automatically on `git push` when `.html`, `.css`, or `.js` files 
 ## Stack
 
 Static HTML · CSS · vanilla JS — no dependencies, no framework, no build.  
-Pythia QueryFile backend: Python 3.11 · FastAPI · DuckDB · uvicorn.  
+Pinky QueryFile backend: Python 3.11 · FastAPI · DuckDB · uvicorn.  
 Tests: Python 3.11 · Playwright · pytest · Pillow.
 
 ---
