@@ -1,5 +1,5 @@
 # AGENT.md — pinky-studio
-*Update date : 2026-05-25 16:31*
+*Update date : 2026-05-26 09:00*
 
 Browser-based tools for the pinky-and-snowflake suite.
 No build step — open any `.html` directly or serve via GitHub Pages.
@@ -35,6 +35,11 @@ pinky-studio/
 ├── duckdb_explorer/        ← FastAPI backend for Pinky QueryFile
 │   ├── server.py           ← /health · /upload · /query endpoints
 │   └── requirements.txt
+├── docs/
+│   ├── explanation/         ← design.md · mvp.md · roadmap.md
+│   ├── how-to/
+│   ├── reference/           ← config.md · hooks.md · git.md
+│   └── tutorials/
 ├── scripts/                ← dev helpers (serve, lint…)
 ├── tests/                  ← backend tests (pytest)
 ├── LICENSE
@@ -55,7 +60,7 @@ Each page directory contains:
 |------|------|-----------------|
 | Pinky QueryFile | `pages/duckdb-explorer/` | Yes — `uvicorn duckdb_explorer.server:app` |
 | Pinky Design | `pages/palette-title-generator/` | No |
-| Env Generator | `pages/env-generator/` | No |
+| Pinky Config | `pages/env-generator/` | No |
 | Stack Reference | `pages/hub-online/` | No |
 | Articles | `pages/hub-articles/` | No |
 
@@ -92,7 +97,7 @@ Format: `<emoji> <type>(<scope>): <description>`
 | `queryfile` | `pages/duckdb-explorer/` + `duckdb_explorer/` backend |
 | `studio` | `index.html`, `app.css`, `repos.json`, global layout/landing page |
 | `design` | `pages/palette-title-generator/` |
-| `env` | `pages/env-generator/` |
+| `config` | `pages/env-generator/` |
 | `hub` | `pages/hub-online/`, `pages/hub-articles/` |
 | `assets` | `assets/` — logos, icons, pdoc CSS |
 | `docs` | `README.md`, `AGENT.md` |
