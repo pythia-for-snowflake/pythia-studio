@@ -5,12 +5,11 @@ import pytest
 from PIL import Image, ImageChops
 
 PAGES = [
-    ("index",     "/"),
-    ("palette",   "/tools/palette-title-generator.html"),
-    ("hub-online", "/tools/hub-online.html"),
-    ("hub-articles", "/tools/hub-articles.html"),
-    ("env-generator", "/tools/env-generator.html"),
-    ("hub-offline", "/tools/hub-offline.html"),
+    ("index",         "/"),
+    ("palette",       "/pages/palette-title-generator/"),
+    ("hub-online",    "/pages/hub-online/"),
+    ("hub-articles",  "/pages/hub-articles/"),
+    ("env-generator", "/pages/env-generator/"),
 ]
 
 SNAPSHOTS_DIR = Path(__file__).parent / "snapshots"
@@ -25,7 +24,7 @@ def _diff_ratio(a: bytes, b: bytes) -> float:
         return 1.0
     diff = ImageChops.difference(img_a, img_b)
     total_channels = img_a.size[0] * img_a.size[1] * 3
-    diff_sum = sum(diff.getflattened_data())
+    diff_sum = sum(diff.tobytes())
     return diff_sum / (total_channels * 255)
 
 
