@@ -1,5 +1,5 @@
 # 🐁 pinky-studio
-*Update date : 2026-05-25 16:31*
+*Update date : 2026-05-26 09:00*
 
 Browser-based tools for the [pinky-and-snowflake](https://github.com/pinky-and-snowflake) suite.  
 No build step — open any `.html` directly or serve via GitHub Pages.
@@ -14,7 +14,7 @@ No build step — open any `.html` directly or serve via GitHub Pages.
 |------|------|-------------|
 | Pinky QueryFile | `pages/duckdb-explorer/` | Query local XLSX, CSV, Parquet and S3/HTTP files — multi-source, auto-preview, column stats. Requires local FastAPI backend. |
 | Pinky Design | `pages/palette-title-generator/` | Signature color → harmony → semantic tokens → app title PNG export |
-| Env Generator | `pages/env-generator/` | conda env · dependencies · pre-commit hooks · commit convention |
+| Pinky Config | `pages/env-generator/` | conda env · dependencies · pre-commit hooks · commit convention |
 | Stack Reference | `pages/hub-online/` | Curated live docs: Snowflake, Snowpark, Streamlit, DuckDB, Python, Anthropic |
 | Articles | `pages/hub-articles/` | Articles that validate the pinky architecture approach |
 
